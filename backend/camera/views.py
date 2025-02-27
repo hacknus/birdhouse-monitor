@@ -132,7 +132,7 @@ def get_gallery(request):
 
     # Ensure the directory exists
     if os.path.exists(image_dir):
-        gallery_images = [f'media/{f}' for f in os.listdir(image_dir) if f.endswith('.jpg')]
-        print(gallery_images)
+        # Get the image filenames and prepend MEDIA_URL
+        gallery_images = [f'{settings.MEDIA_URL}{f}' for f in os.listdir(image_dir) if f.endswith('.jpg')]
 
     return JsonResponse({'images': gallery_images})
