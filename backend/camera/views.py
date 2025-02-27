@@ -10,7 +10,7 @@ from datetime import datetime
 # Detect if running on Raspberry Pi
 IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true' or platform.system() == "Linux"
 
-if os.environ.get('DOCKER_ENV', 'false') == 'true':
+if IS_RPI:
     from picamera2 import Picamera2
 
     camera = Picamera2()
