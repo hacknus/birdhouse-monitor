@@ -4,7 +4,7 @@ import platform
 import time
 
 from django.conf import settings
-from django.http import JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
 from django.shortcuts import render
 
 from datetime import datetime
@@ -36,35 +36,26 @@ def start_stream(request):
     # Ensure you have a live video stream
     camera.start("preview", show_preview=False)
 
-    # Create an HTTP response for streaming MJPEG
-    response = HttpResponse(content_type="multipart/x-mixed-replace; boundary=frame")
+    # Create an in-memory byte stream
+    img_byte_arr = io.BytesIO()
 
-    try:
+    # Setup the camera
+    def gen():
         while True:
-            # Capture the image in memory without saving to disk
-            img_byte_arr = io.BytesIO()
+            # Capture the image to a byte array (in memory)
+            camera.capture(img_byte_arr, format='jpeg')
 
-            # Capture the image and save it directly to the memory buffer in JPEG format
-            camera.capture_array("raw").tofile(img_byte_arr)
+            # Reset the buffer pointer to the beginning
             img_byte_arr.seek(0)
 
-            # Write the boundary and image data to the response
-            response.write(b'--frame\r\n')
-            response.write(b'Content-Type: image/jpeg\r\n\r\n')
-            response.write(img_byte_arr.read())
-            response.write(b'\r\n')
+            # Yield the byte stream content as an HTTP response
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + img_byte_arr.read() + b'\r\n\r\n')
 
-            # Flush the response to send it to the client
-            response.flush()
+            # Sleep to maintain the framerate
+            time.sleep(1 / camera.framerate)
 
-            # Add a small delay to prevent overloading the CPU
-            time.sleep(0.1)
-
-    except GeneratorExit:
-        # Stop the camera if the client disconnects
-        camera.stop()
-
-    return response
+    return StreamingHttpResponse(gen(), content_type='multipart/x-mixed-replace; boundary=frame')
 
 
 def capture_image(request):
