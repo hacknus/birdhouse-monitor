@@ -3,7 +3,6 @@ from django.urls import path, include
 from .views import home  # Import the new homepage view
 from django.conf import settings
 from django.conf.urls.static import static
-from . import views, consumers
 
 urlpatterns = [
                   path("", home, name="home"),  # Set the home page
