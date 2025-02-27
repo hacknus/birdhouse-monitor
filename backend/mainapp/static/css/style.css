@@ -160,3 +160,13 @@ nav .nav-link:hover {
 .download-btn:hover {
     background-color: #0056b3;
 }
+
+/* Default icon styles */
+.navbar-nav .nav-item .nav-link .nav-icon {
+    transition: filter 0.3s ease; /* smooth transition */
+}
+
+/* On hover, invert the image */
+.navbar-nav .nav-item .nav-link:hover .nav-icon {
+    filter: invert(1); /* Inverts the icon color */
+}
