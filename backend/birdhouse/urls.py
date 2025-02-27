@@ -1,6 +1,8 @@
 # birdhouse/urls.py
+from django.contrib import admin
 from django.urls import path, include
 
 urlpatterns = [
-    path('camera/', include('camera.urls', namespace='camera')),  # For HTTP
+    path('admin/', admin.site.urls),
+    path('camera/', include('camera.urls')),  # Regular camera URLs (like capturing images)
 ]
