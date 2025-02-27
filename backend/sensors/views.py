@@ -24,6 +24,7 @@ sensor_data = {
     "temperature": None,
     "humidity": None
 }
+
 def update_sensor_data():
     global sensor_data
     while True:
@@ -38,7 +39,7 @@ def update_sensor_data():
         sensor_data["temperature"] = temp
         sensor_data["humidity"] = humidity
 
-        time.sleep(3)  # Update every 3 seconds
+        time.sleep(1)  # Update every 1 seconds
 
 
 # Start the sensor data update in a separate thread

@@ -69,10 +69,13 @@ def stream_mjpg(request):
             with output.condition:
                 output.condition.wait()  # Wait for the next frame
                 frame = output.frame
+
             # Yield the frame in MJPEG format with necessary headers
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-            time.sleep(0.1)  # Add a small delay to avoid excessive CPU usage
+
+            # Allow the sensor data thread to update every 3 seconds
+            time.sleep(0.1)  # Keep this small enough to let other processes run
 
     # Return the streaming HTTP response
     return StreamingHttpResponse(gen(), content_type='multipart/x-mixed-replace; boundary=frame')
