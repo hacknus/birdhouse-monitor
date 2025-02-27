@@ -8,8 +8,7 @@
 </head>
 <body>
     <h1>Live Stream</h1>
-    <!-- If you're using MJPEG streaming, this will show the live stream -->
-    <img src="/camera/live_feed/" alt="Live Stream" width="640" height="480">
+    <img src="{% url 'camera:live_stream' %}" alt="Live Stream" width="640" height="480">
 
     <button onclick="captureImage()">Capture Image</button>
 

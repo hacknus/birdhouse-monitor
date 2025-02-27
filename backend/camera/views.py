@@ -1,9 +1,10 @@
+import io
 import os
 import platform
 import time
 
 from django.conf import settings
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 
 from datetime import datetime
@@ -34,7 +35,36 @@ def camera_home(request):
 def start_stream(request):
     # Ensure you have a live video stream
     camera.start("preview", show_preview=False)
-    return render(request, "camera/live_stream.html")  # A template that shows the live feed
+
+    # Create an HTTP response for streaming MJPEG
+    response = HttpResponse(content_type="multipart/x-mixed-replace; boundary=frame")
+
+    try:
+        while True:
+            # Capture the image in memory without saving to disk
+            img_byte_arr = io.BytesIO()
+
+            # Capture the image and save it directly to the memory buffer in JPEG format
+            camera.capture_array("raw").tofile(img_byte_arr)
+            img_byte_arr.seek(0)
+
+            # Write the boundary and image data to the response
+            response.write(b'--frame\r\n')
+            response.write(b'Content-Type: image/jpeg\r\n\r\n')
+            response.write(img_byte_arr.read())
+            response.write(b'\r\n')
+
+            # Flush the response to send it to the client
+            response.flush()
+
+            # Add a small delay to prevent overloading the CPU
+            time.sleep(0.1)
+
+    except GeneratorExit:
+        # Stop the camera if the client disconnects
+        camera.stop()
+
+    return response
 
 
 def capture_image(request):
