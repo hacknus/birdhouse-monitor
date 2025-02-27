@@ -61,15 +61,6 @@
     <p>Motion Status: <span id="motion">--</span></p>
 
     <script>
-        // Start streaming video
-        function startStream() {
-            fetch('/camera/start_stream/')
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Stream started', data);
-                    document.getElementById('camera_feed').src = '/camera/stream.mjpg';
-                });
-        }
 
         // Capture image
         function captureImage() {
