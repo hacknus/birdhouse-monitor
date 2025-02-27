@@ -1,9 +1,10 @@
 import os
+import platform
 import random
 from django.http import JsonResponse
 
 # Detect if running on Raspberry Pi
-IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true'
+IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true' and platform.system() == "Linux"
 
 if IS_RPI:
     import board
