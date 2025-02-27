@@ -75,9 +75,14 @@ def stream_mjpg(request):
 
 def start_stream(request):
     """Start the camera stream in a background thread."""
-    print("started stream")
+    def camera_stream():
+        """Run the camera capture in a separate thread to keep the stream active."""
+        camera.stop_recording()
+        camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
+        camera.start_recording(JpegEncoder(), FileOutput(output))
+
     # Start the camera streaming thread
-    stream_thread = Thread(target=stream_mjpg)
+    stream_thread = Thread(target=camera_stream)
     stream_thread.daemon = True  # Daemon thread will exit when the main program exits
     stream_thread.start()
 
