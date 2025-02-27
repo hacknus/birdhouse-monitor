@@ -19,12 +19,17 @@ if IS_RPI:
     from picamera2 import Picamera2
 
     camera = Picamera2()
+    camera.preview_configuration.size = (800, 600)
+    camera.preview_configuration.format = "YUV420"
+    camera.still_configuration.size = (1600, 1200)
+    camera.still_configuration.enable_raw()
+    camera.still_configuration.raw.size = camera.sensor_resolution
 
 
 # Start the camera stream (assuming MJPEG or similar for live streaming)
 def start_stream(request):
     # Ensure you have a live video stream
-    camera.start_preview()
+    camera.start("preview", show_preview=False)
     return JsonResponse({"status": "streaming started"})
 
 
