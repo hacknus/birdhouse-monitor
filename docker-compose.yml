@@ -5,6 +5,8 @@ services:
     build: .
     container_name: django_backend
     restart: always
+    environment:
+      - DOCKER_ENV=true  # Set the environment variable to indicate we are in Docker
     volumes:
       - ./backend:/app
     expose:

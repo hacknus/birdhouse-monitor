@@ -1,5 +1,4 @@
 import os
-import platform
 import time
 
 from django.http import JsonResponse
@@ -8,9 +7,9 @@ from django.shortcuts import render
 from datetime import datetime
 
 # Detect if running on Raspberry Pi
-IS_RPI = platform.system() == "Linux" and os.path.exists("/sys/firmware/devicetree/base/model")
+IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true'
 
-if IS_RPI:
+if os.environ.get('DOCKER_ENV', 'false') == 'true':
     from picamera2 import Picamera2
 
     camera = Picamera2()

@@ -4,6 +4,9 @@ FROM python:3.11
 # Set working directory
 WORKDIR /app
 
+# Set environment variable inside Docker
+ENV DOCKER_ENV=true
+
 # Install system dependencies (including libcap-dev for python-prctl)
 RUN apt-get update && apt-get install -y libcap-dev && rm -rf /var/lib/apt/lists/*
 
