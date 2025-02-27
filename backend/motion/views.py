@@ -17,6 +17,7 @@ else:
 
 motion_detected = False  # Default state
 
+motion_data = False
 
 def update_motion_data():
     global motion_data

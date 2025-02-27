@@ -20,7 +20,10 @@ if IS_RPI:
 else:
     sensor = None  # Mock sensor
 
-
+sensor_data = {
+    "temperature": None,
+    "humidity": None
+}
 def update_sensor_data():
     global sensor_data
     while True:
