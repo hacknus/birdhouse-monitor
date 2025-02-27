@@ -74,12 +74,10 @@ def stream_mjpg(request):
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
 
-            # Allow the sensor data thread to update every 3 seconds
-            time.sleep(0.1)  # Keep this small enough to let other processes run
+            time.sleep(0.1)  # Add a small delay to avoid excessive CPU usage
 
     # Return the streaming HTTP response
     return StreamingHttpResponse(gen(), content_type='multipart/x-mixed-replace; boundary=frame')
-
 
 def stop_camera(request):
     camera.stop_recording()
