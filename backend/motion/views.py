@@ -8,7 +8,7 @@ IS_RPI = platform.system() == "Linux" and os.path.exists("/sys/firmware/devicetr
 if IS_RPI:
     from gpiozero import MotionSensor
 
-    pir = MotionSensor(4)  # Adjust GPIO pin if needed
+    pir = MotionSensor(4)
 else:
     pir = None  # Mock motion sensor
 
