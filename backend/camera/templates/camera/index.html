@@ -12,52 +12,51 @@
     </style>
 </head>
 <body>
-    <h1>Birdhouse Live Stream</h1>
+<h1>Birdhouse Live Stream</h1>
 
-    <h2>Live Stream</h2>
-    <img id="camera_feed" src="" alt="Live Stream">
+<h2>Live Stream</h2>
+<img id="camera_feed" src="" alt="Live Stream">
 
-    <h2>Controls</h2>
-    <button onclick="toggleIR('on')">Turn On IR</button>
-    <button onclick="toggleIR('off')">Turn Off IR</button>
+<h2>Controls</h2>
+<button onclick="toggleIR('on')">Turn On IR</button>
+<button onclick="toggleIR('off')">Turn Off IR</button>
 
-    <h2>Sensor Data</h2>
-    <p>Temperature: <span id="temperature">--</span> °C</p>
-    <p>Humidity: <span id="humidity">--</span> %</p>
+<h2>Sensor Data</h2>
+<p>Temperature: <span id="temperature">--</span> °C</p>
+<p>Humidity: <span id="humidity">--</span> %</p>
 
-    <script>
-        //const cameraSocket = new WebSocket('ws://localhost:8000/ws/camera/');
-        const cameraSocket = new WebSocket('ws://' + window.location.host + '/ws/camera/');
+<script>
+    //const cameraSocket = new WebSocket('ws://localhost:8000/ws/camera/');
+    const cameraSocket = new WebSocket('ws://' + window.location.host + '/ws/camera/');
+    // When WebSocket connection is established
+    cameraSocket.onopen = function (e) {
+        console.log('WebSocket connected');
+    };
 
-        // When WebSocket connection is established
-        cameraSocket.onopen = function(e) {
-            console.log('WebSocket connected');
-        };
+    // When receiving data from WebSocket
+    cameraSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
 
-        // When receiving data from WebSocket
-        cameraSocket.onmessage = function(e) {
-            const data = JSON.parse(e.data);
-
-            if (data.frame) {
-                // Update the image source with the received frame
-                const frameBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
-                document.getElementById('camera_feed').src = 'data:image/jpeg;base64,' + frameBase64;
-            }
-
-            if (data.sensor_data) {
-                // Update the sensor data
-                document.getElementById('temperature').textContent = data.sensor_data.temperature;
-                document.getElementById('humidity').textContent = data.sensor_data.humidity;
-            }
-        };
-
-        // Send message to toggle IR lights
-        function toggleIR(state) {
-            cameraSocket.send(JSON.stringify({
-                action: "toggle_ir",
-                state: state
-            }));
+        if (data.frame) {
+            // Update the image source with the received frame
+            const frameBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
+            document.getElementById('camera_feed').src = 'data:image/jpeg;base64,' + frameBase64;
         }
-    </script>
+
+        if (data.sensor_data) {
+            // Update the sensor data
+            document.getElementById('temperature').textContent = data.sensor_data.temperature;
+            document.getElementById('humidity').textContent = data.sensor_data.humidity;
+        }
+    };
+
+    // Send message to toggle IR lights
+    function toggleIR(state) {
+        cameraSocket.send(JSON.stringify({
+            action: "toggle_ir",
+            state: state
+        }));
+    }
+</script>
 </body>
 </html>
