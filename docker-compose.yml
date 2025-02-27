@@ -9,9 +9,6 @@ services:
       - ./backend:/app
     expose:
       - "8000"
-    depends_on:
-      - nginx
-
   nginx:
     image: nginx:latest
     container_name: nginx_proxy
@@ -23,4 +20,4 @@ services:
       - ./backend/static:/app/static
       - ./backend/media:/app/media
     depends_on:
-      - backend
+      - backend  # nginx should depend on backend, NOT the other way around
