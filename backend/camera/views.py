@@ -127,11 +127,11 @@ def toggle_ir(request):
 
 def get_gallery(request):
     """Fetch and return a list of captured images in the gallery."""
-    image_dir = os.path.join(settings.MEDIA_ROOT, 'captured_images')
+    image_dir = settings.MEDIA_ROOT
     gallery_images = []
 
     # Ensure the directory exists
     if os.path.exists(image_dir):
-        gallery_images = [f'media/{f}' for f in os.listdir(image_dir) if f.endswith('.jpg')]
+        gallery_images = [f'{settings.MEDIA_ROOT}/{f}' for f in os.listdir(image_dir) if f.endswith('.jpg')]
 
     return JsonResponse({'images': gallery_images})
