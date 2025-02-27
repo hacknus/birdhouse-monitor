@@ -17,7 +17,6 @@
       img = document.createElement("IMG");
       img.className += "mx-auto d-block rounded cam-stream";    // Zobraz IMG ako block a centruj na stred stranky
       img.src = "{% url 'video_feed' %}";
-
       return img;
     }
 
@@ -72,7 +71,7 @@
   <div class="container mt-3 mb-4">
     <!-- Uvodna sprava -->
     <div class="row text-center">
-      <p>Welcome to the AIGarden's interface.</p>
+      <p>Welcome to Vögeli.</p>
     </div>
 
     <!-- Zobrazenie streamu z kamery -->
@@ -81,7 +80,7 @@
       <div class="text-center mt-1 mb-3">
         <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp" onchange="showStream(event)">
         <label class="btn btn-outline-dark" for="enablePreview">Enable preview</label>
-        <div id="enablePreviewHelp" class="form-text">Please click above for turning on the live stream from your garden.</div>
+        <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live stream.</div>
       </div>
       <div class="mt-1 mb-2" id="imgPreview"></div>
     </div>
@@ -91,21 +90,17 @@
     <div class="container p-4">
         <h5>Social media</h5>
         <section class="mb-4">
-            <a class="btn btn-outline-light btn-floating m-1" href="https://www.instagram.com/martin.kubovcik/" role="button">
-                <i class="fa fa-instagram"></i>
-            </a>
-            <a class="btn btn-outline-light btn-floating m-1" href="https://github.com/markub3327/AIGarden" role="button">
+            <a class="btn btn-outline-light btn-floating m-1" href="https://github.com/hacknus/birdhouse-monitor" role="button">
                 <i class="fa fa-github"></i>
             </a>
         </section>
         <h5>About us</h5>
         <section class="mb-4">
-          AIGarden 🚰🌱🥕🍅 is an open-source project that uses Raspberry Pi to automate your garden and simplified caring about your garden.
-          You can make watering autonomous and monitoring plants smarter.
+          Vögeli 🐦‍⬛ is an open-source project that uses Raspberry Pi to monitor your birdhouse. The codebase is inspired by AIGarden (Martin Kubovčík).
         </section>
     </div>
     <div class="text-center p-3 my-footer">
-        © 2023 Copyright: Martin Kubovčík
+        © 2025 Copyright: Linus Leo Stöckli
     </div>
   </footer>
 </body>

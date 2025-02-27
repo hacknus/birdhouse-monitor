@@ -13,7 +13,10 @@ body {
 }
 
 .cam-stream {
-    max-width: 85%;
+  width: 100%;
+  max-width: 800px; /* Adjust as needed */
+  height: auto;
+  border: 2px solid #333; /* Optional: Add border */
 }
 
 .my-footer {
