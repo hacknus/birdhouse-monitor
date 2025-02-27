@@ -116,13 +116,3 @@ def toggle_ir(request):
         GPIO.output(IR_PIN, GPIO.HIGH if state == "on" else GPIO.LOW)
 
     return JsonResponse({"status": f"IR light {state}"})
-
-
-# Gallery view
-def gallery(request):
-    # List all files in the media directory (assumes images are stored here)
-    image_dir = settings.MEDIA_ROOT
-    image_files = [f for f in os.listdir(image_dir) if f.endswith('.jpg')]
-    image_urls = [os.path.join("media/camera", f) for f in image_files]
-
-    return render(request, "camera/gallery.html", {"images": image_urls})
