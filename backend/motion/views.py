@@ -37,7 +37,4 @@ motion_thread.start()
 
 def motion_status(request):
     # Return the current sensor data as a JSON response
-    return JsonResponse(motion_data)
-
-
-e({"motion": "active" if motion_detected else "inactive"})
+    return JsonResponse({"motion": "active" if motion_data else "inactive"})
