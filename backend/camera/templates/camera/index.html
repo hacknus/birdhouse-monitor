@@ -97,6 +97,11 @@
     // Start stream and load gallery on page load
     window.onload = function () {
         loadGallery();
+        fetch('/camera/start_stream/')
+            .then(response => response.json())
+            .then(data => {
+                console.log(data.status);  // Stream started message
+            });
     };
 
     // Update sensor data every 3 seconds
