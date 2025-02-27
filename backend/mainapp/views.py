@@ -54,3 +54,9 @@ def save_image(request):
         return JsonResponse({"message": "Image saved!", "image_url": f"/media/gallery/{timestamp}.jpg"})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
+
+def gallery(request):
+    image_dir = os.path.join(settings.MEDIA_URL, "gallery/")
+    images = [{"url": f"{image_dir}{image}"} for image in os.listdir(os.path.join(settings.MEDIA_ROOT, "gallery"))]
+
+    return render(request, "gallery.html", {"images": images})
