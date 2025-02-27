@@ -1,0 +1,26 @@
+<!-- camera/templates/camera/live_stream.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Stream</title>
+</head>
+<body>
+    <h1>Live Stream</h1>
+    <!-- If you're using MJPEG streaming, this will show the live stream -->
+    <img src="/camera/live_feed/" alt="Live Stream" width="640" height="480">
+
+    <button onclick="captureImage()">Capture Image</button>
+
+    <script>
+        function captureImage() {
+            fetch(`/camera/capture/`)
+                .then(response => response.json())
+                .then(data => {
+                    alert('Image Captured!');
+                });
+        }
+    </script>
+</body>
+</html>

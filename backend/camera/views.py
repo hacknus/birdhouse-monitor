@@ -29,11 +29,13 @@ else:
 def camera_home(request):
     return render(request, "camera/index.html")
 
+
 # Start the camera stream (assuming MJPEG or similar for live streaming)
 def start_stream(request):
     # Ensure you have a live video stream
     camera.start("preview", show_preview=False)
-    return JsonResponse({"status": "streaming started"})
+    return render(request, "camera/live_stream.html")  # A template that shows the live feed
+
 
 def capture_image(request):
     """Capture image from camera (real on Pi, placeholder on macOS)."""
@@ -72,8 +74,12 @@ def toggle_ir(request):
 
     return JsonResponse({"status": f"IR light {state}"})
 
-# View for gallery (display images from media folder)
+
+# Gallery view
 def gallery(request):
-    image_files = [f for f in os.listdir(settings.MEDIA_ROOT) if f.endswith('.jpg')]
-    image_urls = [settings.MEDIA_URL + f for f in image_files]
-    return JsonResponse({"images": image_urls})
+    # List all files in the media directory (assumes images are stored here)
+    image_dir = os.path.join(settings.MEDIA_ROOT, "camera")  # Or wherever the images are stored
+    image_files = [f for f in os.listdir(image_dir) if f.endswith('.jpg')]
+    image_urls = [os.path.join("media/camera", f) for f in image_files]
+
+    return render(request, "camera/gallery.html", {"images": image_urls})
