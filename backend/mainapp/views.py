@@ -13,7 +13,7 @@ from django.shortcuts import render
 from picamera2 import Picamera2
 
 from .models import SensorData
-import sensor_acquisition
+import mainapp.sensor_acquisition
 
 # init camera
 picam2 = Picamera2()
