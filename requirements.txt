@@ -1,5 +1,0 @@
-Django
-gpiozero
-picamera2
-flask
-adafruit-circuitpython-sht4x
