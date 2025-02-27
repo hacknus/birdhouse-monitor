@@ -28,7 +28,7 @@
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'gallery' %}"><img class="rounded"
                                                                              src="{% static 'img/gallery.png' %}"
-                                                                             alt="Home" width="32" height="32"> Home</a>
+                                                                             alt="Home" width="32" height="32"> Gallery</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#about"><img class="rounded" src="{% static 'img/about.png' %}"
@@ -42,14 +42,21 @@
 
 <!-- Image Gallery -->
 <div class="container mt-4">
-    <h2 class="text-center">📷 Image Gallery</h2>
+    <h2 class="text-center">Image Gallery</h2>
     <div class="row">
         {% for image in images %}
         <div class="col-md-4 mb-4">
             <div class="card">
-                <img src="{{ image.url }}" class="card-img-top img-thumbnail" alt="Saved Image" onclick="showModal('{{ image.url }}')">
+                <img src="{{ image.url }}" class="card-img-top" alt="Gallery Image">
+                <div class="card-body text-center">
+                    <a href="{{ image.url }}" download class="btn btn-primary">
+                        Download <i class="fa fa-download"></i>
+                    </a>
+                </div>
             </div>
         </div>
+        {% empty %}
+        <p class="text-center">No images available.</p>
         {% endfor %}
     </div>
 </div>
