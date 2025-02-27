@@ -1,32 +1,27 @@
-import time
+# livestream/stream.py
 
-from flask import Flask, Response
-from picamera2 import Picamera2
 import io
+from picamera2 import Picamera2
+from picamera2.encoders import JpegEncoder
+from picamera2.outputs import FileOutput
 
-app = Flask(__name__)
-camera = Picamera2()
-camera.preview_configuration.size = (800, 600)
-camera.preview_configuration.format = "YUV420"
-camera.still_configuration.size = (1600, 1200)
-camera.still_configuration.enable_raw()
-camera.still_configuration.raw.size = camera.sensor_resolution
 
-camera.start("preview", show_preview=False)
-time.sleep(2)
+class CameraStream:
+    def __init__(self):
+        # Initialize the camera
+        self.camera = Picamera2()
+        self.camera.configure(self.camera.create_video_configuration(main={"size": (640, 480)}))
+        self.camera.start_recording(JpegEncoder(), FileOutput(self))
 
-def generate():
-    stream = io.BytesIO()
-    while True:
-        camera.capture_file(stream, format='jpeg')
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + stream.getvalue() + b'\r\n')
-        stream.seek(0)
-        stream.truncate()
+    def get_frame(self):
+        """Get a single frame as JPEG"""
+        stream = io.BytesIO()
+        self.camera.capture(stream, format='jpeg')
+        return stream.getvalue()
 
-@app.route('/video_feed')
-def video_feed():
-    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-if __name__ == "__main__":
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    def gen(self):
+        """Stream frames endlessly"""
+        while True:
+            frame = self.get_frame()
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
