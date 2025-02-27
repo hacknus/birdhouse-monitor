@@ -54,8 +54,7 @@ def stream_mjpg(request):
     output = StreamingOutput()
 
     # Ensure the camera is stopped before reconfiguring it
-    if camera.recording:
-        camera.stop_recording()
+    camera.stop_recording()
 
     # Configure the camera for MJPEG streaming
     camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
@@ -104,8 +103,7 @@ def capture_image(request):
         print(f"Saving image to: {image_path}")
 
         # Ensure the camera is stopped before reconfiguring it
-        if camera.recording:
-            camera.stop_recording()
+        camera.stop_recording()
 
         camera.start("preview", show_preview=False)
         time.sleep(2)
