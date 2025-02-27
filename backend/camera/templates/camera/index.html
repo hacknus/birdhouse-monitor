@@ -36,8 +36,7 @@
 
     <h2>Live Stream</h2>
     <!-- Live stream image -->
-    <img src="{% url 'camera:live_stream' %}" alt="Live Stream" width="640" height="480">
-
+    <img src="{% url 'camera:stream_mjpg' %}" alt="Live Stream" width="640" height="480">
 
     <h2>Camera</h2>
     <video id="camera_feed" autoplay></video>
@@ -45,7 +44,9 @@
 
     <h2>Gallery</h2>
     <div id="gallery" class="gallery-container">
-        <!-- Gallery images will go here -->
+        {% for image in gallery_images %}
+            <img src="{{ image }}" alt="Captured Image">
+        {% endfor %}
     </div>
 
     <h2>Controls</h2>
@@ -66,8 +67,7 @@
                 .then(response => response.json())
                 .then(data => {
                     console.log('Stream started', data);
-                    // Replace the source with MJPEG stream URL or any other format
-                    document.getElementById('camera_feed').src = '/camera/stream'; // Replace with actual MJPEG stream URL if necessary
+                    document.getElementById('camera_feed').src = '/camera/stream.mjpg';
                 });
         }
 
@@ -76,8 +76,8 @@
             fetch('/camera/capture/')
                 .then(response => response.json())
                 .then(data => {
-                    document.getElementById('camera_feed').src = data.image;
                     addToGallery(data.image);
+                    document.getElementById('camera_feed').src = data.image;
                 });
         }
 
@@ -98,7 +98,7 @@
 
         // Update sensor data
         function updateSensorData() {
-            fetch(`/sensors/data/`)
+            fetch(`/camera/sensors/data/`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('temperature').innerText = data.temperature;
@@ -108,7 +108,7 @@
 
         // Update motion status
         function updateMotionStatus() {
-            fetch(`/motion/status/`)
+            fetch(`/camera/motion/status/`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('motion').innerText = data.motion;

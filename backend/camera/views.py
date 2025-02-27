@@ -35,45 +35,46 @@ if IS_RPI:
     camera.still_configuration.enable_raw()
     camera.still_configuration.raw.size = camera.sensor_resolution
     camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
-    output = StreamingOutput()
-    camera.start_recording(JpegEncoder(), FileOutput(output))
 
 else:
     camera = None  # Mock camera
 
-
 def camera_home(request):
-    return render(request, "camera/index.html")
+    # Gallery images
+    image_dir = os.path.join(settings.MEDIA_ROOT, 'captured_images')
+    gallery_images = []
+
+    if os.path.exists(image_dir):
+        gallery_images = [f'captured_images/{f}' for f in os.listdir(image_dir) if f.endswith('.jpg')]
+
+    return render(request, 'camera/index.html', {'gallery_images': gallery_images})
 
 
-# Define the MJPEG streaming page
-PAGE = """\
-<html>
-<head>
-<title>picamera2 MJPEG Streaming Demo</title>
-</head>
-<body>
-<h1>Picamera2 MJPEG Streaming Demo</h1>
-<img src="stream.mjpg" width="640" height="480" />
-</body>
-</html>
-"""
+def start_stream(request):
+    # Start the MJPEG stream
+    output = StreamingOutput()
+    camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
+    camera.start_recording(JpegEncoder(), FileOutput(output))
+    return JsonResponse({"message": "Stream started"})
 
-def camera_home(request):
-    content = PAGE.encode('utf-8')
-    return HttpResponse(content, content_type='text/html')
-
-def gen():
-    while True:
-        with output.condition:
-            output.condition.wait()
-            frame = output.frame
-        yield (b'--frame\r\n'
-               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
-        time.sleep(0.1)
 
 def stream_mjpg(request):
-    return StreamingHttpResponse(gen(), content_type='multipart/x-mixed-replace; boundary=frame')
+    output = StreamingOutput()
+    camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
+    camera.start_recording(JpegEncoder(), FileOutput(output))
+
+    try:
+        while True:
+            with output.condition:
+                output.condition.wait()
+                frame = output.frame
+
+            response = HttpResponse(frame, content_type="image/jpeg")
+            return response
+    except Exception as e:
+        camera.stop_recording()
+        print(f"Error: {e}")
+        return HttpResponse(status=500)
 
 def stop_camera(request):
     camera.stop_recording()
