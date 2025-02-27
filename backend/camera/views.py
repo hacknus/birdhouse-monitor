@@ -2,6 +2,7 @@ import io
 import os
 import platform
 import time
+from threading import Condition
 
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
@@ -9,12 +10,23 @@ from django.shortcuts import render
 
 from datetime import datetime
 
+class StreamingOutput(io.BufferedIOBase):
+    def __init__(self):
+        self.frame = None
+        self.condition = Condition()
+
+    def write(self, buf):
+        with self.condition:
+            self.frame = buf
+            self.condition.notify_all()
+
 # Detect if running on Raspberry Pi
 IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true' or platform.system() == "Linux"
 
 if IS_RPI:
     from picamera2 import Picamera2
-
+    from picamera2.encoders import JpegEncoder
+    from picamera2.outputs import FileOutput
     camera = Picamera2()
 
     camera.preview_configuration.size = (800, 600)
@@ -22,6 +34,9 @@ if IS_RPI:
     camera.still_configuration.size = (1600, 1200)
     camera.still_configuration.enable_raw()
     camera.still_configuration.raw.size = camera.sensor_resolution
+    camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
+    output = StreamingOutput()
+    camera.start_recording(JpegEncoder(), FileOutput(output))
 
 else:
     camera = None  # Mock camera
@@ -31,32 +46,38 @@ def camera_home(request):
     return render(request, "camera/index.html")
 
 
-# Start the camera stream (assuming MJPEG or similar for live streaming)
-def start_stream(request):
-    # Ensure you have a live video stream
-    camera.start("preview", show_preview=False)
+# Define the MJPEG streaming page
+PAGE = """\
+<html>
+<head>
+<title>picamera2 MJPEG Streaming Demo</title>
+</head>
+<body>
+<h1>Picamera2 MJPEG Streaming Demo</h1>
+<img src="stream.mjpg" width="640" height="480" />
+</body>
+</html>
+"""
 
-    # Create an in-memory byte stream
-    img_byte_arr = io.BytesIO()
+def camera_home(request):
+    content = PAGE.encode('utf-8')
+    return HttpResponse(content, content_type='text/html')
 
-    # Setup the camera
-    def gen():
-        while True:
-            # Capture the image to a byte array (in memory)
-            camera.capture(img_byte_arr, format='jpeg')
+def gen():
+    while True:
+        with output.condition:
+            output.condition.wait()
+            frame = output.frame
+        yield (b'--frame\r\n'
+               b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+        time.sleep(0.1)
 
-            # Reset the buffer pointer to the beginning
-            img_byte_arr.seek(0)
-
-            # Yield the byte stream content as an HTTP response
-            yield (b'--frame\r\n'
-                   b'Content-Type: image/jpeg\r\n\r\n' + img_byte_arr.read() + b'\r\n\r\n')
-
-            # Sleep to maintain the framerate
-            time.sleep(1 / camera.framerate)
-
+def stream_mjpg(request):
     return StreamingHttpResponse(gen(), content_type='multipart/x-mixed-replace; boundary=frame')
 
+def stop_camera(request):
+    camera.stop_recording()
+    return HttpResponse("Camera stopped.")
 
 def capture_image(request):
     """Capture image from camera (real on Pi, placeholder on macOS)."""
