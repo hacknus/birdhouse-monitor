@@ -1,10 +1,19 @@
+import time
+
 from flask import Flask, Response
 from picamera2 import Picamera2
 import io
 
 app = Flask(__name__)
 camera = Picamera2()
-camera.start()
+camera.preview_configuration.size = (800, 600)
+camera.preview_configuration.format = "YUV420"
+camera.still_configuration.size = (1600, 1200)
+camera.still_configuration.enable_raw()
+camera.still_configuration.raw.size = camera.sensor_resolution
+
+camera.start("preview", show_preview=False)
+time.sleep(2)
 
 def generate():
     stream = io.BytesIO()
