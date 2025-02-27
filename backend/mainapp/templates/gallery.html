@@ -40,14 +40,14 @@
     </div>
 </nav>
 
-<!-- Image Gallery -->
+<!-- Gallery Container -->
 <div class="container mt-4">
     <h2 class="text-center">Image Gallery</h2>
     <div class="row">
         {% for image in images %}
         <div class="col-md-4 mb-4">
             <div class="card">
-                <img src="{{ image.url }}" class="card-img-top" alt="Gallery Image">
+                <img src="{{ image.url }}" class="card-img-top" alt="Gallery Image" onclick="openModal('{{ image.url }}')">
                 <div class="card-body text-center">
                     <a href="{{ image.url }}" download class="btn btn-primary">
                         Download <i class="fa fa-download"></i>
@@ -61,23 +61,32 @@
     </div>
 </div>
 
-<!-- Image Modal -->
-<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-body text-center">
-                <img id="modalImage" src="" class="img-fluid rounded">
-            </div>
-        </div>
-    </div>
+<!-- Image Preview Modal -->
+<div id="imageModal" class="modal">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <a id="downloadLink" class="download-btn" download>
+        Download <i class="fa fa-download"></i>
+    </a>
 </div>
 
+<!-- JavaScript -->
 <script>
-    function showModal(imageSrc) {
-        document.getElementById("modalImage").src = imageSrc;
-        new bootstrap.Modal(document.getElementById('imageModal')).show();
+    function openModal(imageSrc) {
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("modalImage");
+        var downloadBtn = document.getElementById("downloadLink");
+
+        modal.style.display = "block";
+        modalImg.src = imageSrc;
+        downloadBtn.href = imageSrc;
+    }
+
+    function closeModal() {
+        document.getElementById("imageModal").style.display = "none";
     }
 </script>
+
 
 <footer class="bg-dark text-center text-white" id="about">
     <div class="container p-4">
