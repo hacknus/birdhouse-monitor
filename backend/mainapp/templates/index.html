@@ -45,6 +45,20 @@
             }
         }
 
+        function togglePreviewLabel() {
+            var checkbox = document.getElementById("enablePreview");
+            var label = document.querySelector("label[for='enablePreview']");
+
+            if (checkbox.checked) {
+                label.textContent = "Disable preview";
+            } else {
+                label.textContent = "Enable preview";
+            }
+        }
+
+        // Ensure the label updates when toggling
+        document.getElementById("enablePreview").addEventListener("change", togglePreviewLabel);
+
     </script>
 </head>
 
@@ -68,8 +82,9 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'gallery' %}"><img class="rounded"
-                                                                             src="{% static 'img/gallery.png' %}"
-                                                                             alt="Home" width="32" height="32"> Gallery</a>
+                                                                               src="{% static 'img/gallery.png' %}"
+                                                                               alt="Home" width="32" height="32">
+                        Gallery</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#about"><img class="rounded" src="{% static 'img/about.png' %}"
@@ -92,7 +107,7 @@
         <h3 class="text-center mt-3"><b>Camera stream</b></h3>
         <div class="text-center mt-1 mb-3">
             <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
-                   onchange="showStream(event)">
+                   onchange="togglePreviewLabel()">
             <label class="btn btn-outline-dark" for="enablePreview">Enable preview</label>
             <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live stream.</div>
         </div>
