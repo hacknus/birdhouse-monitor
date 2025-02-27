@@ -16,102 +16,6 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        // Function to fetch temperature, humidity, and motion status
-        function fetchData() {
-            // Fetch temperature
-            fetch("/get_temperature/")
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("temperature").textContent = data.temperature + " °C";
-                    updateTemperatureGraph(data.temperature);
-                });
-
-            // Fetch humidity
-            fetch("/get_humidity/")
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("humidity").textContent = data.humidity + " %";
-                    updateHumidityGraph(data.humidity);
-                });
-
-            // Fetch motion status
-            fetch("/get_motion_status/")
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById("motionStatus").textContent = data.motion_triggered ? "Motion detected" : "No motion";
-                });
-        }
-
-        // Set up the graph for temperature
-        let temperatureChart = new Chart(document.getElementById("temperatureChart"), {
-            type: "line",
-            data: {
-                labels: [],  // Time labels, will be filled dynamically
-                datasets: [{
-                    label: 'Temperature (°C)',
-                    data: [],  // Temperature data, will be filled dynamically
-                    borderColor: 'rgb(75, 192, 192)',
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: false
-                    }
-                }
-            }
-        });
-
-        // Set up the graph for humidity
-        let humidityChart = new Chart(document.getElementById("humidityChart"), {
-            type: "line",
-            data: {
-                labels: [],  // Time labels, will be filled dynamically
-                datasets: [{
-                    label: 'Humidity (%)',
-                    data: [],  // Humidity data, will be filled dynamically
-                    borderColor: 'rgb(153, 102, 255)',
-                    fill: false
-                }]
-            },
-            options: {
-                scales: {
-                    y: {
-                        beginAtZero: false
-                    }
-                }
-            }
-        });
-
-        // Function to update the temperature graph
-        function updateTemperatureGraph(temp) {
-            let now = new Date().toLocaleTimeString();
-            temperatureChart.data.labels.push(now);
-            temperatureChart.data.datasets[0].data.push(temp);
-            if (temperatureChart.data.labels.length > 10) {
-                temperatureChart.data.labels.shift();
-                temperatureChart.data.datasets[0].data.shift();
-            }
-            temperatureChart.update();
-        }
-
-        // Function to update the humidity graph
-        function updateHumidityGraph(humidity) {
-            let now = new Date().toLocaleTimeString();
-            humidityChart.data.labels.push(now);
-            humidityChart.data.datasets[0].data.push(humidity);
-            if (humidityChart.data.labels.length > 10) {
-                humidityChart.data.labels.shift();
-                humidityChart.data.datasets[0].data.shift();
-            }
-            humidityChart.update();
-        }
-
-        // Initial fetch of data
-        fetchData();
-        setInterval(fetchData, 10000);  // Refresh every 10 seconds
-
         function createPreview() {
             img = document.createElement("IMG");
             img.className += "mx-auto d-block rounded cam-stream";    // Zobraz IMG ako block a centruj na stred stranky
@@ -248,6 +152,8 @@
                    onchange="showStream(event)">
             <label class="btn btn-outline-dark" for="enablePreview">Enable preview</label>
             <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live stream.</div>
+            <!-- Button to toggle IR LED -->
+            <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()">IR OFF</button>
         </div>
         <div class="mt-1 mb-2" id="imgPreview"></div>
         <!-- Save Image Button -->
@@ -255,11 +161,6 @@
             <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
             <p id="saveMessage" class="text-success mt-2"></p>
         </div>
-    </div>
-
-    <!-- Button to toggle IR LED -->
-    <div class="text-center mt-3">
-        <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()">IR OFF</button>
     </div>
 
     <div class="container mt-3 mb-4">
@@ -319,6 +220,102 @@
     </div>
 </footer>
 <script>
+    // Function to fetch temperature, humidity, and motion status
+    function fetchData() {
+        // Fetch temperature
+        fetch("/get_temperature/")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("temperature").textContent = data.temperature + " °C";
+                updateTemperatureGraph(data.temperature);
+            });
+
+        // Fetch humidity
+        fetch("/get_humidity/")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("humidity").textContent = data.humidity + " %";
+                updateHumidityGraph(data.humidity);
+            });
+
+        // Fetch motion status
+        fetch("/get_motion_status/")
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("motionStatus").textContent = data.motion_triggered ? "Motion detected" : "No motion";
+            });
+    }
+
+    // Set up the graph for temperature
+    let temperatureChart = new Chart(document.getElementById("temperatureChart"), {
+        type: "line",
+        data: {
+            labels: [],  // Time labels, will be filled dynamically
+            datasets: [{
+                label: 'Temperature (°C)',
+                data: [],  // Temperature data, will be filled dynamically
+                borderColor: 'rgb(75, 192, 192)',
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+
+    // Set up the graph for humidity
+    let humidityChart = new Chart(document.getElementById("humidityChart"), {
+        type: "line",
+        data: {
+            labels: [],  // Time labels, will be filled dynamically
+            datasets: [{
+                label: 'Humidity (%)',
+                data: [],  // Humidity data, will be filled dynamically
+                borderColor: 'rgb(153, 102, 255)',
+                fill: false
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: false
+                }
+            }
+        }
+    });
+
+    // Function to update the temperature graph
+    function updateTemperatureGraph(temp) {
+        let now = new Date().toLocaleTimeString();
+        temperatureChart.data.labels.push(now);
+        temperatureChart.data.datasets[0].data.push(temp);
+        if (temperatureChart.data.labels.length > 10) {
+            temperatureChart.data.labels.shift();
+            temperatureChart.data.datasets[0].data.shift();
+        }
+        temperatureChart.update();
+    }
+
+    // Function to update the humidity graph
+    function updateHumidityGraph(humidity) {
+        let now = new Date().toLocaleTimeString();
+        humidityChart.data.labels.push(now);
+        humidityChart.data.datasets[0].data.push(humidity);
+        if (humidityChart.data.labels.length > 10) {
+            humidityChart.data.labels.shift();
+            humidityChart.data.datasets[0].data.shift();
+        }
+        humidityChart.update();
+    }
+
+    // Initial fetch of data
+    fetchData();
+    setInterval(fetchData, 10000);  // Refresh every 10 seconds
+
     document.getElementById("saveImageBtn").addEventListener("click", function () {
         let imgPreview = document.getElementById("imgPreview");
         let enablePreview = document.getElementById("enablePreview");
