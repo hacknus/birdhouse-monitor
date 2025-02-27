@@ -2,13 +2,12 @@ import json
 import asyncio
 import os
 import platform
-
 from channels.generic.websocket import AsyncWebsocketConsumer
-
 from threading import Thread
 import io
 import random
 import time
+from channels.db import database_sync_to_async
 
 # Define your sensor data (mock values for this example)
 sensor_data = {
@@ -43,7 +42,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
 
                 self.camera = Picamera2()
 
-                print("starting camera")
+                print("Starting camera")
 
                 self.camera.preview_configuration.size = (800, 600)
                 self.camera.preview_configuration.format = "YUV420"
@@ -53,7 +52,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
                 self.camera.configure(self.camera.create_video_configuration(main={"size": (640, 480)}))
                 self.camera.start_recording(JpegEncoder(), FileOutput(self))
 
-            self.send_json({'status': 'Stream started'})
+            await self.send_json({'status': 'Stream started'})
             # Start a separate thread to handle camera frame updates
             Thread(target=self.send_frames, daemon=True).start()
 
@@ -65,8 +64,9 @@ class CameraConsumer(AsyncWebsocketConsumer):
         print("WebSocket disconnected")
         if self.is_streaming:
             self.is_streaming = False
-            self.camera.stop_recording()
-            self.send_json({'status': 'Stream stopped'})
+            if self.camera:
+                self.camera.stop_recording()
+            await self.send_json({'status': 'Stream stopped'})
 
     async def receive(self, text_data):
         """Handle receiving data from WebSocket."""
@@ -87,15 +87,15 @@ class CameraConsumer(AsyncWebsocketConsumer):
             GPIO.setup(IR_PIN, GPIO.OUT)
             GPIO.output(IR_PIN, GPIO.HIGH if state == "on" else GPIO.LOW)
 
-    def send_frames(self):
+    async def send_frames(self):
         """Send frames to WebSocket every time a new frame is captured."""
         while self.is_streaming:
             if self.frame:
                 # Send frame to WebSocket clients
-                self.send_json({
+                await self.send_json({
                     'frame': self.frame
                 })
-            asyncio.sleep(0.1)
+            await asyncio.sleep(0.1)  # Use async sleep to avoid blocking
 
     def write(self, buf):
         """Called when the camera produces a frame, send it to the WebSocket."""
@@ -128,9 +128,13 @@ class CameraConsumer(AsyncWebsocketConsumer):
 
             print(sensor_data)
 
-            # Send sensor data to all connected WebSocket clients
-            self.send_json({
-                'sensor_data': sensor_data
-            })
+            # Send sensor data to all connected WebSocket clients asynchronously
+            asyncio.run(self.send_sensor_data())
 
             time.sleep(1)  # Update every 1 second
+
+    async def send_sensor_data(self):
+        """Send sensor data to WebSocket asynchronously."""
+        await self.send_json({
+            'sensor_data': sensor_data
+        })

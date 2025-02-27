@@ -11,7 +11,7 @@
 
 <script>
     const videoFeed = document.getElementById('videoFeed');
-    const socket = new WebSocket('ws://' + window.location.host + '/ws/video_feed/');
+    const socket = new WebSocket('ws://' + window.location.host + '/ws/video_feed/');  // Ensure the URL matches
 
     socket.onmessage = function(e) {
         const data = JSON.parse(e.data);
