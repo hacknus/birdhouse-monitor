@@ -1,13 +1,16 @@
-# Use Python base image (ARM compatible for Raspberry Pi)
+# Use a Python base image (Raspberry Pi compatible)
 FROM python:3.11
 
 # Set working directory
 WORKDIR /app
 
+# Install system dependencies (including libcap-dev for python-prctl)
+RUN apt-get update && apt-get install -y libcap-dev && rm -rf /var/lib/apt/lists/*
+
 # Copy project files
 COPY backend/ /app/
 
-# Install dependencies
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Collect static files
