@@ -26,7 +26,8 @@
     <p>Humidity: <span id="humidity">--</span> %</p>
 
     <script>
-        const cameraSocket = new WebSocket('ws://localhost:8000/ws/camera/');
+        //const cameraSocket = new WebSocket('ws://localhost:8000/ws/camera/');
+        const cameraSocket = new WebSocket('ws://' + window.location.host + '/ws/camera/');
 
         // When WebSocket connection is established
         cameraSocket.onopen = function(e) {

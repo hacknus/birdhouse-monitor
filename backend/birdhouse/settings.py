@@ -64,7 +64,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = 'birdhouse-monitor.asgi.application'
+ASGI_APPLICATION = 'birdhouse.asgi.application'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')

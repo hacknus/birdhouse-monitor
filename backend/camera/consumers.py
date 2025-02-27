@@ -126,6 +126,8 @@ class CameraConsumer(AsyncWebsocketConsumer):
             sensor_data["temperature"] = temp
             sensor_data["humidity"] = humidity
 
+            print(sensor_data)
+
             # Send sensor data to all connected WebSocket clients
             self.send_json({
                 'sensor_data': sensor_data
