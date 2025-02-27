@@ -62,6 +62,27 @@
         // Ensure the label updates and the stream shows when toggling
         document.getElementById("enablePreview").addEventListener("change", showStream);
 
+        // Trigger IR LED
+        function triggerIRLED() {
+            fetch("/trigger_ir_led/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": "{{ csrf_token }}",
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({action: "toggle"}) // Send action to toggle IR LED
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("IR LED toggled!");
+                    } else {
+                        alert("Failed to toggle IR LED.");
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
     </script>
 </head>
 
@@ -126,6 +147,11 @@
             <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
             <p id="saveMessage" class="text-success mt-2"></p>
         </div>
+    </div>
+
+    <!-- IR LED Control Button -->
+    <div class="row text-center mt-4">
+        <button class="btn btn-danger" onclick="triggerIRLED()">Toggle IR LED</button>
     </div>
 </div>
 

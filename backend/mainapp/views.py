@@ -40,6 +40,7 @@ def video_feed(request):
 def index(request):
     return render(request, "index.html")
 
+
 def save_image(request):
     if request.method == "POST":
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -67,3 +68,36 @@ def gallery(request):
     images = [{"url": f"{image_dir}{image}"} for image in image_files]
 
     return render(request, "gallery.html", {"images": images})
+
+
+# Function to toggle the IR LED
+def trigger_ir_led(request):
+    if request.method == 'POST':
+        # Get the action (toggle) from the request
+        data = request.body.decode('utf-8')
+
+        # Example: action might be sent in JSON format
+        if 'toggle' in data:
+            import RPi.GPIO as GPIO
+            # Toggle IR LED (ON or OFF)
+
+            # Setup GPIO mode
+            GPIO.setmode(GPIO.BCM)
+
+            # Set the GPIO pin that controls the IR LED
+            IR_LED_PIN = 17  # Change this pin number to match your setup
+            GPIO.setup(IR_LED_PIN, GPIO.OUT)
+
+            current_state = GPIO.input(IR_LED_PIN)  # Check current state
+            new_state = GPIO.LOW if current_state else GPIO.HIGH
+            GPIO.output(IR_LED_PIN, new_state)  # Set new state for the IR LED
+
+            # Wait a small moment to ensure the toggle happens properly
+            time.sleep(0.1)
+
+            # Send a success response
+            return JsonResponse({'success': True, 'message': 'IR LED toggled successfully.'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid action.'}, status=400)
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
