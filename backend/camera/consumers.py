@@ -43,6 +43,8 @@ class CameraConsumer(AsyncWebsocketConsumer):
 
                 self.camera = Picamera2()
 
+                print("starting camera")
+
                 self.camera.preview_configuration.size = (800, 600)
                 self.camera.preview_configuration.format = "YUV420"
                 self.camera.still_configuration.size = (1600, 1200)
