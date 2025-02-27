@@ -7,6 +7,14 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 
 from threading import Thread
 import io
+import random
+import time
+
+# Define your sensor data (mock values for this example)
+sensor_data = {
+    "temperature": None,
+    "humidity": None
+}
 
 # Detect if running on Raspberry Pi
 IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true' or platform.system() == "Linux"
@@ -42,9 +50,13 @@ class CameraConsumer(AsyncWebsocketConsumer):
                 self.camera.still_configuration.raw.size = self.camera.sensor_resolution
                 self.camera.configure(self.camera.create_video_configuration(main={"size": (640, 480)}))
                 self.camera.start_recording(JpegEncoder(), FileOutput(self))
+
             self.send_json({'status': 'Stream started'})
             # Start a separate thread to handle camera frame updates
             Thread(target=self.send_frames, daemon=True).start()
+
+            # Start the sensor data update loop in a separate thread
+            Thread(target=self.update_sensor_data, daemon=True).start()
 
     async def disconnect(self, close_code):
         """Handle WebSocket disconnection."""
@@ -86,3 +98,35 @@ class CameraConsumer(AsyncWebsocketConsumer):
     def write(self, buf):
         """Called when the camera produces a frame, send it to the WebSocket."""
         self.frame = buf
+
+    def update_sensor_data(self):
+        """Update and send sensor data to clients."""
+        if IS_RPI:
+            import board
+            import adafruit_sht4x
+
+            i2c = board.I2C()
+            sensor = adafruit_sht4x.SHT4x(i2c)
+            print("setting up SHT")
+            print(sensor)
+        else:
+            sensor = None  # Mock sensor
+
+        while self.is_streaming:
+            """Get temperature & humidity (real on Pi, mock on macOS)."""
+            if IS_RPI:
+                temp = round(sensor.temperature, 2)
+                humidity = round(sensor.relative_humidity, 2)
+            else:
+                temp = round(random.uniform(15.0, 30.0), 2)  # Mock values
+                humidity = round(random.uniform(30.0, 80.0), 2)
+
+            sensor_data["temperature"] = temp
+            sensor_data["humidity"] = humidity
+
+            # Send sensor data to all connected WebSocket clients
+            self.send_json({
+                'sensor_data': sensor_data
+            })
+
+            time.sleep(1)  # Update every 1 second
