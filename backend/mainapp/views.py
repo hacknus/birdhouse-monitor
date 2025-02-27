@@ -55,8 +55,15 @@ def save_image(request):
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
+
 def gallery(request):
     image_dir = os.path.join(settings.MEDIA_URL, "gallery/")
-    images = [{"url": f"{image_dir}{image}"} for image in os.listdir(os.path.join(settings.MEDIA_ROOT, "gallery"))]
+
+    try:
+        image_files = os.listdir(os.path.join(settings.MEDIA_ROOT, "gallery"))
+    except FileNotFoundError:
+        image_files = []  # If the folder doesn't exist, return an empty list
+
+    images = [{"url": f"{image_dir}{image}"} for image in image_files]
 
     return render(request, "gallery.html", {"images": images})
