@@ -4,61 +4,128 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Birdhouse Live Stream</title>
+    <style>
+        .gallery {
+            display: flex;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        .gallery img {
+            width: 150px;
+            height: 100px;
+            margin: 5px;
+        }
+
+        .gallery-container {
+            width: 100%;
+            overflow-x: auto;
+            margin-top: 20px;
+        }
+
+        #camera_feed {
+            width: 640px;
+            height: 480px;
+            display: block;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<h1>Birdhouse Live Stream</h1>
+    <h1>Birdhouse Live Stream</h1>
 
-<h2>Camera</h2>
-<img id="camera_feed" src="" width="640" height="480">
-<button onclick="captureImage()">Capture Image</button>
+    <h2>Camera</h2>
+    <video id="camera_feed" autoplay></video>
+    <button onclick="captureImage()">Capture Image</button>
 
-<h2>Controls</h2>
-<button onclick="toggleIR('on')">Turn On IR</button>
-<button onclick="toggleIR('off')">Turn Off IR</button>
+    <h2>Gallery</h2>
+    <div id="gallery" class="gallery-container">
+        <!-- Gallery images will go here -->
+    </div>
 
-<h2>Sensor Data</h2>
-<p>Temperature: <span id="temperature">--</span> °C</p>
-<p>Humidity: <span id="humidity">--</span> %</p>
+    <h2>Controls</h2>
+    <button onclick="toggleIR('on')">Turn On IR</button>
+    <button onclick="toggleIR('off')">Turn Off IR</button>
 
-<h2>Motion Detection</h2>
-<p>Motion Status: <span id="motion">--</span></p>
+    <h2>Sensor Data</h2>
+    <p>Temperature: <span id="temperature">--</span> °C</p>
+    <p>Humidity: <span id="humidity">--</span> %</p>
 
-<script>
-    function captureImage() {
-        fetch(`/camera/capture/`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('camera_feed').src = `/media/${data.image.split('/').pop()}`;
-            });
-    }
+    <h2>Motion Detection</h2>
+    <p>Motion Status: <span id="motion">--</span></p>
 
-    function toggleIR(state) {
-        fetch(`/camera/toggle_ir/?state=${state}`)
-            .then(response => response.json())
-            .then(data => console.log(data));
-    }
+    <script>
+        // Start streaming video
+        function startStream() {
+            fetch('/camera/start_stream/')
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Stream started', data);
+                    // Replace the source with MJPEG stream URL or any other format
+                    document.getElementById('camera_feed').src = '/camera/stream'; // Replace with actual MJPEG stream URL if necessary
+                });
+        }
 
-    function updateSensorData() {
-        fetch(`/sensors/data/`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('temperature').innerText = data.temperature;
-                document.getElementById('humidity').innerText = data.humidity;
-            });
-    }
+        // Capture image
+        function captureImage() {
+            fetch('/camera/capture/')
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('camera_feed').src = data.image;
+                    addToGallery(data.image);
+                });
+        }
 
-    function updateMotionStatus() {
-        fetch(`/motion/status/`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('motion').innerText = data.motion;
-            });
-    }
+        // Update gallery with new image
+        function addToGallery(imageUrl) {
+            let gallery = document.getElementById('gallery');
+            let imgElement = document.createElement('img');
+            imgElement.src = imageUrl;
+            gallery.appendChild(imgElement);
+        }
 
-    -
+        // Toggle IR Lights
+        function toggleIR(state) {
+            fetch(`/camera/toggle_ir/?state=${state}`)
+                .then(response => response.json())
+                .then(data => console.log(data));
+        }
 
-        setInterval(updateSensorData, 3000);
-    setInterval(updateMotionStatus, 5000);
-</script>
+        // Update sensor data
+        function updateSensorData() {
+            fetch(`/sensors/data/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('temperature').innerText = data.temperature;
+                    document.getElementById('humidity').innerText = data.humidity;
+                });
+        }
+
+        // Update motion status
+        function updateMotionStatus() {
+            fetch(`/motion/status/`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('motion').innerText = data.motion;
+                });
+        }
+
+        // Load gallery images
+        function loadGallery() {
+            fetch('/camera/gallery/')
+                .then(response => response.json())
+                .then(data => {
+                    data.images.forEach(image => addToGallery(image));
+                });
+        }
+
+        // Start stream and load gallery on page load
+        window.onload = function() {
+            startStream();
+            loadGallery();
+            setInterval(updateSensorData, 3000);
+            setInterval(updateMotionStatus, 5000);
+        };
+    </script>
 </body>
 </html>
