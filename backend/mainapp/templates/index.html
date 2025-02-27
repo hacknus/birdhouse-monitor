@@ -31,20 +31,6 @@
             }
         });
 
-        function showStream(e) {
-            enablePreview = e.target;
-            imgPreview = document.getElementById("imgPreview");
-            saveImageBtn = document.getElementById("saveImageBtn");
-
-            if (enablePreview.checked) {
-                imgPreview.appendChild(createPreview());
-                saveImageBtn.disabled = false;  // Enable button
-            } else {
-                imgPreview.innerHTML = "";  // Clear preview
-                saveImageBtn.disabled = true;  // Disable button
-            }
-        }
-
         function togglePreviewLabel() {
             var checkbox = document.getElementById("enablePreview");
             var label = document.querySelector("label[for='enablePreview']");
@@ -56,8 +42,22 @@
             }
         }
 
-        // Ensure the label updates when toggling
-        document.getElementById("enablePreview").addEventListener("change", togglePreviewLabel);
+        function showStream(e) {
+            var enablePreview = e.target;
+            var imgPreview = document.getElementById("imgPreview");
+
+            if (enablePreview.checked) {
+                imgPreview.appendChild(createPreview());
+            } else {
+                imgPreview.removeChild(imgPreview.lastElementChild);
+            }
+
+            // Also update the label text
+            togglePreviewLabel();
+        }
+
+        // Ensure the label updates and the stream shows when toggling
+        document.getElementById("enablePreview").addEventListener("change", showStream);
 
     </script>
 </head>
@@ -107,7 +107,7 @@
         <h3 class="text-center mt-3"><b>Camera stream</b></h3>
         <div class="text-center mt-1 mb-3">
             <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
-                   onchange="togglePreviewLabel()">
+                   onchange="showStream(event)">
             <label class="btn btn-outline-dark" for="enablePreview">Enable preview</label>
             <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live stream.</div>
         </div>
