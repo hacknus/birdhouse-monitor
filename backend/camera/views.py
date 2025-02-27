@@ -2,7 +2,7 @@ import io
 import os
 import platform
 import time
-from threading import Condition, Thread
+from threading import Condition
 
 from django.conf import settings
 from django.http import JsonResponse, HttpResponse, StreamingHttpResponse
@@ -43,9 +43,6 @@ else:
     camera = None  # Mock camera
 
 
-# Global variable to store the output (frame buffer)
-output = StreamingOutput()
-
 def camera_home(request):
     # Gallery images
     image_dir = os.path.join(settings.MEDIA_ROOT, 'captured_images')
@@ -58,36 +55,29 @@ def camera_home(request):
 
 
 def stream_mjpg(request):
-    """Stream the MJPEG video feed to clients."""
+    output = StreamingOutput()
+
+    # Ensure the camera is stopped before reconfiguring it
+    camera.stop_recording()
+
+    # Configure the camera for MJPEG streaming
+    camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
+    camera.start_recording(JpegEncoder(), FileOutput(output))
+
     def gen():
-        """Generate MJPEG stream."""
         while True:
             with output.condition:
                 output.condition.wait()  # Wait for the next frame
                 frame = output.frame
+
             # Yield the frame in MJPEG format with necessary headers
             yield (b'--frame\r\n'
                    b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+
             time.sleep(0.1)  # Add a small delay to avoid excessive CPU usage
 
+    # Return the streaming HTTP response
     return StreamingHttpResponse(gen(), content_type='multipart/x-mixed-replace; boundary=frame')
-
-
-def start_stream(request):
-    """Start the camera stream in a background thread."""
-    def camera_stream():
-        """Run the camera capture in a separate thread to keep the stream active."""
-        camera.stop_recording()
-        camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
-        camera.start_recording(JpegEncoder(), FileOutput(output))
-
-    # Start the camera streaming thread
-    stream_thread = Thread(target=camera_stream)
-    stream_thread.daemon = True  # Daemon thread will exit when the main program exits
-    stream_thread.start()
-
-    return JsonResponse({"status": "Stream started."})
-
 
 def stop_camera(request):
     camera.stop_recording()
@@ -135,4 +125,14 @@ def toggle_ir(request):
     return JsonResponse({"status": f"IR light {state}"})
 
 
-# In your URLs, you would need to route the start_stream view
+def get_gallery(request):
+    """Fetch and return a list of captured images in the gallery."""
+    image_dir = settings.MEDIA_ROOT
+    gallery_images = []
+
+    # Ensure the directory exists
+    if os.path.exists(image_dir):
+        # Get the image filenames and prepend MEDIA_URL
+        gallery_images = [f'{settings.MEDIA_URL}{f}' for f in os.listdir(image_dir) if f.endswith('.jpg')]
+
+    return JsonResponse({'images': gallery_images})
