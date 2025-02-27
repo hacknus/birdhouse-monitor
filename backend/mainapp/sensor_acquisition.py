@@ -48,6 +48,7 @@ def store_sensor_data(temperature, humidity, motion_detected):
         humidity=humidity,
         motion_triggered=motion_detected
     )
+    print(sensor_data)
     sensor_data.save()
 
 def worker():
