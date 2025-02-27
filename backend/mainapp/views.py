@@ -12,6 +12,8 @@ from django.shortcuts import render
 
 from picamera2 import Picamera2
 
+from .models import SensorData
+
 # init camera
 picam2 = Picamera2()
 picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (800, 600)}))
@@ -103,19 +105,23 @@ def trigger_ir_led(request):
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
 
 
-def get_temperature(request):
-    # This can be data from a sensor, here is an example
-    temperature = random()  # get_temperature_from_sensor()  # Implement this function to read from your sensor
-    return JsonResponse({"temperature": temperature})
+def get_sensor_data(request):
+    # Get the latest sensor data
+    latest_data = SensorData.objects.last()
 
+    if latest_data:
+        data = {
+            'temperature': latest_data.temperature,
+            'humidity': latest_data.humidity,
+            'motion_triggered': latest_data.motion_triggered,
+            'timestamp': latest_data.timestamp.isoformat()  # Send timestamp in a JSON-compatible format
+        }
+    else:
+        data = {
+            'temperature': None,
+            'humidity': None,
+            'motion_triggered': None,
+            'timestamp': None
+        }
 
-def get_humidity(request):
-    # Fetch humidity
-    humidity = random()  # get_humidity_from_sensor()  # Implement this function to read from your sensor
-    return JsonResponse({"humidity": humidity})
-
-
-def get_motion_status(request):
-    # Fetch motion status (True or False)
-    motion_status = random() > 0.5  # get_motion_from_sensor()  # Implement this function to read from your sensor
-    return JsonResponse({"motion_triggered": motion_status})
+    return JsonResponse(data)
