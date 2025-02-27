@@ -48,5 +48,6 @@ sensor_thread.start()
 
 
 def get_sensor_data(request):
+    print(sensor_data)
     # Return the current sensor data as a JSON response
     return JsonResponse(sensor_data)

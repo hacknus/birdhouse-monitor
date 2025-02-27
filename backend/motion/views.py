@@ -17,17 +17,14 @@ else:
 
 motion_detected = False  # Default state
 
-motion_data = False
-
 def update_motion_data():
-    global motion_data
+    global motion_detected
     while True:
         if IS_RPI:
             motion_detected = pir.motion_detected
         else:
             motion_detected = not motion_detected  # Toggle status for testing
-        motion_data = motion_detected
-        time.sleep(3)  # Update every 3 seconds
+        time.sleep(1)  # Update every 3 seconds
 
 
 # Start the sensor data update in a separate thread
@@ -38,4 +35,4 @@ motion_thread.start()
 
 def motion_status(request):
     # Return the current sensor data as a JSON response
-    return JsonResponse({"motion": "active" if motion_data else "inactive"})
+    return JsonResponse({"motion": "active" if motion_detected else "inactive"})
