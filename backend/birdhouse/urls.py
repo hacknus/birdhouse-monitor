@@ -8,7 +8,6 @@ urlpatterns = [
                   path("", home, name="home"),  # Set the home page
                   path("admin/", admin.site.urls),
                   path('camera/', include('camera.urls', namespace='camera')),  # Add the namespace here
-                  path("sensors/", include("sensors.urls")),  # Ensure you have a `sensors` app
                   path("motion/", include("motion.urls")),  # Ensure you have a `motion` app
               ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

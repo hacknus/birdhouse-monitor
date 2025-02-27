@@ -6,7 +6,7 @@ from channels.auth import AuthMiddlewareStack
 from django.urls import path
 from camera.consumers import CameraConsumer
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'your_project_name.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'birdhouse-monitor.settings')
 
 application = ProtocolTypeRouter({
     "http": get_asgi_application(),
