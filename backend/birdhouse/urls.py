@@ -1,16 +1,6 @@
-from django.contrib import admin
+# birdhouse/urls.py
 from django.urls import path, include
-from .views import home  # Import the new homepage view
-from django.conf import settings
-from django.conf.urls.static import static
 
 urlpatterns = [
-                  path("", home, name="home"),  # Set the home page
-                  path("admin/", admin.site.urls),
-                  path('camera/', include('camera.urls', namespace='camera')),  # Add the namespace here
-                  path("motion/", include("motion.urls")),  # Ensure you have a `motion` app
-              ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
-websocket_urlpatterns = [
-    path('ws/camera/',  include('camera.urls', namespace='camera')),  # WebSocket for camera stream
+    path('camera/', include('camera.urls', namespace='camera')),  # For HTTP
 ]
