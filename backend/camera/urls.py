@@ -1,6 +1,8 @@
 from django.urls import path
 from . import views
 
+app_name = 'camera'  # Add this line to define the app's namespace
+
 urlpatterns = [
     path('', views.camera_home, name='camera_home'),
     path('camera/start_stream/', views.start_stream, name='start_stream'),
