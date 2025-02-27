@@ -9,6 +9,7 @@ IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true' or platform.system() ==
 if IS_RPI:
     import board
     import adafruit_sht4x
+
     i2c = board.I2C()
     sensor = adafruit_sht4x.SHT4x(i2c)
     print("setting up SHT")
@@ -16,11 +17,12 @@ if IS_RPI:
 else:
     sensor = None  # Mock sensor
 
+
 def get_sensor_data(request):
     """Get temperature & humidity (real on Pi, mock on macOS)."""
     if IS_RPI:
-        temp = sensor.temperature
-        humidity = sensor.relative_humidity
+        temp = round(sensor.temperature, 2)
+        humidity = round(sensor.relative_humidity, 2)
     else:
         temp = round(random.uniform(15.0, 30.0), 2)  # Mock values
         humidity = round(random.uniform(30.0, 80.0), 2)

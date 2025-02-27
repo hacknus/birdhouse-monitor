@@ -6,58 +6,59 @@
     <title>Birdhouse Live Stream</title>
 </head>
 <body>
-    <h1>Birdhouse Live Stream</h1>
+<h1>Birdhouse Live Stream</h1>
 
-    <h2>Camera</h2>
-    <img id="camera_feed" src="" width="640" height="480">
-    <button onclick="captureImage()">Capture Image</button>
+<h2>Camera</h2>
+<img id="camera_feed" src="" width="640" height="480">
+<button onclick="captureImage()">Capture Image</button>
 
-    <h2>Controls</h2>
-    <button onclick="toggleIR('on')">Turn On IR</button>
-    <button onclick="toggleIR('off')">Turn Off IR</button>
+<h2>Controls</h2>
+<button onclick="toggleIR('on')">Turn On IR</button>
+<button onclick="toggleIR('off')">Turn Off IR</button>
 
-    <h2>Sensor Data</h2>
-    <p>Temperature: <span id="temperature">--</span> °C</p>
-    <p>Humidity: <span id="humidity">--</span> %</p>
+<h2>Sensor Data</h2>
+<p>Temperature: <span id="temperature">--</span> °C</p>
+<p>Humidity: <span id="humidity">--</span> %</p>
 
-    <h2>Motion Detection</h2>
-    <p>Motion Status: <span id="motion">--</span></p>
+<h2>Motion Detection</h2>
+<p>Motion Status: <span id="motion">--</span></p>
 
-    <script>
-        function captureImage() {
-            fetch(`/camera/capture/`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('camera_feed').src = data.image;
-                });
-        }
+<script>
+    function captureImage() {
+        fetch(`/camera/capture/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('camera_feed').src = `/media/${data.image.split('/').pop()}`;
+            });
+    }
 
-        function toggleIR(state) {
-            fetch(`/camera/toggle_ir/?state=${state}`)
-                .then(response => response.json())
-                .then(data => console.log(data));
-        }
+    function toggleIR(state) {
+        fetch(`/camera/toggle_ir/?state=${state}`)
+            .then(response => response.json())
+            .then(data => console.log(data));
+    }
 
-        function updateSensorData() {
-            fetch(`/sensors/data/`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('temperature').innerText = data.temperature;
-                    document.getElementById('humidity').innerText = data.humidity;
-                });
-        }
+    function updateSensorData() {
+        fetch(`/sensors/data/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('temperature').innerText = data.temperature;
+                document.getElementById('humidity').innerText = data.humidity;
+            });
+    }
 
-        function updateMotionStatus() {
-            fetch(`/motion/status/`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('motion').innerText = data.motion;
-                });
-        }
--
+    function updateMotionStatus() {
+        fetch(`/motion/status/`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('motion').innerText = data.motion;
+            });
+    }
+
+    -
 
         setInterval(updateSensorData, 3000);
-        setInterval(updateMotionStatus, 5000);
-    </script>
+    setInterval(updateMotionStatus, 5000);
+</script>
 </body>
 </html>
