@@ -1,5 +1,7 @@
 import os
 import platform
+import threading
+import time
 
 from django.http import JsonResponse
 
@@ -16,13 +18,26 @@ else:
 motion_detected = False  # Default state
 
 
+def update_motion_data():
+    global motion_data
+    while True:
+        if IS_RPI:
+            motion_detected = pir.motion_detected
+        else:
+            motion_detected = not motion_detected  # Toggle status for testing
+        motion_data = motion_detected
+        time.sleep(3)  # Update every 3 seconds
+
+
+# Start the sensor data update in a separate thread
+motion_thread = threading.Thread(target=update_motion_data)
+motion_thread.daemon = True  # Daemon thread will automatically exit when the main program exits
+motion_thread.start()
+
+
 def motion_status(request):
-    """Get motion sensor status (real on Pi, mock on macOS)."""
-    global motion_detected
+    # Return the current sensor data as a JSON response
+    return JsonResponse(motion_data)
 
-    if IS_RPI:
-        motion_detected = pir.motion_detected
-    else:
-        motion_detected = not motion_detected  # Toggle status for testing
 
-    return JsonResponse({"motion": "active" if motion_detected else "inactive"})
+e({"motion": "active" if motion_detected else "inactive"})

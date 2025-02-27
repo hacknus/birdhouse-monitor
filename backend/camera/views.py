@@ -10,6 +10,7 @@ from django.shortcuts import render
 
 from datetime import datetime
 
+
 class StreamingOutput(io.BufferedIOBase):
     def __init__(self):
         self.frame = None
@@ -20,6 +21,7 @@ class StreamingOutput(io.BufferedIOBase):
             self.frame = buf
             self.condition.notify_all()
 
+
 # Detect if running on Raspberry Pi
 IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true' or platform.system() == "Linux"
 
@@ -27,6 +29,7 @@ if IS_RPI:
     from picamera2 import Picamera2
     from picamera2.encoders import JpegEncoder
     from picamera2.outputs import FileOutput
+
     camera = Picamera2()
 
     camera.preview_configuration.size = (800, 600)
@@ -39,6 +42,7 @@ if IS_RPI:
 else:
     camera = None  # Mock camera
 
+
 def camera_home(request):
     # Gallery images
     image_dir = os.path.join(settings.MEDIA_ROOT, 'captured_images')
@@ -48,6 +52,7 @@ def camera_home(request):
         gallery_images = [f'captured_images/{f}' for f in os.listdir(image_dir) if f.endswith('.jpg')]
 
     return render(request, 'camera/index.html', {'gallery_images': gallery_images})
+
 
 def stream_mjpg(request):
     output = StreamingOutput()
@@ -76,6 +81,7 @@ def stream_mjpg(request):
 def stop_camera(request):
     camera.stop_recording()
     return HttpResponse("Camera stopped.")
+
 
 def capture_image(request):
     """Capture image from camera (real on Pi, placeholder on macOS)."""

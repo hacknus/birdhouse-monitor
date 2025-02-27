@@ -35,7 +35,6 @@
     <h1>Birdhouse Live Stream</h1>
 
     <h2>Live Stream</h2>
-    <!-- Live stream image -->
     <img src="{% url 'camera:stream_mjpg' %}" alt="Live Stream" width="640" height="480">
 
     <h2>Camera</h2>
@@ -61,14 +60,13 @@
     <p>Motion Status: <span id="motion">--</span></p>
 
     <script>
-
         // Capture image
         function captureImage() {
             fetch('/camera/capture/')
                 .then(response => response.json())
                 .then(data => {
-                    addToGallery(data.image);
                     document.getElementById('camera_feed').src = data.image;
+                    addToGallery(data.image);
                 });
         }
 
@@ -82,14 +80,14 @@
 
         // Toggle IR Lights
         function toggleIR(state) {
-            fetch(`/camera/toggle_ir/?state=${state}`)
+            fetch(`/toggle_ir/?state=${state}`)
                 .then(response => response.json())
                 .then(data => console.log(data));
         }
 
         // Update sensor data
         function updateSensorData() {
-            fetch(`/sensors/data/`)
+            fetch(`/sensor_data/`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('temperature').innerText = data.temperature;
