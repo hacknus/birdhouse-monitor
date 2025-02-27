@@ -46,7 +46,7 @@ def capture_image(request):
 
         camera.switch_mode_and_capture_file("still", image_path)
 
-        camera.stop("preview")
+        camera.stop()
 
     else:
         filename = "static/test_image.jpg"  # Placeholder image on macOS
