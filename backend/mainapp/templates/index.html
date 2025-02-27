@@ -34,12 +34,14 @@
         function showStream(e) {
             enablePreview = e.target;
             imgPreview = document.getElementById("imgPreview");
+            saveImageBtn = document.getElementById("saveImageBtn");
+
             if (enablePreview.checked) {
-                imgPreview.appendChild(
-                    createPreview()
-                );
+                imgPreview.appendChild(createPreview());
+                saveImageBtn.disabled = false;  // Enable button
             } else {
-                imgPreview.removeChild(imgPreview.lastElementChild);
+                imgPreview.innerHTML = "";  // Clear preview
+                saveImageBtn.disabled = true;  // Disable button
             }
         }
 
@@ -92,7 +94,7 @@
         <div class="mt-1 mb-2" id="imgPreview"></div>
         <!-- Save Image Button -->
         <div class="text-center mt-3">
-            <button class="btn btn-success" id="saveImageBtn">Save Image</button>
+            <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
             <p id="saveMessage" class="text-success mt-2"></p>
         </div>
     </div>
@@ -118,21 +120,29 @@
     </div>
 </footer>
 <script>
-document.getElementById("saveImageBtn").addEventListener("click", function () {
-    fetch("/save_image/", {
-        method: "POST",
-        headers: { "X-CSRFToken": "{{ csrf_token }}" }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.message) {
-            document.getElementById("saveMessage").innerText = "✅ Image saved to gallery!";
-        } else {
-            document.getElementById("saveMessage").innerText = "❌ Error saving image.";
+    document.getElementById("saveImageBtn").addEventListener("click", function () {
+        let imgPreview = document.getElementById("imgPreview");
+        let enablePreview = document.getElementById("enablePreview");
+
+        if (!enablePreview.checked || imgPreview.children.length === 0) {
+            document.getElementById("saveMessage").innerText = "⚠️ Please enable the preview first!";
+            return;
         }
-    })
-    .catch(error => console.error("Error:", error));
-});
+
+        fetch("/save_image/", {
+            method: "POST",
+            headers: {"X-CSRFToken": "{{ csrf_token }}"}
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data.message) {
+                    document.getElementById("saveMessage").innerText = "✅ Image saved to gallery!";
+                } else {
+                    document.getElementById("saveMessage").innerText = "❌ Error saving image.";
+                }
+            })
+            .catch(error => console.error("Error:", error));
+    });
 </script>
 </body>
 </html>
