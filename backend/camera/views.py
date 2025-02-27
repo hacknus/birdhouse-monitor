@@ -49,7 +49,6 @@ def camera_home(request):
 
     return render(request, 'camera/index.html', {'gallery_images': gallery_images})
 
-
 def stream_mjpg(request):
     output = StreamingOutput()
 
@@ -60,32 +59,19 @@ def stream_mjpg(request):
     camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
     camera.start_recording(JpegEncoder(), FileOutput(output))
 
-    # Create a response for MJPEG streaming
-    response = HttpResponse(content_type="multipart/x-mixed-replace; boundary=FRAME")
-    response['Cache-Control'] = 'no-cache'
-    response['Pragma'] = 'no-cache'
-
-    try:
+    def gen():
         while True:
             with output.condition:
-                output.condition.wait()  # Wait for a new frame
-                frame = output.frame  # Get the latest frame
+                output.condition.wait()  # Wait for the next frame
+                frame = output.frame
+            # Yield the frame in MJPEG format with necessary headers
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/jpeg\r\n\r\n' + frame + b'\r\n\r\n')
+            time.sleep(0.1)  # Add a small delay to avoid excessive CPU usage
 
-            # Send the frame to the client as part of the MJPEG stream
-            response.write(b'--FRAME\r\n')
-            response.write(b'Content-Type: image/jpeg\r\n')
-            response.write(f'Content-Length: {len(frame)}\r\n'.encode())
-            response.write(b'\r\n')  # End of headers
-            response.write(frame)
-            response.write(b'\r\n')  # End of frame
+    # Return the streaming HTTP response
+    return StreamingHttpResponse(gen(), content_type='multipart/x-mixed-replace; boundary=frame')
 
-    except Exception as e:
-        camera.stop_recording()
-        print(f"Error during streaming: {e}")
-        return HttpResponse(status=500)
-
-    # The response will continue to stream until the connection is closed
-    return response
 
 def stop_camera(request):
     camera.stop_recording()

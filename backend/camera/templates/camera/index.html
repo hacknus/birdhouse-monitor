@@ -89,7 +89,7 @@
 
         // Update sensor data
         function updateSensorData() {
-            fetch(`/camera/sensors/data/`)
+            fetch(`/sensors/data/`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('temperature').innerText = data.temperature;
@@ -99,7 +99,7 @@
 
         // Update motion status
         function updateMotionStatus() {
-            fetch(`/camera/motion/status/`)
+            fetch(`/motion/status/`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById('motion').innerText = data.motion;
