@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import camera_home, capture_image, toggle_ir, stream_mjpg, stop_camera
+from .views import camera_home, capture_image, toggle_ir, stream_mjpg, stop_camera, get_gallery
 
 app_name = 'camera'  # Add this line to define the app's namespace
 
@@ -9,4 +9,5 @@ urlpatterns = [
     path("toggle_ir/", toggle_ir, name="toggle_ir"),  # Toggle IR light
     path('stream.mjpg', stream_mjpg, name='stream_mjpg'),
     path('stop/', stop_camera, name='stop_camera'),  # Stop the camera
+    path('gallery/', get_gallery, name='gallery'),  # Stop the camera
 ]

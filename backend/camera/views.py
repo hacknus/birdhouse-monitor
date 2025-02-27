@@ -123,3 +123,15 @@ def toggle_ir(request):
         GPIO.output(IR_PIN, GPIO.HIGH if state == "on" else GPIO.LOW)
 
     return JsonResponse({"status": f"IR light {state}"})
+
+
+def get_gallery(request):
+    """Fetch and return a list of captured images in the gallery."""
+    image_dir = os.path.join(settings.MEDIA_ROOT, 'captured_images')
+    gallery_images = []
+
+    # Ensure the directory exists
+    if os.path.exists(image_dir):
+        gallery_images = [f'media/{f}' for f in os.listdir(image_dir) if f.endswith('.jpg')]
+
+    return JsonResponse({'images': gallery_images})
