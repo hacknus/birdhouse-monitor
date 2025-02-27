@@ -31,7 +31,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
         await self.accept()
         print("WebSocket connected")
 
-        # Start the camera if it's not already started
+        # Start the mainapp if it's not already started
         if not self.is_streaming:
             self.is_streaming = True
             self.camera = None
@@ -42,7 +42,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
 
                 self.camera = Picamera2()
 
-                print("Starting camera")
+                print("Starting mainapp")
 
                 self.camera.preview_configuration.size = (800, 600)
                 self.camera.preview_configuration.format = "YUV420"
@@ -53,7 +53,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
                 self.camera.start_recording(JpegEncoder(), FileOutput(self))
 
             await self.send_json({'status': 'Stream started'})
-            # Start a separate thread to handle camera frame updates
+            # Start a separate thread to handle mainapp frame updates
             Thread(target=self.send_frames, daemon=True).start()
 
             # Start the sensor data update loop in a separate thread
@@ -98,7 +98,7 @@ class CameraConsumer(AsyncWebsocketConsumer):
             await asyncio.sleep(0.1)  # Use async sleep to avoid blocking
 
     def write(self, buf):
-        """Called when the camera produces a frame, send it to the WebSocket."""
+        """Called when the mainapp produces a frame, send it to the WebSocket."""
         self.frame = buf
 
     def update_sensor_data(self):
