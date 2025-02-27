@@ -40,3 +40,17 @@ def video_feed(request):
 def index(request):
     return render(request, "index.html")
 
+def save_image(request):
+    if request.method == "POST":
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
+
+        frame = picam2.capture_array()
+        frame = frame[:, :, :-1]
+        frame = cv2.rotate(frame, cv2.ROTATE_180)
+
+        cv2.imwrite(image_path, frame)
+
+        return JsonResponse({"message": "Image saved!", "image_url": f"/media/gallery/{timestamp}.jpg"})
+
+    return JsonResponse({"error": "Invalid request"}, status=400)
