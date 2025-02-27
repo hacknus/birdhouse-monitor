@@ -35,8 +35,7 @@
 <h1>Birdhouse Live Stream</h1>
 
 <h2>Live Stream</h2>
-<!-- Live stream image -->
-<img id="camera_feed" src="{% url 'camera:stream_mjpg' %}" alt="Live Stream" width="640" height="480">
+<img src="{% url 'camera:stream_mjpg' %}" alt="Live Stream" width="640" height="480">
 
 <h2>Camera</h2>
 <video id="camera_feed" autoplay></video>
@@ -44,7 +43,9 @@
 
 <h2>Gallery</h2>
 <div id="gallery" class="gallery-container">
-    <!-- Gallery images will go here -->
+    {% for image in gallery_images %}
+    <img src="{{ image }}" alt="Captured Image">
+    {% endfor %}
 </div>
 
 <h2>Controls</h2>
@@ -59,31 +60,7 @@
 <p>Motion Status: <span id="motion">--</span></p>
 
 <script>
-    // Start stream and load gallery on page load
-    window.onload = function () {
-        loadGallery();
-        setInterval(updateSensorData, 3000);
-        setInterval(updateMotionStatus, 5000);
-    };
-
-    function updateSensorData() {
-        fetch('/sensors/data/')
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('temperature').innerText = data.temperature;
-                document.getElementById('humidity').innerText = data.humidity;
-            });
-    }
-
-    // Update motion status
-    function updateMotionStatus() {
-        fetch(`/motion/status/`)
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('motion').innerText = data.motion;
-            });
-    }
-
+    // Capture image
     function captureImage() {
         fetch('/camera/capture/')
             .then(response => response.json())
@@ -93,6 +70,7 @@
             });
     }
 
+    // Update gallery with new image
     function addToGallery(imageUrl) {
         let gallery = document.getElementById('gallery');
         let imgElement = document.createElement('img');
@@ -100,8 +78,9 @@
         gallery.appendChild(imgElement);
     }
 
+    // Toggle IR Lights
     function toggleIR(state) {
-        fetch(`/camera/toggle_ir/?state=${state}`)
+        fetch(`/toggle_ir/?state=${state}`)
             .then(response => response.json())
             .then(data => console.log(data));
     }
@@ -114,6 +93,30 @@
                 data.images.forEach(image => addToGallery(image));
             });
     }
+
+    // Start stream and load gallery on page load
+    window.onload = function () {
+        loadGallery();
+    };
+
+    // Update sensor data every 3 seconds
+    setInterval(function () {
+        fetch('/sensors/data/')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('temperature').innerText = data.temperature;
+                document.getElementById('humidity').innerText = data.humidity;
+            });
+    }, 3000);
+
+    setInterval(function () {
+        fetch('/motion/status/')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('motion').innerText = data.motion;
+            });
+    }, 3000);
+
 </script>
 </body>
 </html>
