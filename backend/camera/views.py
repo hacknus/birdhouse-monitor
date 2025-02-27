@@ -2,6 +2,7 @@ import os
 import platform
 import time
 
+from django.conf import settings
 from django.http import JsonResponse
 from django.shortcuts import render
 
@@ -28,7 +29,8 @@ def capture_image(request):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 
     if IS_RPI:
-        filename = f"media/{timestamp}.jpg"
+        filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
+        image_path = os.path.join(settings.MEDIA_ROOT, filename)
 
         camera.preview_configuration.size = (800, 600)
         camera.preview_configuration.format = "YUV420"
@@ -39,12 +41,12 @@ def capture_image(request):
         camera.start("preview", show_preview=False)
         time.sleep(2)
 
-        camera.switch_mode_and_capture_file("still", filename)
+        camera.switch_mode_and_capture_file("still", image_path)
 
     else:
         filename = "static/test_image.jpg"  # Placeholder image on macOS
 
-    return JsonResponse({"image": filename})
+    return JsonResponse({"image": f"{settings.MEDIA_URL}{filename}"})
 
 
 def toggle_ir(request):

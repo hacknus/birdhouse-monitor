@@ -28,7 +28,7 @@
         fetch(`/camera/capture/`)
             .then(response => response.json())
             .then(data => {
-                document.getElementById('camera_feed').src = `media/${data.image.split('/').pop()}`;
+                document.getElementById('camera_feed').src = `/media/${data.image.split('/').pop()}`;
             });
     }
 
