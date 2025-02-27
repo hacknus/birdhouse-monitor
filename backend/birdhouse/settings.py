@@ -3,6 +3,11 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent  # Ensure BASE_DIR is a Path object
 
+STATIC_URL = '/static/'
+
+# Define where static files should be collected to (during 'collectstatic')
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
 SECRET_KEY = 'your-secret-key'
 
 DEBUG = True
@@ -58,6 +63,5 @@ TEMPLATES = [
     },
 ]
 
-STATIC_URL = '/static/'
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
