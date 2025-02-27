@@ -1,4 +1,3 @@
-<!-- backend/camera/templates/camera/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,6 +7,22 @@
 </head>
 <body>
     <h1>Raspberry Pi Live Stream</h1>
-    <img src="{% url 'video_feed' %}" alt="Live Video Stream" />
+    <img id="videoFeed" src="" alt="Live Video Stream" />
+
+    <script>
+        const videoFeed = document.getElementById('videoFeed');
+        const socket = new WebSocket('ws://' + window.location.host + '/ws/video_feed/');
+
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.type === 'image') {
+                videoFeed.src = 'data:image/jpeg;base64,' + data.image;
+            }
+        };
+
+        socket.onclose = function(e) {
+            console.error('WebSocket closed unexpectedly');
+        };
+    </script>
 </body>
 </html>
