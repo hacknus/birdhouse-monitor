@@ -107,7 +107,7 @@ nav .nav-link:hover {
     border-radius: 25px;
 }
 
-/* Modal styles */
+/* Center the modal and make it responsive */
 .modal {
     display: none;
     position: fixed;
@@ -117,25 +117,32 @@ nav .nav-link:hover {
     width: 100%;
     height: 100%;
     background-color: rgba(0, 0, 0, 0.8);
+    justify-content: center;
+    align-items: center;
 }
 
+/* Ensure the image scales correctly */
 .modal-content {
     position: relative;
-    margin: 5% auto;
-    display: block;
     max-width: 90%;
-    max-height: 80%;
+    max-height: 90%;
+    display: block;
+    margin: auto;
+    border-radius: 8px;
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
+/* Close button styling */
 .close {
     position: absolute;
-    top: 10px;
-    right: 20px;
+    top: 15px;
+    right: 25px;
     color: white;
     font-size: 30px;
     cursor: pointer;
 }
 
+/* Style for the download button inside the preview */
 .download-btn {
     position: absolute;
     bottom: 20px;
@@ -147,4 +154,9 @@ nav .nav-link:hover {
     text-decoration: none;
     border-radius: 5px;
     font-size: 16px;
+    transition: background 0.3s;
+}
+
+.download-btn:hover {
+    background-color: #0056b3;
 }
