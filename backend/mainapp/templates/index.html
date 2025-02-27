@@ -47,13 +47,18 @@
             enablePreview = e.target;
             imgPreview = document.getElementById("imgPreview");
             saveImageBtn = document.getElementById("saveImageBtn");
+            toggleIRButton = document.getElementById("toggleIRButton");
 
             if (enablePreview.checked) {
                 imgPreview.appendChild(createPreview());
                 saveImageBtn.disabled = false;  // Enable button
+                toggleIRButton.disabled = false;  // Enable the IR button
+
             } else {
                 imgPreview.innerHTML = "";  // Clear preview
                 saveImageBtn.disabled = true;  // Disable button
+                toggleIRButton.disabled = true;  // Disable the IR button
+
             }
 
             // Also update the label text
@@ -146,26 +151,26 @@
 
     <!-- Zobrazenie streamu z kamery -->
     <div class="row row-border">
-    <h3 class="text-center mt-3"><b>Camera stream</b></h3>
-    <div class="text-center mt-1 mb-3">
-        <div class="d-flex justify-content-center">
-            <!-- Enable Preview Checkbox -->
-            <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
-                   onchange="showStream(event)">
-            <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
+        <h3 class="text-center mt-3"><b>Camera stream</b></h3>
+        <div class="text-center mt-1 mb-3">
+            <div class="d-flex justify-content-center">
+                <!-- Enable Preview Checkbox -->
+                <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
+                       onchange="showStream(event)">
+                <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
 
-            <!-- Button to toggle IR LED (Initially Disabled) -->
-            <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR OFF</button>
+                <!-- Button to toggle IR LED (Initially Disabled) -->
+                <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR OFF</button>
+            </div>
+            <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live stream.</div>
         </div>
-        <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live stream.</div>
+        <div class="mt-1 mb-2" id="imgPreview"></div>
+        <!-- Save Image Button -->
+        <div class="text-center mt-3">
+            <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
+            <p id="saveMessage" class="text-success mt-2"></p>
+        </div>
     </div>
-    <div class="mt-1 mb-2" id="imgPreview"></div>
-    <!-- Save Image Button -->
-    <div class="text-center mt-3">
-        <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
-        <p id="saveMessage" class="text-success mt-2"></p>
-    </div>
-</div>
 
     <div class="container mt-3 mb-4">
         <!-- Display Temperature and Humidity -->
