@@ -170,3 +170,22 @@ nav .nav-link:hover {
 .navbar-nav .nav-item .nav-link:hover .nav-icon {
     filter: invert(1); /* Inverts the icon color */
 }
+
+/* Ensure the navbar items are vertically centered */
+.navbar-nav .nav-item .nav-link {
+    display: flex;
+    align-items: center; /* Center both the icon and the text vertically */
+    padding-left: 10px;   /* Add space before the icon */
+    padding-right: 10px;  /* Optional: Add space after the icon */
+}
+
+/* Add space between the icon and the text */
+.navbar-nav .nav-item .nav-link .nav-icon {
+    margin-right: 8px; /* Increase space between icon and text */
+}
+
+/* Optionally, you can adjust the size of the icons */
+.navbar-nav .nav-item .nav-link .nav-icon {
+    width: 32px;
+    height: 32px;
+}
