@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>AIGarden</title>
+    <title>Vögeli</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
@@ -62,23 +62,29 @@
         // Ensure the label updates and the stream shows when toggling
         document.getElementById("enablePreview").addEventListener("change", showStream);
 
+        // Function to get CSRF token from the meta tag
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        // JavaScript function to toggle the IR LED and update the button label
         function toggleIRLED() {
             const button = document.getElementById("toggleIRButton");
-            const action = button.textContent === "IR OFF" ? "on" : "off"; // Toggle the action
+            const action = button.textContent === "IR OFF" ? "on" : "off"; // Determine if action is "on" or "off"
 
             // Send the request to toggle the IR LED
             fetch("/trigger_ir_led/", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": "{{ csrf_token }}",
-                    "Content-Type": "application/json"
+                    "X-CSRFToken": getCSRFToken(), // Get the CSRF token from the meta tag
+                    "Content-Type": "application/json"  // Ensure the content type is application/json
                 },
-                body: JSON.stringify({action: action})
+                body: JSON.stringify({action: action})  // Send the action ("on" or "off")
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        // Change the label based on the action
+                        // Update the button text depending on the action
                         button.textContent = action === "on" ? "IR ON" : "IR OFF";
                     } else {
                         console.error("Error toggling IR LED:", data.message);
@@ -88,6 +94,7 @@
         }
 
     </script>
+    <meta name="csrf-token" content="{{ csrf_token }}">
 </head>
 
 <body>
@@ -153,9 +160,9 @@
         </div>
     </div>
 
-    <!-- IR LED Control Button -->
+    <!-- Button to toggle IR LED -->
     <div class="text-center mt-3">
-        <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()">IR LED OFF</button>
+        <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()">IR OFF</button>
     </div>
 </div>
 

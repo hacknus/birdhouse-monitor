@@ -73,34 +73,29 @@ def gallery(request):
 # Function to toggle the IR LED
 def trigger_ir_led(request):
     if request.method == 'POST':
-        # Get the action (toggle) from the request
-        data = request.body.decode('utf-8')
+        try:
+            data = json.loads(request.body.decode('utf-8'))
+            action = data.get('action')
+        except json.JSONDecodeError:
+            return JsonResponse({'success': False, 'message': 'Invalid request format.'}, status=400)
 
-        # Example: action might be sent in JSON format
-        if 'toggle' in data:
-            import RPi.GPIO as GPIO
-            # Toggle IR LED (ON or OFF)
+        import RPi.GPIO as GPIO
+        # Toggle IR LED (ON or OFF)
 
-            # Setup GPIO mode
-            GPIO.setmode(GPIO.BCM)
+        # Setup GPIO mode
+        GPIO.setmode(GPIO.BCM)
 
-            # Set the GPIO pin that controls the IR LED
-            IR_LED_PIN = 17  # Change this pin number to match your setup
-            GPIO.setup(IR_LED_PIN, GPIO.OUT)
+        # Set the GPIO pin that controls the IR LED
+        IR_LED_PIN = 17  # Change this pin number to match your setup
+        GPIO.setup(IR_LED_PIN, GPIO.OUT)
 
-            try:
-                data = json.loads(request.body.decode('utf-8'))
-                action = data.get('action')
-            except json.JSONDecodeError:
-                return JsonResponse({'success': False, 'message': 'Invalid request format.'}, status=400)
-
-            if action == 'on':
-                GPIO.output(IR_LED_PIN, GPIO.HIGH)  # Turn the IR LED on
-                return JsonResponse({'success': True, 'message': 'IR LED is ON.'})
-            elif action == 'off':
-                GPIO.output(IR_LED_PIN, GPIO.LOW)  # Turn the IR LED off
-                return JsonResponse({'success': True, 'message': 'IR LED is OFF.'})
-            else:
-                return JsonResponse({'success': False, 'message': 'Invalid action.'}, status=400)
+        if action == 'on':
+            GPIO.output(IR_LED_PIN, GPIO.HIGH)  # Turn the IR LED on
+            return JsonResponse({'success': True, 'message': 'IR LED is ON.'})
+        elif action == 'off':
+            GPIO.output(IR_LED_PIN, GPIO.LOW)  # Turn the IR LED off
+            return JsonResponse({'success': True, 'message': 'IR LED is OFF.'})
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid action.'}, status=400)
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
