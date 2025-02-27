@@ -43,13 +43,16 @@
         }
 
         function showStream(e) {
-            var enablePreview = e.target;
-            var imgPreview = document.getElementById("imgPreview");
+            enablePreview = e.target;
+            imgPreview = document.getElementById("imgPreview");
+            saveImageBtn = document.getElementById("saveImageBtn");
 
             if (enablePreview.checked) {
                 imgPreview.appendChild(createPreview());
+                saveImageBtn.disabled = false;  // Enable button
             } else {
-                imgPreview.removeChild(imgPreview.lastElementChild);
+                imgPreview.innerHTML = "";  // Clear preview
+                saveImageBtn.disabled = true;  // Disable button
             }
 
             // Also update the label text
