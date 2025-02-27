@@ -32,6 +32,9 @@ def capture_image(request):
         filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}.jpg"
         image_path = os.path.join(settings.MEDIA_ROOT, filename)
 
+        # Debugging
+        print(f"Saving image to: {image_path}")
+
         camera.preview_configuration.size = (800, 600)
         camera.preview_configuration.format = "YUV420"
         camera.still_configuration.size = (1600, 1200)
