@@ -8,7 +8,7 @@ from django.shortcuts import render
 from datetime import datetime
 
 # Detect if running on Raspberry Pi
-IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true' and platform.system() == "Linux"
+IS_RPI = os.environ.get('DOCKER_ENV', 'false') == 'true' or platform.system() == "Linux"
 
 if os.environ.get('DOCKER_ENV', 'false') == 'true':
     from picamera2 import Picamera2
