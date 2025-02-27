@@ -108,8 +108,8 @@ def toggle_ir(request):
 # Gallery view
 def gallery(request):
     # List all files in the media directory (assumes images are stored here)
-    image_dir = os.path.join(settings.MEDIA_ROOT, "camera")  # Or wherever the images are stored
+    image_dir = settings.MEDIA_ROOT
     image_files = [f for f in os.listdir(image_dir) if f.endswith('.jpg')]
-    image_urls = [os.path.join("media", f) for f in image_files]
+    image_urls = [os.path.join("media/camera", f) for f in image_files]
 
     return render(request, "camera/gallery.html", {"images": image_urls})
