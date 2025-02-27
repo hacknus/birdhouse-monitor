@@ -134,5 +134,14 @@ def toggle_ir(request):
 
     return JsonResponse({"status": f"IR light {state}"})
 
+def get_gallery(request):
+    """Fetch and return a list of captured images in the gallery."""
+    image_dir = settings.MEDIA_ROOT
+    gallery_images = []
 
-# In your URLs, you would need to route the start_stream view
+    # Ensure the directory exists
+    if os.path.exists(image_dir):
+        # Get the image filenames and prepend MEDIA_URL
+        gallery_images = [f'{settings.MEDIA_URL}{f}' for f in os.listdir(image_dir) if f.endswith('.jpg')]
+
+    return JsonResponse({'images': gallery_images})
