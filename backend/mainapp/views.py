@@ -11,9 +11,9 @@ from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
 from django.shortcuts import render
 
 from picamera2 import Picamera2
-
+å
 from .models import SensorData
-import sensor_acquisition
+from .sensor_acquisition import *
 
 # init camera
 picam2 = Picamera2()
