@@ -49,15 +49,6 @@ def camera_home(request):
 
     return render(request, 'camera/index.html', {'gallery_images': gallery_images})
 
-
-def start_stream(request):
-    # Start the MJPEG stream
-    output = StreamingOutput()
-    camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
-    camera.start_recording(JpegEncoder(), FileOutput(output))
-    return JsonResponse({"message": "Stream started"})
-
-
 def stream_mjpg(request):
     output = StreamingOutput()
     camera.configure(camera.create_video_configuration(main={"size": (640, 480)}))
