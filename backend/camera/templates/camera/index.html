@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Birdhouse Live Stream</title>
+    <title>Birdhouse Camera Stream</title>
     <style>
         #camera_feed {
             width: 640px;
@@ -15,7 +15,7 @@
     <h1>Birdhouse Live Stream</h1>
 
     <h2>Live Stream</h2>
-    <img src="/camera/stream.mjpg" id="camera_feed" alt="Live Stream">
+    <img id="camera_feed" src="" alt="Live Stream">
 
     <h2>Controls</h2>
     <button onclick="toggleIR('on')">Turn On IR</button>
@@ -25,38 +25,30 @@
     <p>Temperature: <span id="temperature">--</span> °C</p>
     <p>Humidity: <span id="humidity">--</span> %</p>
 
-    <h2>Motion Detection</h2>
-    <p>Motion Status: <span id="motion">--</span></p>
-
     <script>
-        // Start the stream when the page loads
-        window.onload = function() {
-            fetch('/camera/start_stream/')
-                .then(response => response.json())
-                .then(data => {
-                    console.log(data.status);  // Stream started message
-                });
+        const cameraSocket = new WebSocket('ws://localhost:8000/ws/camera/');
 
-            // Load sensor data and other updates
-            setInterval(updateSensorData, 3000);
-            setInterval(updateMotionStatus, 5000);
+        // When WebSocket connection is established
+        cameraSocket.onopen = function(e) {
+            console.log('WebSocket connected');
         };
 
-        // Update sensor data
-        function updateSensorData() {
-            fetch('/sensors/data/')
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('temperature').innerText = data.temperature;
-                    document.getElementById('humidity').innerText = data.humidity;
-                });
-        }
+        // When receiving data (camera frames)
+        cameraSocket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            if (data.frame) {
+                // Update the image source with the received frame
+                const frameBase64 = btoa(String.fromCharCode.apply(null, new Uint8Array(data.frame)));
+                document.getElementById('camera_feed').src = 'data:image/jpeg;base64,' + frameBase64;
+            }
+        };
 
-        // Toggle IR lights
+        // Send message to toggle IR lights
         function toggleIR(state) {
-            fetch(`/camera/toggle_ir/?state=${state}`)
-                .then(response => response.json())
-                .then(data => console.log(data));
+            cameraSocket.send(JSON.stringify({
+                action: "toggle_ir",
+                state: state
+            }));
         }
     </script>
 </body>

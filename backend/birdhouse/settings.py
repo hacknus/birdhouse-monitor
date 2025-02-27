@@ -24,6 +24,7 @@ INSTALLED_APPS = [
     'camera',
     'sensors',
     'motion',
+    'channels',
 ]
 
 MIDDLEWARE = [
@@ -62,6 +63,8 @@ TEMPLATES = [
         },
     },
 ]
+
+ASGI_APPLICATION = 'birdhouse-monitor.asgi.application'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
