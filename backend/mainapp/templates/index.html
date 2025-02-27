@@ -62,22 +62,26 @@
         // Ensure the label updates and the stream shows when toggling
         document.getElementById("enablePreview").addEventListener("change", showStream);
 
-        // Trigger IR LED
-        function triggerIRLED() {
+        function toggleIRLED() {
+            const button = document.getElementById("toggleIRButton");
+            const action = button.textContent === "IR OFF" ? "on" : "off"; // Toggle the action
+
+            // Send the request to toggle the IR LED
             fetch("/trigger_ir_led/", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": "{{ csrf_token }}",
                     "Content-Type": "application/json"
                 },
-                body: JSON.stringify({action: "toggle"}) // Send action to toggle IR LED
+                body: JSON.stringify({action: action})
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert("IR LED toggled!");
+                        // Change the label based on the action
+                        button.textContent = action === "on" ? "IR ON" : "IR OFF";
                     } else {
-                        alert("Failed to toggle IR LED.");
+                        console.error("Error toggling IR LED:", data.message);
                     }
                 })
                 .catch(error => console.error("Error:", error));
@@ -150,8 +154,8 @@
     </div>
 
     <!-- IR LED Control Button -->
-    <div class="row text-center mt-4">
-        <button class="btn btn-danger" onclick="triggerIRLED()">Toggle IR LED</button>
+    <div class="text-center mt-3">
+        <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()">IR LED OFF</button>
     </div>
 </div>
 

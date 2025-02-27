@@ -88,16 +88,19 @@ def trigger_ir_led(request):
             IR_LED_PIN = 17  # Change this pin number to match your setup
             GPIO.setup(IR_LED_PIN, GPIO.OUT)
 
-            current_state = GPIO.input(IR_LED_PIN)  # Check current state
-            new_state = GPIO.LOW if current_state else GPIO.HIGH
-            GPIO.output(IR_LED_PIN, new_state)  # Set new state for the IR LED
+            try:
+                data = json.loads(request.body.decode('utf-8'))
+                action = data.get('action')
+            except json.JSONDecodeError:
+                return JsonResponse({'success': False, 'message': 'Invalid request format.'}, status=400)
 
-            # Wait a small moment to ensure the toggle happens properly
-            time.sleep(0.1)
-
-            # Send a success response
-            return JsonResponse({'success': True, 'message': 'IR LED toggled successfully.'})
-        else:
-            return JsonResponse({'success': False, 'message': 'Invalid action.'}, status=400)
+            if action == 'on':
+                GPIO.output(IR_LED_PIN, GPIO.HIGH)  # Turn the IR LED on
+                return JsonResponse({'success': True, 'message': 'IR LED is ON.'})
+            elif action == 'off':
+                GPIO.output(IR_LED_PIN, GPIO.LOW)  # Turn the IR LED off
+                return JsonResponse({'success': True, 'message': 'IR LED is OFF.'})
+            else:
+                return JsonResponse({'success': False, 'message': 'Invalid action.'}, status=400)
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
