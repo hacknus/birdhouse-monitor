@@ -14,7 +14,139 @@
     <link rel="stylesheet" type="text/css" href="{% static 'css/print.css' %}" media="print">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <div class="container mt-3 mb-4">
+        <!-- Display Temperature and Humidity -->
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Temperature</h3>
+                <p id="temperature">Loading...</p>
+            </div>
+            <div class="col-md-6">
+                <h3>Humidity</h3>
+                <p id="humidity">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Display Motion Status -->
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Motion Status</h3>
+                <p id="motionStatus">Loading...</p>
+            </div>
+        </div>
+
+        <!-- Temperature and Humidity Graph -->
+        <div class="row">
+            <div class="col-md-6">
+                <h3>Temperature Graph</h3>
+                <canvas id="temperatureChart"></canvas>
+            </div>
+            <div class="col-md-6">
+                <h3>Humidity Graph</h3>
+                <canvas id="humidityChart"></canvas>
+            </div>
+        </div>
+    </div>
+
     <script>
+        // Function to fetch temperature, humidity, and motion status
+        function fetchData() {
+            // Fetch temperature
+            fetch("/get_temperature/")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("temperature").textContent = data.temperature + " °C";
+                    updateTemperatureGraph(data.temperature);
+                });
+
+            // Fetch humidity
+            fetch("/get_humidity/")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("humidity").textContent = data.humidity + " %";
+                    updateHumidityGraph(data.humidity);
+                });
+
+            // Fetch motion status
+            fetch("/get_motion_status/")
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("motionStatus").textContent = data.motion_triggered ? "Motion detected" : "No motion";
+                });
+        }
+
+        // Set up the graph for temperature
+        let temperatureChart = new Chart(document.getElementById("temperatureChart"), {
+            type: "line",
+            data: {
+                labels: [],  // Time labels, will be filled dynamically
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: [],  // Temperature data, will be filled dynamically
+                    borderColor: 'rgb(75, 192, 192)',
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+
+        // Set up the graph for humidity
+        let humidityChart = new Chart(document.getElementById("humidityChart"), {
+            type: "line",
+            data: {
+                labels: [],  // Time labels, will be filled dynamically
+                datasets: [{
+                    label: 'Humidity (%)',
+                    data: [],  // Humidity data, will be filled dynamically
+                    borderColor: 'rgb(153, 102, 255)',
+                    fill: false
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: false
+                    }
+                }
+            }
+        });
+
+        // Function to update the temperature graph
+        function updateTemperatureGraph(temp) {
+            let now = new Date().toLocaleTimeString();
+            temperatureChart.data.labels.push(now);
+            temperatureChart.data.datasets[0].data.push(temp);
+            if (temperatureChart.data.labels.length > 10) {
+                temperatureChart.data.labels.shift();
+                temperatureChart.data.datasets[0].data.shift();
+            }
+            temperatureChart.update();
+        }
+
+        // Function to update the humidity graph
+        function updateHumidityGraph(humidity) {
+            let now = new Date().toLocaleTimeString();
+            humidityChart.data.labels.push(now);
+            humidityChart.data.datasets[0].data.push(humidity);
+            if (humidityChart.data.labels.length > 10) {
+                humidityChart.data.labels.shift();
+                humidityChart.data.datasets[0].data.shift();
+            }
+            humidityChart.update();
+        }
+
+        // Initial fetch of data
+        fetchData();
+        setInterval(fetchData, 10000);  // Refresh every 10 seconds
+
         function createPreview() {
             img = document.createElement("IMG");
             img.className += "mx-auto d-block rounded cam-stream";    // Zobraz IMG ako block a centruj na stred stranky

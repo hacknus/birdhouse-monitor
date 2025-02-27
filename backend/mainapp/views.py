@@ -1,6 +1,8 @@
 import json
 import time
 import datetime
+from random import random
+
 import cv2
 import os
 
@@ -99,3 +101,21 @@ def trigger_ir_led(request):
             return JsonResponse({'success': False, 'message': 'Invalid action.'}, status=400)
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
+
+
+def get_temperature(request):
+    # This can be data from a sensor, here is an example
+    temperature = random()  # get_temperature_from_sensor()  # Implement this function to read from your sensor
+    return JsonResponse({"temperature": temperature})
+
+
+def get_humidity(request):
+    # Fetch humidity
+    humidity = random()  # get_humidity_from_sensor()  # Implement this function to read from your sensor
+    return JsonResponse({"humidity": humidity})
+
+
+def get_motion_status(request):
+    # Fetch motion status (True or False)
+    motion_status = random() > 0.5  # get_motion_from_sensor()  # Implement this function to read from your sensor
+    return JsonResponse({"motion_triggered": motion_status})
