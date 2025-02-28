@@ -40,7 +40,7 @@
                         <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter"
                              width="32"
                              height="32">
-                        Gallery
+                        Newsletter
                     </a>
                 </li>
                 <li class="nav-item">
@@ -57,7 +57,7 @@
 </nav>
 
 <!-- Form for adding an email address -->
-<h2>Add an Email Address</h2>
+<h4>Add an Email Address</h4>
 <form method="post" action="{% url 'add_email' %}">
     {% csrf_token %}
     <input type="email" name="email" placeholder="Enter your email" required>
@@ -65,20 +65,12 @@
 </form>
 
 <!-- Form for removing an email address -->
-<h2>Remove an Email Address</h2>
+<h4>Remove an Email Address</h4>
 <form method="post" action="{% url 'remove_email' %}">
     {% csrf_token %}
     <input type="email" name="email" placeholder="Enter your email" required>
     <button type="submit">Remove Email</button>
 </form>
-
-<!-- Display the list of current subscribers -->
-<h2>Current Subscribers</h2>
-<ul>
-    {% for email in email_list %}
-    <li>{{ email }}</li>
-    {% endfor %}
-</ul>
 
 <!-- Display messages -->
 {% if messages %}
