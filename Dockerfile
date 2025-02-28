@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libcap-dev \
     libopencv-dev \
+    python3-picamera2 \
     python3-opencv \
     redis-server \
     libcamera-dev \
