@@ -314,9 +314,17 @@
             return;
         }
 
+        // Map the updated data to labels and datasets
+        const timeLabels = data.map(entry => {
+            const date = new Date(entry.timestamp);  // ISO format to Date object
+            return date.toLocaleTimeString();  // Human-readable time string
+        });
+
+        const temperatureData = data.map(entry => entry.temperature);
+
         // Update chart data
-        window.temperatureChart.data.labels = data.map(entry => new Date(entry.timestamp * 1000).toLocaleTimeString());
-        window.temperatureChart.data.datasets[0].data = data.map(entry => entry.temperature);
+        window.temperatureChart.data.labels = timeLabels;
+        window.temperatureChart.data.datasets[0].data = temperatureData;
 
         // Refresh chart
         window.temperatureChart.update();
@@ -347,7 +355,12 @@
             return;
         }
 
-        const timeLabels = data.map(entry => new Date(entry.timestamp * 1000).toLocaleTimeString());
+        // Convert the timestamp from ISO format to a human-readable time
+        const timeLabels = data.map(entry => {
+            const date = new Date(entry.timestamp);  // ISO format is automatically parsed by JavaScript's Date
+            return date.toLocaleTimeString(); // Optional: Format it as per your preference
+        });
+
         const temperatureData = data.map(entry => entry.temperature);
 
         // Get the canvas element for the chart
@@ -390,10 +403,8 @@
                 }
             });
         } else {
-            // Update the chart data if it exists
-            window.temperatureChart.data.labels = timeLabels;
-            window.temperatureChart.data.datasets[0].data = temperatureData;
-            window.temperatureChart.update();
+            // If the chart is already created, just update it
+            updateTemperatureChart(data);
         }
     }
 
