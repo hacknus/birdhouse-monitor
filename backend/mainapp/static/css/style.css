@@ -121,7 +121,6 @@ ul li {
 .navbar-nav .nav-item .nav-link {
     display: flex;  /* Ensures the icon and text are aligned horizontally */
     align-items: center;  /* Vertically center the content */
-    padding: 10px 15px;  /* Add padding to the navbar items */
     color: black !important;  /* Set the text color to black */
     background-color: transparent !important;  /* Transparent background by default */
     border-radius: .75rem;  /* Rounded corners */
@@ -133,11 +132,6 @@ ul li {
 .navbar-nav .nav-item .nav-link:hover {
     color: white !important;  /* Text turns white on hover */
     background-color: black !important;  /* Background turns black on hover */
-}
-
-/* Invert the icon color on hover */
-.navbar-nav .nav-item .nav-link:hover .nav-icon {
-    filter: invert(1);  /* Invert icon color to white */
 }
 
 /* Make sure the icon is black by default */
