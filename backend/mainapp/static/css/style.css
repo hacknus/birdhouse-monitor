@@ -1,209 +1,5 @@
 body {
     font-family: Poppins, Roboto, Helvetica, Arial, sans-serif !important;
-}
-
-.canvas-chartjs {
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-}
-
-.print-header {
-    display: none !important;
-}
-
-.cam-stream {
-    width: 100%;
-}
-
-.my-footer {
-    background-color: rgba(0, 0, 0, 0.2);
-}
-
-.nav-link.active {
-    color: var(--bs-white) !important;
-}
-
-.nav-link {
-    color: #dee2e6 !important;
-    border-radius: .75rem !important;
-}
-
-nav .nav-link:hover {
-    color: #212529 !important;
-    border-radius: .75rem !important;
-    background-color: #dee2e6 !important;
-}
-
-.btn-run {
-    color: #ffffff !important;
-    background-color: #157347 !important;
-    border-color: #146c43 !important;
-}
-
-.btn-run:hover {
-    color: #dee2e6 !important;
-    background-color: #157347 !important;
-    border-color: #146c43 !important;
-}
-
-.btn-stop {
-    color: #ffffff !important;
-    background-color: #dc3545 !important;
-    border-color: #dc3545 !important;
-    width: 75% !important;
-    margin: 0 auto !important;
-    text-align: center !important;
-}
-
-.btn-stop:hover {
-    color: #dee2e6 !important;
-    background-color: #dc3545 !important;;
-    border-color: #dc3545 !important;;
-}
-
-.table-sensor {
-    --bs-table-bg: #fff3cd;
-    --bs-table-striped-bg: #f2e7c3;
-    --bs-table-striped-color: #212529;
-    --bs-table-active-bg: #e6dbb9;
-    --bs-table-active-color: #212529;
-    --bs-table-hover-bg: #ece1be;
-    --bs-table-hover-color: #212529;
-    color: #212529;
-}
-
-.table-plant {
-    --bs-table-bg: #d1e7dd;
-    --bs-table-striped-bg: #c7dbd2;
-    --bs-table-striped-color: #212529;
-    --bs-table-active-bg: #bcd0c7;
-    --bs-table-active-color: #212529;
-    --bs-table-hover-bg: #c1d6cc;
-    --bs-table-hover-color: #212529;
-    color: #212529;
-}
-
-.table-config {
-    --bs-table-bg: #cfe2ff;
-    --bs-table-striped-bg: #c5d7f2;
-    --bs-table-striped-color: #212529;
-    --bs-table-active-bg: #bacbe6;
-    --bs-table-active-color: #212529;
-    --bs-table-hover-bg: #bfd1ec;
-    --bs-table-hover-color: #212529;
-    color: #212529;
-}
-
-.table {
-    --bs-table-active-color: #212529;
-    --bs-table-active-bg: #dee2e6;
-    --bs-table-hover-color: #212529;
-    --bs-table-hover-bg: #dee2e6;
-}
-
-.row-border {
-    border: 1px #212529 solid;
-    border-radius: 25px;
-}
-
-/* Center the modal and make it responsive */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1000;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
-    justify-content: center;
-    align-items: center;
-}
-
-/* Ensure the image scales correctly */
-.modal-content {
-    position: relative;
-    max-width: 90%;
-    max-height: 90%;
-    display: block;
-    margin: auto;
-    border-radius: 8px;
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
-}
-
-/* Close button styling */
-.close {
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    color: white;
-    font-size: 30px;
-    cursor: pointer;
-}
-
-/* Style for the download button inside the preview */
-.download-btn {
-    position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: background 0.3s;
-}
-
-.download-btn:hover {
-    background-color: #0056b3;
-}
-
-/* Default icon styles */
-.navbar-nav .nav-item .nav-link .nav-icon {
-    transition: filter 0.3s ease; /* smooth transition */
-}
-
-/* On hover, invert the image */
-.navbar-nav .nav-item .nav-link:hover .nav-icon {
-    filter: invert(1); /* Inverts the icon color */
-}
-
-/* Ensure the navbar items are vertically centered */
-.navbar-nav .nav-item .nav-link {
-    display: flex;
-    align-items: center; /* Center both the icon and the text vertically */
-    padding-left: 10px;   /* Add space before the icon */
-    padding-right: 10px;  /* Optional: Add space after the icon */
-}
-
-/* Add space between the icon and the text */
-.navbar-nav .nav-item .nav-link .nav-icon {
-    margin-right: 8px; /* Increase space between icon and text */
-}
-
-/* Optionally, you can adjust the size of the icons */
-.navbar-nav .nav-item .nav-link .nav-icon {
-    width: 32px;
-    height: 32px;
-}
-
-#subscriberCount {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-    margin-top: 20px;
-    padding: 10px;
-    background-color: #f0f0f0;
-    border-radius: 4px;
-    text-align: center;
-}
-
-/* General styling for the body */
-body {
-    font-family: Arial, sans-serif;
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
@@ -213,7 +9,6 @@ body {
     height: 100vh; /* Full screen height */
 }
 
-/* Centering the newsletter container */
 .newsletter-container {
     background-color: #ffffff;
     padding: 20px;
@@ -223,23 +18,24 @@ body {
     max-width: 400px; /* Limit the width */
     text-align: center;
     margin: 0 20px; /* Margin around the container */
+    display: flex;
+    flex-direction: column; /* Ensure everything inside stacks vertically */
+    align-items: center; /* Center the items inside */
 }
 
-/* Styling for the heading */
 h1 {
     font-size: 24px;
     color: #333;
     margin-bottom: 20px;
 }
 
-/* Styling for the form */
 form {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: center; /* Stack the form elements vertically */
+    width: 100%;
 }
 
-/* Input field styling */
 input[type="email"] {
     width: 100%;
     padding: 10px;
@@ -249,7 +45,6 @@ input[type="email"] {
     font-size: 16px;
 }
 
-/* Button styling */
 button {
     width: 100%;
     padding: 10px;
@@ -266,7 +61,6 @@ button:hover {
     background-color: #45a049;
 }
 
-/* List styling for subscribers */
 h2 {
     font-size: 20px;
     color: #333;
@@ -284,4 +78,29 @@ ul li {
     margin: 5px 0;
     border-radius: 4px;
     font-size: 16px;
+}
+
+#subscriberCount {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-top: 20px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    text-align: center;
+}
+
+/* Navbar styles */
+.navbar-nav .nav-item .nav-link {
+    display: flex;
+    align-items: center; /* Center both the icon and the text vertically */
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.navbar-nav .nav-item .nav-link .nav-icon {
+    margin-right: 8px;
+    width: 32px;
+    height: 32px;
 }
