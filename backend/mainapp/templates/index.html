@@ -265,18 +265,10 @@
                             y: entry.humidity
                         }));
 
-                        // Update charts instead of recreating
-                        if (window.temperatureChart) {
-                            updateTemperatureChart(formattedTemperature);
-                        } else {
-                            renderTemperatureChart(data);
-                        }
+                        if (!data) return;
 
-                        if (window.humidityChart) {
-                            updateHumidityChart(formattedHumidity);
-                        } else {
-                            renderHumidityChart(data);
-                        }
+                        renderChart("temperature", "temperatureChart", "Temperature (°C)", [data], 'rgba(255, 99, 132, 1)');
+                        renderChart("humidity", "humidityChart", "Humidity (%)", [data], 'rgba(54, 162, 235, 1)');
                     } else {
                         console.log('No data available');
                         // Handle the case where there's no data
@@ -303,79 +295,26 @@
         setInterval(fetchData, 10000);  // Fetch data every 10 seconds
     });
 
-    function updateTemperatureChart(data) {
-        if (!window.temperatureChart) {
-            console.error("Temperature chart not initialized yet!");
-            return;
-        }
-
+    function renderChart(chartName, canvasId, label, data, color) {
         if (!data || data.length === 0) {
-            console.warn("No temperature data available.");
+            console.log(`No data for ${chartName} chart`);
             return;
         }
 
-        // Map the updated data to labels and datasets
-        const timeLabels = data.map(entry => {
-            const date = new Date(entry.timestamp);  // ISO format to Date object
-            return date.toLocaleTimeString();  // Human-readable time string
-        });
+        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
+        const chartData = data.map(entry => entry[chartName]); // "temperature" or "humidity"
 
-        const temperatureData = data.map(entry => entry.temperature);
+        const ctx = document.getElementById(canvasId).getContext('2d');
 
-        // Update chart data
-        window.temperatureChart.data.labels = timeLabels;
-        window.temperatureChart.data.datasets[0].data = temperatureData;
-
-        // Refresh chart
-        window.temperatureChart.update();
-    }
-
-    function updateHumidityChart(data) {
-        if (!window.humidityChart) {
-            console.error("Humidity chart not initialized yet!");
-            return;
-        }
-
-        if (!data || data.length === 0) {
-            console.warn("No humidity data available.");
-            return;
-        }
-
-        // Update chart data
-        window.humidityChart.data.labels = data.map(entry => new Date(entry.timestamp * 1000));
-        window.humidityChart.data.datasets[0].data = data.map(entry => entry.humidity);
-
-        // Refresh chart
-        window.humidityChart.update();
-    }
-
-    function renderTemperatureChart(data) {
-        if (!data || data.length === 0) {
-            console.log('No data for temperature chart');
-            return;
-        }
-
-        // Convert the timestamp from ISO format to a human-readable time
-        const timeLabels = data.map(entry => {
-            const date = new Date(entry.timestamp);  // ISO format is automatically parsed by JavaScript's Date
-            return date.toLocaleTimeString(); // Optional: Format it as per your preference
-        });
-
-        const temperatureData = data.map(entry => entry.temperature);
-
-        // Get the canvas element for the chart
-        const ctx = document.getElementById('temperatureChart').getContext('2d');
-
-        // Create the chart if it doesn't exist
-        if (!window.temperatureChart) {
-            window.temperatureChart = new Chart(ctx, {
+        if (!window[chartName + 'Chart']) {
+            window[chartName + 'Chart'] = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: timeLabels,  // Time as labels for the x-axis
+                    labels: timeLabels,
                     datasets: [{
-                        label: 'Temperature (°C)',
-                        data: temperatureData,
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        label: `${label}`,
+                        data: chartData,
+                        borderColor: color,
                         fill: false,
                         tension: 0.1
                     }]
@@ -384,75 +323,29 @@
                     responsive: true,
                     scales: {
                         x: {
-                            title: {
-                                display: true,
-                                text: 'Time'
-                            },
-                            ticks: {
-                                autoSkip: true,
-                                maxTicksLimit: 10
-                            }
+                            title: {display: true, text: 'Time'},
+                            ticks: {autoSkip: true, maxTicksLimit: 10}
                         },
-                        y: {
-                            title: {
-                                display: true,
-                                text: 'Temperature (°C)'
-                            }
-                        }
+                        y: {title: {display: true, text: label}}
                     }
                 }
             });
         } else {
-            // If the chart is already created, just update it
-            updateTemperatureChart(data);
+            updateChart(chartName, timeLabels, chartData);
         }
     }
 
-    function renderHumidityChart(data) {
-        if (!data || data.length === 0) return;
+    function updateChart(chartName, timeLabels, chartData) {
+        if (!window[chartName + 'Chart']) {
+            console.error(`${chartName} chart not initialized yet!`);
+            return;
+        }
 
-        // Convert timestamps properly
-        const timeLabels = data.map(entry => ({
-            x: new Date(entry.timestamp * 1000),
-            y: entry.humidity
-        }));
-
-        const ctx = document.getElementById('humidityChart').getContext('2d');
-
-        // Destroy previous chart if it exists
-        if (window.humidityChart) window.humidityChart.destroy();
-
-        window.humidityChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [{
-                    label: 'Humidity (%)',
-                    data: timeLabels,
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    fill: false,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        type: 'time',
-                        time: {
-                            unit: 'minute',
-                            displayFormats: {
-                                minute: 'HH:mm',
-                                hour: 'HH:mm'
-                            }
-                        },
-                        title: {display: true, text: 'Time'}
-                    },
-                    y: {title: {display: true, text: 'Humidity (%)'}}
-                },
-                animation: false  // Prevent jumping
-            }
-        });
+        window[chartName + 'Chart'].data.labels = timeLabels;
+        window[chartName + 'Chart'].data.datasets[0].data = chartData;
+        window[chartName + 'Chart'].update();
     }
+
 
     // Function to clear previous charts (for when new data is loaded)
     function clearCharts() {
