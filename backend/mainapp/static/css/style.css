@@ -97,7 +97,6 @@ ul li {
     text-align: center;
 }
 
-
 /* Style for the download button inside the preview */
 .download-btn {
     position: absolute;
@@ -119,7 +118,7 @@ ul li {
 
 /* Navbar Styles */
 .navbar {
-    background-color: #ffffff; /* White background */
+    background-color: black; /* Black background by default */
     padding: 0.5rem 1rem; /* Adjust navbar padding */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Adds a small shadow to the navbar */
 }
@@ -142,7 +141,7 @@ ul li {
 .navbar-nav .nav-item .nav-link {
     display: flex;  /* Ensures the icon and text are aligned horizontally */
     align-items: center;  /* Vertically center the content */
-    color: black !important;  /* Set the text color to black */
+    color: white !important;  /* Set the text color to white by default */
     background-color: transparent !important;  /* Transparent background by default */
     border-radius: .75rem;  /* Rounded corners */
     transition: all 0.3s ease;  /* Smooth transition for hover effect */
@@ -151,22 +150,22 @@ ul li {
 
 /* Navbar link hover effects */
 .navbar-nav .nav-item .nav-link:hover {
-    color: white !important;  /* Text turns white on hover */
-    background-color: black !important;  /* Background turns black on hover */
+    color: black !important;  /* Text turns black on hover */
+    background-color: white !important;  /* Background turns white on hover */
     border-radius: .75rem !important;  /* Keep rounded corners on hover */
 }
 
-/* Ensure the icons inside the navbar are black by default */
+/* Ensure the icons inside the navbar are white by default */
 .navbar-nav .nav-item .nav-link .nav-icon {
-    filter: invert(0); /* Default icon color (black) */
+    filter: invert(1); /* Default icon color (white) */
     margin-right: 8px; /* Add space between icon and text */
     width: 24px; /* Set the icon size */
     height: 24px; /* Set the icon size */
 }
 
-/* On hover, invert the icon color */
+/* On hover, invert the icon color to black */
 .navbar-nav .nav-item .nav-link:hover .nav-icon {
-    filter: invert(1); /* Invert icon color to white */
+    filter: invert(0); /* Invert icon color to black */
 }
 
 /* Optional: Adjust padding for navbar items for better hover effect */
