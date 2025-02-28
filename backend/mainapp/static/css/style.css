@@ -97,41 +97,66 @@ ul li {
     text-align: center;
 }
 
-/* Navbar styles */
-.navbar-nav .nav-item .nav-link {
-    display: block; /* Revert to block instead of flex for the default layout */
-    padding-left: 10px;
-    padding-right: 10px;
+
+/* Style for the download button inside the preview */
+.download-btn {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background 0.3s;
 }
 
+.download-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Default icon styles */
 .navbar-nav .nav-item .nav-link .nav-icon {
-    margin-right: 8px;
+    transition: filter 0.3s ease; /* smooth transition */
+}
+
+/* On hover, invert the image */
+.navbar-nav .nav-item .nav-link:hover .nav-icon {
+    filter: invert(1); /* Inverts the icon color */
+}
+
+/* Ensure the navbar items are vertically centered */
+.navbar-nav .nav-item .nav-link {
+    display: flex;
+    align-items: center; /* Center both the icon and the text vertically */
+    padding-left: 10px;   /* Add space before the icon */
+    padding-right: 10px;  /* Optional: Add space after the icon */
+}
+
+/* Add space between the icon and the text */
+.navbar-nav .nav-item .nav-link .nav-icon {
+    margin-right: 8px; /* Increase space between icon and text */
+}
+
+/* Optionally, you can adjust the size of the icons */
+.navbar-nav .nav-item .nav-link .nav-icon {
     width: 32px;
     height: 32px;
 }
 
-/* Ensure navbar icons don't invert */
-.navbar-nav .nav-item .nav-link .nav-icon {
-    transition: filter 0.3s ease; /* Smooth transition for icon filter */
+.nav-link.active {
+    color: var(--bs-white) !important;
 }
 
-/* Remove inversion effect */
-.navbar-nav .nav-item .nav-link:hover .nav-icon {
-    filter: none; /* Disable the inversion on hover */
-}
-
-/* Styling for active links in the navbar */
-.navbar-nav .nav-item .nav-link.active {
-    color: #ffffff !important;
-    background-color: #007bff; /* Example active state background */
-}
-
-.navbar-nav .nav-item .nav-link {
-    color: #dee2e6 !important; /* Default link color */
-}
-
-.navbar-nav .nav-item .nav-link:hover {
-    color: #212529 !important;
-    background-color: #dee2e6 !important;
+.nav-link {
+    color: #dee2e6 !important;
     border-radius: .75rem !important;
+}
+
+nav .nav-link:hover {
+    color: #212529 !important;
+    border-radius: .75rem !important;
+    background-color: #dee2e6 !important;
 }
