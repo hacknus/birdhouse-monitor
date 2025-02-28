@@ -278,40 +278,41 @@
             return;
         }
 
-        const timeLabels = data.map(entry => new Date(entry.timestamp * 1000).toLocaleTimeString());
-        const chartData = data.map(entry => entry[chartName]); // Extract temperature or humidity
+        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
+        const chartData = data.map(entry => entry[chartName]); // "temperature" or "humidity"
 
         const ctx = document.getElementById(canvasId).getContext('2d');
 
-        // Check if chart exists, destroy it before re-creating to avoid duplication
+        // Check if the chart already exists
         if (window[chartName + 'Chart']) {
-            window[chartName + 'Chart'].destroy();
-        }
-
-        // Create a new chart instance
-        window[chartName + 'Chart'] = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: timeLabels,
-                datasets: [{
-                    label: `${label}`,
-                    data: chartData,
-                    borderColor: color,
-                    fill: false,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        title: {display: true, text: 'Time'},
-                        ticks: {autoSkip: true, maxTicksLimit: 10}
-                    },
-                    y: {title: {display: true, text: label}}
+            console.log(`Updating existing ${chartName} chart`);
+            updateChart(chartName, timeLabels, chartData);
+        } else {
+            console.log(`Creating new ${chartName} chart`);
+            window[chartName + 'Chart'] = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,
+                    datasets: [{
+                        label: `${label}`,
+                        data: chartData,
+                        borderColor: color,
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {display: true, text: 'Time'},
+                            ticks: {autoSkip: true, maxTicksLimit: 10}
+                        },
+                        y: {title: {display: true, text: label}}
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 
     function updateChart(chartName, timeLabels, chartData) {
@@ -320,19 +321,30 @@
             return;
         }
 
-        window[chartName + 'Chart'].data.labels = timeLabels;
-        window[chartName + 'Chart'].data.datasets[0].data = chartData;
-        window[chartName + 'Chart'].update();
+        // Ensure we update only if the chart instance exists
+        const chartInstance = window[chartName + 'Chart'];
+        if (chartInstance && chartInstance.data) {
+            chartInstance.data.labels = timeLabels;
+            chartInstance.data.datasets[0].data = chartData;
+            chartInstance.update();
+        } else {
+            console.error(`Error updating ${chartName} chart: Chart instance is invalid.`);
+        }
     }
 
-
-    // Function to clear previous charts (for when new data is loaded)
+    // Function to safely clear charts before re-rendering
     function clearCharts() {
-        const ctxTemperature = document.getElementById('temperatureChart').getContext('2d');
-        const ctxHumidity = document.getElementById('humidityChart').getContext('2d');
+        if (window.temperatureChart) {
+            console.log("Destroying temperature chart");
+            window.temperatureChart.destroy();
+            window.temperatureChart = null;
+        }
 
-        if (window.temperatureChart) window.temperatureChart.destroy();
-        if (window.humidityChart) window.humidityChart.destroy();
+        if (window.humidityChart) {
+            console.log("Destroying humidity chart");
+            window.humidityChart.destroy();
+            window.humidityChart = null;
+        }
     }
 </script>
 </body>
