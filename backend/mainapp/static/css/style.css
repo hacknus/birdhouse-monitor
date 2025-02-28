@@ -115,16 +115,15 @@ ul li {
 .download-btn:hover {
     background-color: #0056b3;
 }
-
 /* Navbar Styles */
 .navbar {
-    background-color: black !important; /* Black background */
+    background-color: black !important;  /* Black background for the navbar */
     padding: 0.5rem 1rem;
 }
 
 /* Navbar items */
 .navbar-nav {
-    display: flex !important; /* Ensure navbar items are in a row */
+    display: flex !important;  /* Ensure navbar items are in a row */
     justify-content: flex-start;
     margin: 0;
     padding: 0;
@@ -133,36 +132,36 @@ ul li {
 
 /* Each navbar item */
 .navbar-nav .nav-item {
-    padding: 0 15px; /* Add padding to space out the items */
+    padding: 0 15px;  /* Add padding to space out the items */
 }
 
 /* Navbar links */
 .navbar-nav .nav-item .nav-link {
-    color: white !important; /* White text by default */
-    background-color: transparent !important; /* Transparent background */
+    color: black !important;  /* Black text by default */
+    background-color: transparent !important;  /* Transparent background */
     padding: 10px 15px;
-    text-decoration: none !important; /* Remove underline */
+    text-decoration: none !important;  /* Remove underline */
     display: flex;
     align-items: center;
     border-radius: .75rem;
-    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for hover effect */
+    transition: background-color 0.3s ease, color 0.3s ease;  /* Smooth transition for hover effect */
 }
 
 /* Navbar Links Hover Effects */
 .navbar-nav .nav-item .nav-link:hover {
-    color: black !important; /* Text turns black on hover */
-    background-color: white !important; /* Background turns white on hover */
+    color: white !important;  /* Text turns white on hover */
+    background-color: black !important;  /* Background turns black on hover */
 }
 
-/* Force Icon Colors to be White */
+/* Force Icon Colors to be Black by default */
 .navbar-nav .nav-item .nav-link .nav-icon {
-    filter: invert(1); /* White icon by default */
+    filter: invert(0);  /* Black icon by default */
     margin-right: 8px;
     width: 24px;
     height: 24px;
 }
 
-/* On Hover, Invert the Icon Color to Black */
+/* On Hover, Invert the Icon Color to White */
 .navbar-nav .nav-item .nav-link:hover .nav-icon {
-    filter: invert(0); /* Black icon on hover */
+    filter: invert(1);  /* White icon on hover */
 }
