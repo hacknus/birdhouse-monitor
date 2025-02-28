@@ -6,6 +6,9 @@ import time
 import board
 import adafruit_sht4x
 
+# Function to store the data in the database
+from .models import SensorData  # Import your Django model
+
 i2c = board.I2C()
 sensor = adafruit_sht4x.SHT4x(i2c)
 print("setting up SHT")
@@ -37,9 +40,6 @@ def collect_data():
 
     # Store this data in the database
     store_sensor_data(temperature, humidity, motion_detected)
-
-# Function to store the data in the database
-from .models import SensorData  # Import your Django model
 
 def store_sensor_data(temperature, humidity, motion_detected):
     # Create a new SensorData entry in the database
