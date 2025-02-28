@@ -255,9 +255,9 @@
                         document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
                         document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
 
-                        // You can render charts or other UI updates based on the fetched data
-                        renderTemperatureChart(data.map(entry => entry.temperature));
-                        renderHumidityChart(data.map(entry => entry.humidity));
+                        // Render charts with time on the x-axis
+                        renderTemperatureChart(data);
+                        renderHumidityChart(data);
                     } else {
                         console.log('No data available');
                         // Handle the case where there's no data
@@ -284,12 +284,18 @@
         setInterval(fetchData, 10000);  // Fetch data every 10 seconds
     });
 
-    function renderTemperatureChart(temperatureData) {
+    function renderTemperatureChart(data) {
         // Check if we have any data to render
-        if (!temperatureData || temperatureData.length === 0) {
+        if (!data || data.length === 0) {
             console.log('No data for temperature chart');
             return;
         }
+
+        // Format time for x-axis labels (you can adjust the format as needed)
+        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());  // Format time (HH:MM:SS)
+
+        // Prepare temperature data
+        const temperatureData = data.map(entry => entry.temperature);
 
         // Get the canvas element for the chart
         const ctx = document.getElementById('temperatureChart').getContext('2d');
@@ -298,7 +304,7 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: temperatureData.map((_, index) => index + 1),  // Create dummy labels like [1, 2, 3,...]
+                labels: timeLabels,  // Use time as labels for x-axis
                 datasets: [{
                     label: 'Temperature (°C)',
                     data: temperatureData,
@@ -313,7 +319,11 @@
                     x: {
                         title: {
                             display: true,
-                            text: 'Data Points'
+                            text: 'Time'
+                        },
+                        ticks: {
+                            autoSkip: true,  // Automatically skip some ticks if there are too many
+                            maxTicksLimit: 10 // Limit the number of x-axis ticks
                         }
                     },
                     y: {
@@ -327,12 +337,18 @@
         });
     }
 
-    function renderHumidityChart(humidityData) {
+    function renderHumidityChart(data) {
         // Check if we have any data to render
-        if (!humidityData || humidityData.length === 0) {
+        if (!data || data.length === 0) {
             console.log('No data for humidity chart');
             return;
         }
+
+        // Format time for x-axis labels (you can adjust the format as needed)
+        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());  // Format time (HH:MM:SS)
+
+        // Prepare humidity data
+        const humidityData = data.map(entry => entry.humidity);
 
         // Get the canvas element for the chart
         const ctx = document.getElementById('humidityChart').getContext('2d');
@@ -341,7 +357,7 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: humidityData.map((_, index) => index + 1),  // Create dummy labels like [1, 2, 3,...]
+                labels: timeLabels,  // Use time as labels for x-axis
                 datasets: [{
                     label: 'Humidity (%)',
                     data: humidityData,
@@ -356,7 +372,11 @@
                     x: {
                         title: {
                             display: true,
-                            text: 'Data Points'
+                            text: 'Time'
+                        },
+                        ticks: {
+                            autoSkip: true,  // Automatically skip some ticks if there are too many
+                            maxTicksLimit: 10 // Limit the number of x-axis ticks
                         }
                     },
                     y: {
@@ -378,30 +398,6 @@
         if (window.temperatureChart) window.temperatureChart.destroy();
         if (window.humidityChart) window.humidityChart.destroy();
     }
-
-    document.getElementById("saveImageBtn").addEventListener("click", function () {
-        let imgPreview = document.getElementById("imgPreview");
-        let enablePreview = document.getElementById("enablePreview");
-
-        if (!enablePreview.checked || imgPreview.children.length === 0) {
-            document.getElementById("saveMessage").innerText = "⚠️ Please enable the preview first!";
-            return;
-        }
-
-        fetch("/save_image/", {
-            method: "POST",
-            headers: {"X-CSRFToken": "{{ csrf_token }}"}
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    document.getElementById("saveMessage").innerText = "✅ Image saved to gallery!";
-                } else {
-                    document.getElementById("saveMessage").innerText = "❌ Error saving image.";
-                }
-            })
-            .catch(error => console.error("Error:", error));
-    });
 </script>
 </body>
 </html>
