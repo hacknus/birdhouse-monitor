@@ -236,7 +236,7 @@
     </div>
 </footer>
 <script>
-    function renderTemperatureChart(temperatureData, timestamps) {
+    function renderTemperatureChart(temperatureData, timeLabels) {
         // Check if we have any data to render
         if (!temperatureData || temperatureData.length === 0) {
             console.log('No data for temperature chart');
@@ -250,7 +250,7 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: timestamps,  // Use timestamps as x-axis labels
+                labels: timeLabels,  // Use the Date objects as labels
                 datasets: [{
                     label: 'Temperature (°C)',
                     data: temperatureData,
@@ -267,11 +267,10 @@
                             display: true,
                             text: 'Time'
                         },
-                        type: 'time', // This tells Chart.js to treat the x-axis as time
+                        type: 'time', // Use the time scale for the x-axis
                         time: {
-                            unit: 'minute', // You can adjust this based on your data
-                            tooltipFormat: 'll HH:mm', // Format for tooltips
-                            unitStepSize: 1
+                            unit: 'minute', // Adjust the time unit as needed (e.g., 'minute', 'hour', etc.)
+                            tooltipFormat: 'll HH:mm', // Adjust the format for tooltip
                         }
                     },
                     y: {
@@ -285,7 +284,7 @@
         });
     }
 
-    function renderHumidityChart(humidityData, timestamps) {
+    function renderHumidityChart(humidityData, timeLabels) {
         // Check if we have any data to render
         if (!humidityData || humidityData.length === 0) {
             console.log('No data for humidity chart');
@@ -299,7 +298,7 @@
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: timestamps,  // Use timestamps as x-axis labels
+                labels: timeLabels,  // Use the Date objects as labels
                 datasets: [{
                     label: 'Humidity (%)',
                     data: humidityData,
@@ -316,11 +315,10 @@
                             display: true,
                             text: 'Time'
                         },
-                        type: 'time', // This tells Chart.js to treat the x-axis as time
+                        type: 'time', // Use the time scale for the x-axis
                         time: {
-                            unit: 'minute', // You can adjust this based on your data
-                            tooltipFormat: 'll HH:mm', // Format for tooltips
-                            unitStepSize: 1
+                            unit: 'minute', // Adjust the time unit as needed (e.g., 'minute', 'hour', etc.)
+                            tooltipFormat: 'll HH:mm', // Adjust the format for tooltip
                         }
                     },
                     y: {
@@ -346,18 +344,21 @@
                     console.log("Fetched data:", data);  // Log the raw data to the console
 
                     if (data && data.length > 0) {
-                        const timestamps = data.map(entry => entry.timestamp); // Extract timestamps
+                        const latestData = data[data.length - 1]; // Get the most recent data point
+
+                        // Update DOM with the latest data
+                        document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
+                        document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
+                        document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
+
+                        // Convert timestamps to Date objects
+                        const timeLabels = data.map(entry => new Date(entry.timestamp));  // Convert to Date objects
                         const temperatureData = data.map(entry => entry.temperature);
                         const humidityData = data.map(entry => entry.humidity);
 
-                        // Update DOM with the latest data
-                        document.getElementById('temperatureValue').textContent = `${temperatureData[temperatureData.length - 1]} °C`;
-                        document.getElementById('humidityValue').textContent = `${humidityData[humidityData.length - 1]} %`;
-                        document.getElementById('motionStatus').textContent = data[data.length - 1].motion_triggered ? 'Motion Detected' : 'No Motion';
-
-                        // Render charts
-                        renderTemperatureChart(temperatureData, timestamps);
-                        renderHumidityChart(humidityData, timestamps);
+                        // Render the charts with time-based data
+                        renderTemperatureChart(temperatureData, timeLabels); // pass time as Date objects
+                        renderHumidityChart(humidityData, timeLabels); // pass time as Date objects
                     } else {
                         console.log('No data available');
                         // Handle the case where there's no data
