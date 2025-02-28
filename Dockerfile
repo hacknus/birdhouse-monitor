@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
     libopencv-dev \
     python3.11 \
     python3-pip \
-    python3-libcamera \  # <-- Install libcamera directly from apt
+    python3-libcamera \
     python3-picamera2 \
     python3-opencv \
     redis-server \
