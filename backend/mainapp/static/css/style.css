@@ -117,31 +117,33 @@ ul li {
     background-color: #0056b3;
 }
 
-/* Default icon styles */
-.navbar-nav .nav-item .nav-link .nav-icon {
-    transition: filter 0.3s ease; /* smooth transition */
-}
-
-/* On hover, invert the image */
-.navbar-nav .nav-item .nav-link:hover .nav-icon {
-    filter: invert(1); /* Inverts the icon color */
-}
-
-/* Ensure the navbar items are vertically centered */
+/* Ensure the navbar items have proper alignment and the button width is correct */
 .navbar-nav .nav-item .nav-link {
-    display: flex;
-    align-items: center; /* Center both the icon and the text vertically */
-    padding-left: 10px;   /* Add space before the icon */
-    padding-right: 10px;  /* Optional: Add space after the icon */
+    display: flex;  /* Ensures the icon and text are aligned horizontally */
+    align-items: center;  /* Vertically center the content */
+    color: black !important;  /* Set the text color to black */
+    background-color: transparent !important;  /* Transparent background by default */
+    border-radius: .75rem;  /* Rounded corners */
+    transition: all 0.3s ease;  /* Smooth transition for hover effect */
+    width: auto;  /* Allow the width to adjust based on the content */
 }
 
-/* Add space between the icon and the text */
-.navbar-nav .nav-item .nav-link .nav-icon {
-    margin-right: 8px; /* Increase space between icon and text */
+/* Navbar button hover effects */
+.navbar-nav .nav-item .nav-link:hover {
+    color: white !important;  /* Text turns white on hover */
+    background-color: black !important;  /* Background turns black on hover */
 }
 
-/* Optionally, you can adjust the size of the icons */
+/* Make sure the icon is black by default */
 .navbar-nav .nav-item .nav-link .nav-icon {
-    width: 32px;
-    height: 32px;
+    filter: invert(1);  /* Default icon color (black) */
+    margin-right: 8px;  /* Add space between icon and text */
+    width: 24px;  /* Set the icon size */
+    height: 24px;  /* Set the icon size */
+}
+
+/* Optional: Reduce the padding for the navbar items (optional adjustment) */
+.navbar-nav .nav-item .nav-link {
+    padding-left: 12px;
+    padding-right: 12px;
 }
