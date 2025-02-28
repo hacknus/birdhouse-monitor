@@ -118,19 +118,6 @@ ul li {
 }
 
 /* Ensure the navbar items have proper alignment and full-width button behavior */
-.navbar-nav {
-    display: flex;
-    flex-direction: column; /* Stack items vertically */
-    padding: 0; /* Ensure no extra padding */
-    margin: 0; /* Remove margin to avoid unwanted spacing */
-    width: 100%; /* Ensure the navbar takes the full width */
-}
-
-.navbar-nav .nav-item {
-    width: 100%; /* Ensure each nav item takes full width */
-}
-
-/* Ensure the navbar links behave properly and hover takes the full area */
 .navbar-nav .nav-item .nav-link {
     display: flex;  /* Ensures the icon and text are aligned horizontally */
     align-items: center;  /* Vertically center the content */
