@@ -267,7 +267,7 @@
 
                         // Update charts instead of recreating
                         if (window.temperatureChart) {
-                            updateChart(window.temperatureChart, formattedTemperature);
+                            updateTemperatureChart(window.temperatureChart, formattedTemperature);
                         } else {
                             renderTemperatureChart(data);
                         }
