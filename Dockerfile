@@ -21,6 +21,7 @@ RUN apt-get update && apt-get install -y \
     libcap-dev \
     libopencv-dev \
     python3-picamera2 \
+    python3-libcamera \
     python3-opencv \
     redis-server \
     libcamera-dev \
