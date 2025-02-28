@@ -125,7 +125,7 @@ ul li {
 
 /* Navbar items */
 .navbar-nav {
-    display: flex;
+    display: flex; /* Ensure navbar items are aligned in a row */
     justify-content: flex-start; /* Items aligned from left to right */
     list-style: none;
     margin: 0;
@@ -146,6 +146,7 @@ ul li {
     border-radius: .75rem;  /* Rounded corners */
     transition: all 0.3s ease;  /* Smooth transition for hover effect */
     padding: 10px 15px;  /* Padding for each navbar item */
+    text-decoration: none; /* Remove any underlines from the links */
 }
 
 /* Navbar link hover effects */
