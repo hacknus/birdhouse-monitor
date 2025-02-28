@@ -20,8 +20,10 @@ RUN apt-get update && apt-get install -y \
     libjpeg-dev \
     libcap-dev \
     libopencv-dev \
+    python3.11 \
+    python3-pip \
+    python3-libcamera \  # <-- Install libcamera directly from apt
     python3-picamera2 \
-    python3-libcamera \
     python3-opencv \
     redis-server \
     libcamera-dev \
@@ -30,6 +32,9 @@ RUN apt-get update && apt-get install -y \
 
 # Copy project files
 COPY backend/ /app/
+
+# Set Python 3.11 as default
+RUN update-alternatives --install /usr/bin/python python /usr/bin/python3.11 1
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
