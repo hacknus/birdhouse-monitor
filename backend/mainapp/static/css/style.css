@@ -156,7 +156,7 @@ ul li {
 
 /* Ensure that the navbar link spans the whole button */
 .navbar-nav .nav-item .nav-link {
-    display: inline-flex;  /* Allow the link to expand to the full content size */
+    /* display: inline-flex;  /* Allow the link to expand to the full content size */
     align-items: center;
     justify-content: center;  /* Center the content within the button */
 }
