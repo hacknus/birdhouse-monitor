@@ -243,9 +243,8 @@ button:hover {
     background-color: #45a049;
 }
 
-.btn-sm {
-    padding: 5px 10px;  /* Adjust padding */
-    font-size: 12px;  /* Reduce font size */
+#toggleIRButton, #saveImageBtn {
+    width: 120px;  /* Adjust the width of the buttons */
 }
 
 /* List styling for subscribers */
