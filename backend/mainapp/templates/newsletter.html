@@ -55,18 +55,8 @@
 <div class="newsletter-container">
     <h1>Newsletter Subscription</h1>
 
-    <!-- Subscribe Form -->
-    <form id="newsletterForm" method="POST">
-        {% csrf_token %}
-        <div class="form-group">
-            <label for="email">Email Address:</label>
-            <input type="email" id="email" name="email" placeholder="Enter your email" required>
-        </div>
-        <button type="submit">Subscribe</button>
-    </form>
-
     <!-- Add an Email Address -->
-    <h2>Add an Email Address</h2>
+    <h4>Add an Email Address</h4>
     <form method="post" action="{% url 'add_email' %}">
         {% csrf_token %}
         <input type="email" name="email" placeholder="Enter your email" required>
@@ -74,7 +64,7 @@
     </form>
 
     <!-- Remove an Email Address -->
-    <h2>Remove an Email Address</h2>
+    <h4>Remove an Email Address</h4>
     <form method="post" action="{% url 'remove_email' %}">
         {% csrf_token %}
         <input type="email" name="email" placeholder="Enter email to remove" required>
@@ -82,12 +72,10 @@
     </form>
 
     <!-- Display the current subscribers -->
-    <h2>Current Subscribers</h2>
-    <ul>
-        {% for email in email_list %}
-        <li>{{ email }}</li>
-        {% endfor %}
-    </ul>
+    <h4>Current Subscribers</h4>
+    <div id="subscriberCount">
+        Number of subscribers: {{ email_list.count }}
+    </div>
 
     <!-- Display success or error messages -->
     {% if messages %}
