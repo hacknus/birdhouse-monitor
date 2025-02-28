@@ -163,27 +163,27 @@
     </div>
 
     <!-- Zobrazenie streamu z kamery -->
-<div class="row row-border">
-    <h3 class="text-center mt-3"><b>Livestream</b></h3>
-    <div class="text-center mt-1 mb-3">
-        <div class="d-flex justify-content-center">
-            <!-- Enable Preview Checkbox -->
-            <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
-                   onchange="showStream(event)">
-            <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
+    <div class="row row-border">
+        <h3 class="text-center mt-3"><b>Livestream</b></h3>
+        <div class="text-center mt-1 mb-3">
+            <div class="d-flex justify-content-center">
+                <!-- Enable Preview Checkbox -->
+                <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
+                       onchange="showStream(event)">
+                <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
 
-            <!-- Button to toggle IR LED (Initially Disabled) -->
-            <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR OFF</button>
+                <!-- Button to toggle IR LED (Initially Disabled) -->
+                <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR OFF</button>
+            </div>
+            <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>
         </div>
-        <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>
+        <div class="mt-1 mb-2" id="imgPreview"></div>
+        <!-- Save Image Button -->
+        <div class="text-center mt-3">
+            <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
+            <p id="saveMessage" class="text-success mt-2"></p>
+        </div>
     </div>
-    <div class="mt-1 mb-2" id="imgPreview"></div>
-    <!-- Save Image Button -->
-    <div class="text-center mt-3">
-        <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
-        <p id="saveMessage" class="text-success mt-2"></p>
-    </div>
-</div>
 
     <select id="periodSelect">
         <option value="24h">24 Hours</option>
@@ -285,26 +285,28 @@
     });
 
     function renderTemperatureChart(data) {
-        // Check if we have any data to render
         if (!data || data.length === 0) {
             console.log('No data for temperature chart');
             return;
         }
 
-        // Format time for x-axis labels (you can adjust the format as needed)
-        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());  // Format time (HH:MM:SS)
-
-        // Prepare temperature data
+        // Convert timestamps to JavaScript Date objects
+        const timeLabels = data.map(entry => new Date(entry.timestamp));
         const temperatureData = data.map(entry => entry.temperature);
 
-        // Get the canvas element for the chart
+        // Get the canvas element
         const ctx = document.getElementById('temperatureChart').getContext('2d');
 
-        // Create or update the chart
-        new Chart(ctx, {
+        // Destroy existing chart before creating a new one
+        if (window.temperatureChart) {
+            window.temperatureChart.destroy();
+        }
+
+        // Create or update the chart with a time-based x-axis
+        window.temperatureChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: timeLabels,  // Use time as labels for x-axis
+                labels: timeLabels,
                 datasets: [{
                     label: 'Temperature (°C)',
                     data: temperatureData,
@@ -317,13 +319,21 @@
                 responsive: true,
                 scales: {
                     x: {
+                        type: 'time', // Use time-based scale
+                        time: {
+                            unit: 'minute', // Adjust unit (minute, hour, day) based on your data range
+                            tooltipFormat: 'HH:mm:ss', // Format for tooltips
+                            displayFormats: {
+                                minute: 'HH:mm', // Format for x-axis ticks
+                                hour: 'HH:mm'
+                            }
+                        },
                         title: {
                             display: true,
                             text: 'Time'
                         },
                         ticks: {
-                            autoSkip: true,  // Automatically skip some ticks if there are too many
-                            maxTicksLimit: 10 // Limit the number of x-axis ticks
+                            autoSkip: false // Ensure time gaps are visible
                         }
                     },
                     y: {
@@ -338,26 +348,28 @@
     }
 
     function renderHumidityChart(data) {
-        // Check if we have any data to render
         if (!data || data.length === 0) {
             console.log('No data for humidity chart');
             return;
         }
 
-        // Format time for x-axis labels (you can adjust the format as needed)
-        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());  // Format time (HH:MM:SS)
-
-        // Prepare humidity data
+        // Convert timestamps to JavaScript Date objects
+        const timeLabels = data.map(entry => new Date(entry.timestamp));
         const humidityData = data.map(entry => entry.humidity);
 
-        // Get the canvas element for the chart
+        // Get the canvas element
         const ctx = document.getElementById('humidityChart').getContext('2d');
 
-        // Create or update the chart
-        new Chart(ctx, {
+        // Destroy existing chart before creating a new one
+        if (window.humidityChart) {
+            window.humidityChart.destroy();
+        }
+
+        // Create or update the chart with a time-based x-axis
+        window.humidityChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: timeLabels,  // Use time as labels for x-axis
+                labels: timeLabels,
                 datasets: [{
                     label: 'Humidity (%)',
                     data: humidityData,
@@ -370,13 +382,21 @@
                 responsive: true,
                 scales: {
                     x: {
+                        type: 'time', // Use time-based scale
+                        time: {
+                            unit: 'minute',
+                            tooltipFormat: 'HH:mm:ss',
+                            displayFormats: {
+                                minute: 'HH:mm',
+                                hour: 'HH:mm'
+                            }
+                        },
                         title: {
                             display: true,
                             text: 'Time'
                         },
                         ticks: {
-                            autoSkip: true,  // Automatically skip some ticks if there are too many
-                            maxTicksLimit: 10 // Limit the number of x-axis ticks
+                            autoSkip: false // Ensure time gaps are visible
                         }
                     },
                     y: {
