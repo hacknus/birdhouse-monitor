@@ -274,77 +274,76 @@
 
     function renderChart(chartName, canvasId, label, data, color) {
         if (!data || data.length === 0) {
-            console.log(`No data for ${chartName} chart`);
+            console.warn(`No data for ${chartName} chart`);
             return;
         }
 
-        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
-        const chartData = data.map(entry => entry[chartName]); // "temperature" or "humidity"
-
-        const ctx = document.getElementById(canvasId).getContext('2d');
-
-        // Check if the chart already exists
-        if (window[chartName + 'Chart']) {
-            console.log(`Updating existing ${chartName} chart`);
-            updateChart(chartName, timeLabels, chartData);
-        } else {
-            console.log(`Creating new ${chartName} chart`);
-            window[chartName + 'Chart'] = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: timeLabels,
-                    datasets: [{
-                        label: `${label}`,
-                        data: chartData,
-                        borderColor: color,
-                        fill: false,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            title: {display: true, text: 'Time'},
-                            ticks: {autoSkip: true, maxTicksLimit: 10}
-                        },
-                        y: {title: {display: true, text: label}}
-                    }
-                }
-            });
+        const ctx = document.getElementById(canvasId);
+        if (!ctx) {
+            console.error(`Canvas with ID "${canvasId}" not found!`);
+            return;
         }
+
+        const ctx2d = ctx.getContext('2d');
+        if (!ctx2d) {
+            console.error(`Failed to get 2D context for ${canvasId}`);
+            return;
+        }
+
+        // Log before destroying the old chart
+        if (window[chartName + 'Chart']) {
+            console.log(`Destroying previous ${chartName} chart instance`);
+            window[chartName + 'Chart'].destroy();
+        }
+
+        console.log(`Creating new ${chartName} chart`);
+
+        window[chartName + 'Chart'] = new Chart(ctx2d, {
+            type: 'line',
+            data: {
+                labels: data.map(entry => new Date(entry.timestamp).toLocaleTimeString()),
+                datasets: [{
+                    label: `${label}`,
+                    data: data.map(entry => entry[chartName]),
+                    borderColor: color,
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {title: {display: true, text: 'Time'}},
+                    y: {title: {display: true, text: label}}
+                }
+            }
+        });
     }
 
     function updateChart(chartName, timeLabels, chartData) {
-        if (!window[chartName + 'Chart']) {
-            console.error(`${chartName} chart not initialized yet!`);
+        const chartInstance = window[chartName + 'Chart'];
+
+        if (!chartInstance || !chartInstance.data) {
+            console.error(`Error updating ${chartName} chart: Chart instance is invalid.`, chartInstance);
             return;
         }
 
-        // Ensure we update only if the chart instance exists
-        const chartInstance = window[chartName + 'Chart'];
-        if (chartInstance && chartInstance.data) {
-            chartInstance.data.labels = timeLabels;
-            chartInstance.data.datasets[0].data = chartData;
-            chartInstance.update();
-        } else {
-            console.error(`Error updating ${chartName} chart: Chart instance is invalid.`);
-        }
+        console.log(`Updating ${chartName} chart with new data:`, chartData);
+
+        chartInstance.data.labels = timeLabels;
+        chartInstance.data.datasets[0].data = chartData;
+        chartInstance.update();
     }
 
     // Function to safely clear charts before re-rendering
     function clearCharts() {
-        if (window.temperatureChart) {
-            console.log("Destroying temperature chart");
-            window.temperatureChart.destroy();
-            window.temperatureChart = null;
-        }
-
-        if (window.humidityChart) {
-            console.log("Destroying humidity chart");
-            window.humidityChart.destroy();
-            window.humidityChart = null;
-        }
+        ['temperatureChart', 'humidityChart'].forEach(chartName => {
+            if (window[chartName]) {
+                console.log(`Destroying ${chartName}`);
+                window[chartName].destroy();
+                window[chartName] = null;
+            }
+        });
     }
 </script>
 </body>
