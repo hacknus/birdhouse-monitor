@@ -7,6 +7,13 @@ WORKDIR /app
 # Set environment variable inside Docker
 ENV DOCKER_ENV=true
 
+RUN apt update && apt install -y --no-install-recommends gnupg
+
+RUN echo "deb http://archive.raspberrypi.org/debian/ bookworm main" > /etc/apt/sources.list.d/raspi.list \
+  && apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 82B129927FA3303E
+
+RUN apt update && apt -y upgrade
+
 # Install system dependencies (including libcap-dev for python-prctl)
 # Install dependencies for PiCamera and Redis
 RUN apt-get update && apt-get install -y \
