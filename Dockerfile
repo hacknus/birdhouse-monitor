@@ -15,10 +15,9 @@ RUN apt-get update && apt-get install -y \
     libopencv-dev \
     python3-opencv \
     redis-server \
+    libcamera-dev \
+    libcamera-tools \
     && rm -rf /var/lib/apt/lists/*
-
-# Install picamera2 via pip (this is the correct way to install PiCamera2 on Raspberry Pi)
-RUN pip install picamera2
 
 # Copy project files
 COPY backend/ /app/
