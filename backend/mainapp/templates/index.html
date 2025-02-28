@@ -338,30 +338,28 @@
     }
 
     function renderHumidityChart(data) {
-        // Check if we have any data to render
         if (!data || data.length === 0) {
             console.log('No data for humidity chart');
             return;
         }
 
-        // Format time for x-axis labels (you can adjust the format as needed)
-        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());  // Format time (HH:MM:SS)
+        // ✅ Ensure timestamps are Date objects
+        const timeLabels = data.map(entry => new Date(entry.timestamp));
+        const humidityData = data.map(entry => parseFloat(entry.humidity)); // Ensure numbers
 
-        // Prepare humidity data
-        const humidityData = data.map(entry => entry.humidity);
+        console.log("Time Labels:", timeLabels);
+        console.log("Humidity Data:", humidityData);
 
-        // Get the canvas element for the chart
         const ctx = document.getElementById('humidityChart').getContext('2d');
 
-        // Create or update the chart
         new Chart(ctx, {
             type: 'line',
             data: {
-                labels: timeLabels,  // Use time as labels for x-axis
+                labels: timeLabels,
                 datasets: [{
                     label: 'Humidity (%)',
                     data: humidityData,
-                    borderColor: 'rgba(153, 102, 255, 1)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     fill: false,
                     tension: 0.1
                 }]
@@ -372,22 +370,18 @@
                     x: {
                         type: 'time',
                         time: {
-                            unit: 'month'
+                            unit: 'minute' // Adjust if needed
                         },
                         adapters: {
-                            date: {} // ✅ Ensures correct date parsing
+                            date: {}
                         }
                     },
                     y: {
-                        scaleLabel: {
+                        title: {
                             display: true,
-                            labelString: 'Humidity [%]',
-                            fontFamily: "'Poppins', 'Roboto', 'Helvetica', 'Arial', sans-serif",
-                        },
-                        ticks: {
-                            fontFamily: "'Poppins', 'Roboto', 'Helvetica', 'Arial', sans-serif",
+                            text: 'Humidity (%)'
                         }
-                    },
+                    }
                 }
             }
         });
