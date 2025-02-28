@@ -5,3 +5,4 @@ flask
 adafruit-circuitpython-sht4x
 gunicorn
 djangorestframework
+opencv-python
