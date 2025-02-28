@@ -76,7 +76,7 @@
         // JavaScript function to toggle the IR LED and update the button label
         function toggleIRLED() {
             const button = document.getElementById("toggleIRButton");
-            const action = button.textContent === "IR OFF" ? "on" : "off"; // Determine if action is "on" or "off"
+            const action = button.textContent === "IR ON" ? "off" : "on"; // Determine if action is "on" or "off"
 
             // Send the request to toggle the IR LED
             fetch("/trigger_ir_led/", {
@@ -91,7 +91,7 @@
                 .then(data => {
                     if (data.success) {
                         // Update the button text depending on the action
-                        button.textContent = action === "on" ? "IR ON" : "IR OFF";
+                        button.textContent = action === "off" ? "IR OFF" : "IR ON";
                     } else {
                         console.error("Error toggling IR LED:", data.message);
                     }
