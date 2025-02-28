@@ -232,16 +232,26 @@
             fetch(`/get_sensor_data/?period=${selectedPeriod}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Fetched data:", data);
+                    console.log("Fetched data:", data);  // Log the raw data to the console
 
-                    // Update DOM with the fetched data
-                    document.getElementById('temperatureValue').textContent = data.temperature ? `${data.temperature} °C` : 'No data';
-                    document.getElementById('humidityValue').textContent = data.humidity ? `${data.humidity} %` : 'No data';
-                    document.getElementById('motionStatus').textContent = data.motion_triggered !== undefined ? (data.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
+                    if (data && data.length > 0) {
+                        const latestData = data[data.length - 1]; // Get the most recent data point
 
-                    // You can render charts or other UI updates based on the fetched data
-                    renderTemperatureChart(data.temperature);
-                    renderHumidityChart(data.humidity);
+                        // Update DOM with the latest data
+                        document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
+                        document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
+                        document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
+
+                        // You can render charts or other UI updates based on the fetched data
+                        renderTemperatureChart(data.map(entry => entry.temperature));
+                        renderHumidityChart(data.map(entry => entry.humidity));
+                    } else {
+                        console.log('No data available');
+                        // Handle the case where there's no data
+                        document.getElementById('temperatureValue').textContent = 'No data';
+                        document.getElementById('humidityValue').textContent = 'No data';
+                        document.getElementById('motionStatus').textContent = 'No data';
+                    }
                 })
                 .catch(error => {
                     console.error('Error fetching sensor data:', error);
