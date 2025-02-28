@@ -117,7 +117,7 @@ ul li {
     background-color: #0056b3;
 }
 
-/* Ensure the navbar items have proper alignment and full-width button behavior */
+/* Ensure the navbar items have proper alignment and the button width is correct */
 .navbar-nav .nav-item .nav-link {
     display: flex;  /* Ensures the icon and text are aligned horizontally */
     align-items: center;  /* Vertically center the content */
@@ -125,16 +125,14 @@ ul li {
     background-color: transparent !important;  /* Transparent background by default */
     border-radius: .75rem;  /* Rounded corners */
     transition: all 0.3s ease;  /* Smooth transition for hover effect */
-    padding: 10px 15px;  /* Add padding for the content and hover area */
-    width: 100%;  /* Ensure the navbar link takes the full width of the parent */
-    box-sizing: border-box;  /* Ensures padding doesn't affect the width calculation */
+    padding: 10px 15px;  /* Add padding for better hover effect */
+    width: auto;  /* Allow the width to adjust based on the content */
 }
 
 /* Navbar button hover effects */
 .navbar-nav .nav-item .nav-link:hover {
     color: white !important;  /* Text turns white on hover */
     background-color: black !important;  /* Background turns black on hover */
-    border-radius: .75rem !important;  /* Keep rounded corners on hover */
 }
 
 /* Make sure the icon is black by default */
@@ -150,19 +148,22 @@ ul li {
     filter: invert(1);  /* Invert icon color to white */
 }
 
-/* Ensure that navbar links span the full height of their parent container */
-.navbar-nav .nav-item {
-    display: flex;  /* Allow the item to grow and fill available height */
-    align-items: center;  /* Center content vertically */
-}
-
-/* Optional: Adjust the navbar container to ensure the navbar occupies the full height */
-.navbar {
-    height: 100%;
-}
-
-/* Optional: Adjust padding and margin for navbar items */
+/* Optional: Adjust padding for navbar items for better hover effect */
 .navbar-nav .nav-item .nav-link {
     padding-left: 12px;
     padding-right: 12px;
+}
+
+/* Ensure that the navbar link spans the whole button */
+.navbar-nav .nav-item .nav-link {
+    display: inline-flex;  /* Allow the link to expand to the full content size */
+    align-items: center;
+    justify-content: center;  /* Center the content within the button */
+}
+
+/* Additional styling to ensure the navbar button is properly sized on hover */
+.navbar-nav .nav-item .nav-link:hover {
+    background-color: black !important;
+    color: white !important;
+    border-radius: .75rem !important;
 }
