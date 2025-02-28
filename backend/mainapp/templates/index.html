@@ -5,14 +5,27 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
+    <!-- Load FontAwesome Icons -->
     <link rel="stylesheet" type="text/css"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Load Bootstrap CSS -->
     <link rel="stylesheet" type="text/css"
           href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css">
+
+    <!-- Load Custom Styles after Bootstrap -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" media="screen">
+
+    <!-- Load Print Styles -->
     <link rel="stylesheet" type="text/css" href="{% static 'css/print.css' %}" media="print">
+
+    <!-- Load Bootstrap JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Load jQuery (optional for Bootstrap components) -->
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+    <!-- Load Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         function createPreview() {
@@ -126,7 +139,8 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'newsletter' %}">
-                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter" width="32"
+                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter"
+                             width="32"
                              height="32">
                         Newsletter
                     </a>
