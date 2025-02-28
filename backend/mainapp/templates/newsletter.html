@@ -23,31 +23,22 @@
             <ul class="navbar-nav">
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'index' %}">
-                        <img class="rounded nav-icon" src="{% static 'img/home.png' %}" alt="Home" width="32"
-                             height="32">
-                        Home
+                        <img class="rounded nav-icon" src="{% static 'img/home.png' %}" alt="Home" width="32" height="32"> Home
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'gallery' %}">
-                        <img class="rounded nav-icon" src="{% static 'img/gallery.png' %}" alt="Gallery" width="32"
-                             height="32">
-                        Gallery
+                        <img class="rounded nav-icon" src="{% static 'img/gallery.png' %}" alt="Gallery" width="32" height="32"> Gallery
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'newsletter' %}">
-                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter"
-                             width="32"
-                             height="32">
-                        Newsletter
+                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter" width="32" height="32"> Newsletter
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="#about">
-                        <img class="rounded nav-icon" src="{% static 'img/about.png' %}" alt="About" width="32"
-                             height="32">
-                        About
+                        <img class="rounded nav-icon" src="{% static 'img/about.png' %}" alt="About" width="32" height="32"> About
                     </a>
                 </li>
             </ul>
@@ -55,10 +46,12 @@
         <h3 class="text-center mt-3"><b>🐣</b></h3>
     </div>
 </nav>
-<!-- Form for adding an email address -->
+
+<!-- Newsletter Form -->
 <div class="newsletter-container">
     <h1>Newsletter Subscription</h1>
 
+    <!-- Subscribe Form -->
     <form id="newsletterForm" method="POST">
         {% csrf_token %}
         <div class="form-group">
@@ -68,6 +61,7 @@
         <button type="submit">Subscribe</button>
     </form>
 
+    <!-- Remove Subscriber Form -->
     <form id="removeNewsletterForm" method="POST">
         {% csrf_token %}
         <div class="form-group">
@@ -77,9 +71,10 @@
         <button type="submit">Remove</button>
     </form>
 
+    <!-- Subscriber Count -->
     <h2>Subscribers</h2>
     <div id="subscriberCount">
-        {{ num_subscribers }}
+        Number of subscribers: {{ num_subscribers }}
     </div>
 
 </div>
@@ -93,20 +88,18 @@
 </ul>
 {% endif %}
 
+<!-- Footer -->
 <footer class="bg-dark text-center text-white" id="about">
     <div class="container p-4">
         <h5>Social media</h5>
         <section class="mb-4">
-            <a class="btn btn-outline-light btn-floating m-1" href="https://github.com/hacknus/birdhouse-monitor"
-               role="button">
+            <a class="btn btn-outline-light btn-floating m-1" href="https://github.com/hacknus/birdhouse-monitor" role="button">
                 <i class="fa fa-github"></i>
             </a>
         </section>
         <h5>About us</h5>
         <section class="mb-4">
-            Vögeli 🐣 is an open-source project that uses a Raspberry Pi to monitor your birdhouse. The codebase is
-            inspired by <a href="https://github.com/markub3327/AIGarden" target="_blank" rel="noopener noreferrer">AIGarden</a>
-            (Martin Kubovčík).
+            Vögeli 🐣 is an open-source project that uses a Raspberry Pi to monitor your birdhouse. The codebase is inspired by <a href="https://github.com/markub3327/AIGarden" target="_blank" rel="noopener noreferrer">AIGarden</a> (Martin Kubovčík).
         </section>
     </div>
     <div class="text-center p-3 my-footer">
