@@ -117,33 +117,31 @@ ul li {
     background-color: #0056b3;
 }
 
-/* Ensure the navbar items have proper alignment and the button width is correct */
-.navbar-nav .nav-item .nav-link {
-    display: flex;  /* Ensures the icon and text are aligned horizontally */
-    align-items: center;  /* Vertically center the content */
-    color: black !important;  /* Set the text color to black */
-    background-color: transparent !important;  /* Transparent background by default */
-    border-radius: .75rem;  /* Rounded corners */
-    transition: all 0.3s ease;  /* Smooth transition for hover effect */
-    width: auto;  /* Allow the width to adjust based on the content */
-}
-
-/* Navbar button hover effects */
-.navbar-nav .nav-item .nav-link:hover {
-    color: white !important;  /* Text turns white on hover */
-    background-color: black !important;  /* Background turns black on hover */
-}
-
-/* Make sure the icon is black by default */
+/* Default icon styles */
 .navbar-nav .nav-item .nav-link .nav-icon {
-    filter: invert(0);  /* Default icon color (black) */
-    margin-right: 8px;  /* Add space between icon and text */
-    width: 24px;  /* Set the icon size */
-    height: 24px;  /* Set the icon size */
+    transition: filter 0.3s ease; /* smooth transition */
 }
 
-/* Optional: Reduce the padding for the navbar items (optional adjustment) */
+/* On hover, invert the image */
+.navbar-nav .nav-item .nav-link:hover .nav-icon {
+    filter: invert(1); /* Inverts the icon color */
+}
+
+/* Ensure the navbar items are vertically centered */
 .navbar-nav .nav-item .nav-link {
-    padding-left: 12px;
-    padding-right: 12px;
+    display: flex;
+    align-items: center; /* Center both the icon and the text vertically */
+    padding-left: 10px;   /* Add space before the icon */
+    padding-right: 10px;  /* Optional: Add space after the icon */
+}
+
+/* Add space between the icon and the text */
+.navbar-nav .nav-item .nav-link .nav-icon {
+    margin-right: 8px; /* Increase space between icon and text */
+}
+
+/* Optionally, you can adjust the size of the icons */
+.navbar-nav .nav-item .nav-link .nav-icon {
+    width: 32px;
+    height: 32px;
 }
