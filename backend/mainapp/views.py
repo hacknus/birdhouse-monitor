@@ -173,6 +173,7 @@ def write_email_list(email_list):
         for email in email_list:
             writer.writerow([email])
 
+
 # Add an email to the list
 def add_email(request):
     if request.method == 'POST':
@@ -224,7 +225,7 @@ def newsletter_view(request):
             subscribers = list(reader)
     except FileNotFoundError:
         pass  # File does not exist yet, no subscribers
-    print(subscribers)
+
     # Pass the number of subscribers to the template
     return render(request, 'newsletter.html', {
         'subscriber_count': len(subscribers),
