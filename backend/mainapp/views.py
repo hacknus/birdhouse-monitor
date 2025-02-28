@@ -148,6 +148,7 @@ def get_sensor_data(request):
         }
         for entry in data
     ]
+    print(response_data)
 
     return JsonResponse(response_data, safe=False)
 
