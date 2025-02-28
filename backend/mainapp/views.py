@@ -13,11 +13,14 @@ from datetime import timedelta
 from django.utils import timezone
 from django.http import JsonResponse
 from .models import SensorData
-
+import csv
+from django.shortcuts import render, redirect
+from django.contrib import messages
 from picamera2 import Picamera2
 
 from .models import SensorData
 import mainapp.sensor_acquisition
+import mainapp.interrupt
 
 # init camera
 picam2 = Picamera2()
@@ -147,3 +150,71 @@ def get_sensor_data(request):
     ]
 
     return JsonResponse(response_data, safe=False)
+
+
+# Path to the CSV file where emails are stored
+CSV_FILE_PATH = 'newsletter_subscribers.csv'
+
+
+# Read the current list of emails from the CSV file
+def read_email_list():
+    try:
+        with open(CSV_FILE_PATH, mode='r') as file:
+            reader = csv.reader(file)
+            return [row[0] for row in reader]
+    except FileNotFoundError:
+        return []
+
+
+# Write the email list back to the CSV file
+def write_email_list(email_list):
+    with open(CSV_FILE_PATH, mode='w') as file:
+        writer = csv.writer(file)
+        for email in email_list:
+            writer.writerow([email])
+
+
+# View for the newsletter page
+def newsletter(request):
+    # Get the current email list to display it on the page
+    email_list = read_email_list()
+    return render(request, 'newsletter.html', {'email_list': email_list})
+
+
+# Add an email to the list
+def add_email(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        # Check if the email is valid
+        if email and email not in read_email_list():
+            email_list = read_email_list()
+            email_list.append(email)
+            write_email_list(email_list)
+
+            # Success message
+            messages.success(request, f"Email {email} has been added to the newsletter list.")
+        else:
+            # Error message if email is empty or already exists
+            messages.error(request, f"Invalid email or email already in the list: {email}")
+
+        return redirect('newsletter')
+
+
+# Remove an email from the list
+def remove_email(request):
+    if request.method == 'POST':
+        email = request.POST.get('email')
+
+        email_list = read_email_list()
+        if email in email_list:
+            email_list.remove(email)
+            write_email_list(email_list)
+
+            # Success message
+            messages.success(request, f"Email {email} has been removed from the newsletter list.")
+        else:
+            # Error message if email is not found
+            messages.error(request, f"Email {email} is not in the list.")
+
+        return redirect('newsletter')
