@@ -8,7 +8,15 @@ WORKDIR /app
 ENV DOCKER_ENV=true
 
 # Install system dependencies (including libcap-dev for python-prctl)
-RUN apt-get update && apt-get install -y libcap-dev && rm -rf /var/lib/apt/lists/*
+# Install dependencies for PiCamera and Redis
+RUN apt-get update && apt-get install -y \
+    libjpeg-dev \
+    libcap-dev \
+    libopencv-dev \
+    python3-opencv \
+    python3-picamera2 \
+    redis-server \
+    && rm -rf /var/lib/apt/lists/*
 
 # Copy project files
 COPY backend/ /app/

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Gallery</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+
+<body>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'index' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/home.png' %}" alt="Home" width="32"
+                             height="32">
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'gallery' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/gallery.png' %}" alt="Gallery" width="32"
+                             height="32">
+                        Gallery
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'newsletter' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter" width="32"
+                             height="32">
+                        Newsletter
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">
+                        <img class="rounded nav-icon" src="{% static 'img/about.png' %}" alt="About" width="32"
+                             height="32">
+                        About
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <h3 class="text-center mt-3"><b>🐣</b></h3>
+    </div>
+</nav>
+
+<!-- Gallery Container -->
+<div class="container mt-4">
+    <h3 class="text-center mt-3"><b>Image Gallery</b></h3>
+    <div class="row">
+        {% for image in images %}
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{{ image.url }}" class="card-img-top" alt="Gallery Image"
+                     onclick="openModal('{{ image.url }}')">
+                <div class="card-body text-center">
+                    <a href="{{ image.url }}" download class="btn btn-primary">
+                        Download <i class="fa fa-download"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <p class="text-center">No images available.</p>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Image Preview Modal -->
+<div id="imageModal" class="modal" onclick="closeModal()">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImage">
+    <a id="downloadLink" class="download-btn" download>
+        Download <i class="fa fa-download"></i>
+    </a>
+</div>
+
+<!-- JavaScript -->
+<script>
+    function openModal(imageSrc) {
+        var modal = document.getElementById("imageModal");
+        var modalImg = document.getElementById("modalImage");
+        var downloadBtn = document.getElementById("downloadLink");
+
+        modal.style.display = "flex";
+        modalImg.src = imageSrc;
+        downloadBtn.href = imageSrc;
+    }
+
+    function closeModal() {
+        document.getElementById("imageModal").style.display = "none";
+    }
+</script>
+
+<footer class="bg-dark text-center text-white" id="about">
+    <div class="container p-4">
+        <h5>Social media</h5>
+        <section class="mb-4">
+            <a class="btn btn-outline-light btn-floating m-1" href="https://github.com/hacknus/birdhouse-monitor"
+               role="button">
+                <i class="fa fa-github"></i>
+            </a>
+        </section>
+        <h5>About us</h5>
+        <section class="mb-4">
+            Vögeli 🐣 is an open-source project that uses a Raspberry Pi to monitor your birdhouse. The codebase is
+            inspired by <a href="https://github.com/markub3327/AIGarden" target="_blank" rel="noopener noreferrer">AIGarden</a>
+            (Martin Kubovčík).
+        </section>
+    </div>
+    <div class="text-center p-3 my-footer">
+        © 2025 Copyright: Linus Leo Stöckli
+    </div>
+</footer>
+</body>
+</html>

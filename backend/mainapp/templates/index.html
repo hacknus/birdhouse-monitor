@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Vögeli</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <!-- Load FontAwesome Icons -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- Load Bootstrap CSS -->
+    <link rel="stylesheet" type="text/css"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css">
+
+    <!-- Load Custom Styles after Bootstrap -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}" media="screen">
+
+    <!-- Load Print Styles -->
+    <link rel="stylesheet" type="text/css" href="{% static 'css/print.css' %}" media="print">
+
+    <!-- Load Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Load jQuery (optional for Bootstrap components) -->
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+
+    <!-- Load Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        function createPreview() {
+            img = document.createElement("IMG");
+            img.className += "mx-auto d-block rounded cam-stream";    // Zobraz IMG ako block a centruj na stred stranky
+            img.src = "{% url 'video_feed' %}";
+            return img;
+        }
+
+        $(document).ready(function () {
+            enablePreview = document.getElementById("enablePreview");
+            if (enablePreview.checked) {
+                imgPreview.appendChild(
+                    createPreview()
+                );
+            }
+        });
+
+        function togglePreviewLabel() {
+            var checkbox = document.getElementById("enablePreview");
+            var label = document.querySelector("label[for='enablePreview']");
+
+            if (checkbox.checked) {
+                label.textContent = "Disable preview";
+            } else {
+                label.textContent = "Enable preview";
+            }
+        }
+
+        function showStream(e) {
+            enablePreview = e.target;
+            imgPreview = document.getElementById("imgPreview");
+            saveImageBtn = document.getElementById("saveImageBtn");
+            toggleIRButton = document.getElementById("toggleIRButton");
+
+            if (enablePreview.checked) {
+                imgPreview.appendChild(createPreview());
+                saveImageBtn.disabled = false;  // Enable button
+                toggleIRButton.disabled = false;  // Enable the IR button
+
+            } else {
+                imgPreview.innerHTML = "";  // Clear preview
+                saveImageBtn.disabled = true;  // Disable button
+                toggleIRButton.disabled = true;  // Disable the IR button
+
+            }
+
+            // Also update the label text
+            togglePreviewLabel();
+        }
+
+        // Ensure the label updates and the stream shows when toggling
+        document.getElementById("enablePreview").addEventListener("change", showStream);
+
+        // Function to get CSRF token from the meta tag
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        // JavaScript function to toggle the IR LED and update the button label
+        function toggleIRLED() {
+            const button = document.getElementById("toggleIRButton");
+            const action = button.textContent === "IR ON" ? "off" : "on"; // Determine if action is "on" or "off"
+
+            // Send the request to toggle the IR LED
+            fetch("/trigger_ir_led/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCSRFToken(), // Get the CSRF token from the meta tag
+                    "Content-Type": "application/json"  // Ensure the content type is application/json
+                },
+                body: JSON.stringify({action: action})  // Send the action ("on" or "off")
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update the button text depending on the action
+                        button.textContent = action === "off" ? "IR OFF" : "IR ON";
+                    } else {
+                        console.error("Error toggling IR LED:", data.message);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
+        }
+
+    </script>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+</head>
+
+<body>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'index' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/home.png' %}" alt="Home" width="32"
+                             height="32">
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'gallery' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/gallery.png' %}" alt="Gallery" width="32"
+                             height="32">
+                        Gallery
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'newsletter' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter"
+                             width="32" height="32">
+                        Newsletter
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">
+                        <img class="rounded nav-icon" src="{% static 'img/about.png' %}" alt="About" width="32"
+                             height="32">
+                        About
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <h3 class="text-center mt-3"><b>🐣</b></h3>
+    </div>
+</nav>
+<div class="container mt-3 mb-4">
+    <!-- Uvodna sprava -->
+    <div class="row text-center">
+        <p>Hoi Vögeli.</p>
+    </div>
+
+    <!-- Zobrazenie streamu z kamery -->
+<div class="row row-border">
+    <h3 class="text-center mt-3"><b>Livestream</b></h3>
+    <div class="text-center mt-1 mb-3">
+        <div class="d-flex justify-content-center">
+            <!-- Enable Preview Checkbox -->
+            <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
+                   onchange="showStream(event)">
+            <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
+
+            <!-- Button to toggle IR LED (Initially Disabled) -->
+            <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR OFF</button>
+        </div>
+        <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>
+    </div>
+    <div class="mt-1 mb-2" id="imgPreview"></div>
+    <!-- Save Image Button -->
+    <div class="text-center mt-3">
+        <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
+        <p id="saveMessage" class="text-success mt-2"></p>
+    </div>
+</div>
+
+    <select id="periodSelect">
+        <option value="24h">24 Hours</option>
+        <option value="7d">7 Days</option>
+        <option value="1m">1 Month</option>
+        <option value="3m">3 Months</option>
+        <option value="all">All Time</option>
+    </select>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <h4>Temperature</h4>
+            <p id="temperatureValue">Loading...</p>
+            <canvas id="temperatureChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h4>Humidity</h4>
+            <p id="humidityValue">Loading...</p>
+            <canvas id="humidityChart"></canvas>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <h4>Motion Sensor</h4>
+            <p id="motionStatus">Loading...</p>
+        </div>
+    </div>
+
+</div>
+
+<footer class="bg-dark text-center text-white" id="about">
+    <div class="container p-4">
+        <h5>Social media</h5>
+        <section class="mb-4">
+            <a class="btn btn-outline-light btn-floating m-1" href="https://github.com/hacknus/birdhouse-monitor"
+               role="button">
+                <i class="fa fa-github"></i>
+            </a>
+        </section>
+        <h5>About us</h5>
+        <section class="mb-4">
+            Vögeli 🐣 is an open-source project that uses a Raspberry Pi to monitor your birdhouse. The codebase is
+            inspired by <a href="https://github.com/markub3327/AIGarden" target="_blank" rel="noopener noreferrer">AIGarden</a>
+            (Martin Kubovčík).
+        </section>
+    </div>
+    <div class="text-center p-3 my-footer">
+        © 2025 Copyright: Linus Leo Stöckli
+    </div>
+</footer>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const periodSelect = document.getElementById('periodSelect');  // Get the period select element
+        let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
+
+        // Function to fetch data based on the selected period
+        function fetchData() {
+            fetch(`/get_sensor_data/?period=${selectedPeriod}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Fetched data:", data);  // Log the raw data to the console
+
+                    if (data && data.length > 0) {
+                        const latestData = data[data.length - 1]; // Get the most recent data point
+
+                        // Update DOM with the latest data
+                        document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
+                        document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
+                        document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
+
+                        // Render charts with time on the x-axis
+                        renderTemperatureChart(data);
+                        renderHumidityChart(data);
+                    } else {
+                        console.log('No data available');
+                        // Handle the case where there's no data
+                        document.getElementById('temperatureValue').textContent = 'No data';
+                        document.getElementById('humidityValue').textContent = 'No data';
+                        document.getElementById('motionStatus').textContent = 'No data';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching sensor data:', error);
+                });
+        }
+
+        // Function to handle period selection change
+        periodSelect.addEventListener('change', function () {
+            selectedPeriod = periodSelect.value;  // Update the selected period when the user changes it
+            fetchData();  // Immediately fetch the data based on the new period
+        });
+
+        // Initial data fetch on page load
+        fetchData();
+
+        // Periodically fetch the data every 10 seconds (adjust the interval as needed)
+        setInterval(fetchData, 10000);  // Fetch data every 10 seconds
+    });
+
+    function renderTemperatureChart(data) {
+        // Check if we have any data to render
+        if (!data || data.length === 0) {
+            console.log('No data for temperature chart');
+            return;
+        }
+
+        // Format time for x-axis labels (you can adjust the format as needed)
+        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());  // Format time (HH:MM:SS)
+
+        // Prepare temperature data
+        const temperatureData = data.map(entry => entry.temperature);
+
+        // Get the canvas element for the chart
+        const ctx = document.getElementById('temperatureChart').getContext('2d');
+
+        // Create or update the chart
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,  // Use time as labels for x-axis
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: temperatureData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        },
+                        ticks: {
+                            autoSkip: true,  // Automatically skip some ticks if there are too many
+                            maxTicksLimit: 10 // Limit the number of x-axis ticks
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Temperature (°C)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function renderHumidityChart(data) {
+        // Check if we have any data to render
+        if (!data || data.length === 0) {
+            console.log('No data for humidity chart');
+            return;
+        }
+
+        // Format time for x-axis labels (you can adjust the format as needed)
+        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());  // Format time (HH:MM:SS)
+
+        // Prepare humidity data
+        const humidityData = data.map(entry => entry.humidity);
+
+        // Get the canvas element for the chart
+        const ctx = document.getElementById('humidityChart').getContext('2d');
+
+        // Create or update the chart
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,  // Use time as labels for x-axis
+                datasets: [{
+                    label: 'Humidity (%)',
+                    data: humidityData,
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        },
+                        ticks: {
+                            autoSkip: true,  // Automatically skip some ticks if there are too many
+                            maxTicksLimit: 10 // Limit the number of x-axis ticks
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Humidity (%)'
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    // Function to clear previous charts (for when new data is loaded)
+    function clearCharts() {
+        const ctxTemperature = document.getElementById('temperatureChart').getContext('2d');
+        const ctxHumidity = document.getElementById('humidityChart').getContext('2d');
+
+        if (window.temperatureChart) window.temperatureChart.destroy();
+        if (window.humidityChart) window.humidityChart.destroy();
+    }
+</script>
+</body>
+</html>
