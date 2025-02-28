@@ -117,65 +117,64 @@ ul li {
     background-color: #0056b3;
 }
 
-/* Ensure the navbar spans the entire width of the page and stays at the top */
-.navbar {
-    width: 100%; /* Ensure the navbar takes the full width of the page */
-    position: fixed; /* Position the navbar at the top of the screen */
-    top: 0;
-    left: 0;
-    background-color: white; /* Set the background color of the navbar */
-    z-index: 1000; /* Ensure it stays on top of other content */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Add shadow for better visibility */
-}
-
-/* Ensure navbar items are stacked vertically */
+/* Ensure the navbar items have proper alignment and full-width button behavior */
 .navbar-nav {
     display: flex;
     flex-direction: column; /* Stack items vertically */
-    padding: 0; /* Remove extra padding */
+    padding: 0; /* Ensure no extra padding */
     margin: 0; /* Remove margin to avoid unwanted spacing */
     width: 100%; /* Ensure the navbar takes the full width */
 }
 
-/* Each navbar item takes full width */
 .navbar-nav .nav-item {
     width: 100%; /* Ensure each nav item takes full width */
 }
 
-/* Style for navbar links */
+/* Ensure the navbar links behave properly and hover takes the full area */
 .navbar-nav .nav-item .nav-link {
-    display: flex; /* Align icon and text horizontally */
-    align-items: center; /* Vertically center the content */
-    color: black !important; /* Set the text color to black */
-    background-color: transparent !important; /* Transparent background by default */
-    border-radius: .75rem; /* Rounded corners */
-    transition: all 0.3s ease; /* Smooth transition for hover effect */
-    padding: 10px 15px; /* Padding for each navbar item */
-    width: 100%; /* Make navbar links take up full width */
-    box-sizing: border-box; /* Ensures padding doesn't affect the width calculation */
+    display: flex;  /* Ensures the icon and text are aligned horizontally */
+    align-items: center;  /* Vertically center the content */
+    color: black !important;  /* Set the text color to black */
+    background-color: transparent !important;  /* Transparent background by default */
+    border-radius: .75rem;  /* Rounded corners */
+    transition: all 0.3s ease;  /* Smooth transition for hover effect */
+    padding: 10px 15px;  /* Add padding for the content and hover area */
+    width: 100%;  /* Ensure the navbar link takes the full width of the parent */
+    box-sizing: border-box;  /* Ensures padding doesn't affect the width calculation */
 }
 
-/* Navbar link hover effects */
+/* Navbar button hover effects */
 .navbar-nav .nav-item .nav-link:hover {
-    color: white !important; /* Text turns white on hover */
-    background-color: black !important; /* Background turns black on hover */
-    border-radius: .75rem !important; /* Keep rounded corners on hover */
+    color: white !important;  /* Text turns white on hover */
+    background-color: black !important;  /* Background turns black on hover */
+    border-radius: .75rem !important;  /* Keep rounded corners on hover */
 }
 
-/* Ensure the icons inside the navbar are black by default */
+/* Make sure the icon is black by default */
 .navbar-nav .nav-item .nav-link .nav-icon {
-    filter: invert(0); /* Default icon color (black) */
-    margin-right: 8px; /* Add space between icon and text */
-    width: 24px; /* Set the icon size */
-    height: 24px; /* Set the icon size */
+    filter: invert(0);  /* Default icon color (black) */
+    margin-right: 8px;  /* Add space between icon and text */
+    width: 24px;  /* Set the icon size */
+    height: 24px;  /* Set the icon size */
 }
 
 /* On hover, invert the icon color */
 .navbar-nav .nav-item .nav-link:hover .nav-icon {
-    filter: invert(1); /* Invert icon color to white */
+    filter: invert(1);  /* Invert icon color to white */
 }
 
-/* Optional: Adjust padding for navbar links */
+/* Ensure that navbar links span the full height of their parent container */
+.navbar-nav .nav-item {
+    display: flex;  /* Allow the item to grow and fill available height */
+    align-items: center;  /* Center content vertically */
+}
+
+/* Optional: Adjust the navbar container to ensure the navbar occupies the full height */
+.navbar {
+    height: 100%;
+}
+
+/* Optional: Adjust padding and margin for navbar items */
 .navbar-nav .nav-item .nav-link {
     padding-left: 12px;
     padding-right: 12px;
