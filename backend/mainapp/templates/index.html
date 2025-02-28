@@ -284,91 +284,103 @@
         setInterval(fetchData, 10000);  // Fetch data every 10 seconds
     });
 
-    function renderTemperatureChart(temperatureData) {
-        // Check if we have any data to render
-        if (!temperatureData || temperatureData.length === 0) {
-            console.log('No data for temperature chart');
-            return;
-        }
+    function renderTemperatureChart(temperatureData, timestamps) {
+    // Check if we have any data to render
+    if (!temperatureData || temperatureData.length === 0) {
+        console.log('No data for temperature chart');
+        return;
+    }
 
-        // Get the canvas element for the chart
-        const ctx = document.getElementById('temperatureChart').getContext('2d');
+    // Get the canvas element for the chart
+    const ctx = document.getElementById('temperatureChart').getContext('2d');
 
-        // Create or update the chart
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: temperatureData.map((_, index) => index + 1),  // Create dummy labels like [1, 2, 3,...]
-                datasets: [{
-                    label: 'Temperature (°C)',
-                    data: temperatureData,
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    fill: false,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Data Points'
-                        }
+    // Create or update the chart
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timestamps,  // Use timestamps as x-axis labels
+            datasets: [{
+                label: 'Temperature (°C)',
+                data: temperatureData,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
                     },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Temperature (°C)'
-                        }
+                    type: 'time', // This tells Chart.js to treat the x-axis as time
+                    time: {
+                        unit: 'minute', // You can adjust this based on your data
+                        tooltipFormat: 'll HH:mm', // Format for tooltips
+                        unitStepSize: 1
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Temperature (°C)'
                     }
                 }
             }
-        });
+        }
+    });
+}
+
+function renderHumidityChart(humidityData, timestamps) {
+    // Check if we have any data to render
+    if (!humidityData || humidityData.length === 0) {
+        console.log('No data for humidity chart');
+        return;
     }
 
-    function renderHumidityChart(humidityData) {
-        // Check if we have any data to render
-        if (!humidityData || humidityData.length === 0) {
-            console.log('No data for humidity chart');
-            return;
-        }
+    // Get the canvas element for the chart
+    const ctx = document.getElementById('humidityChart').getContext('2d');
 
-        // Get the canvas element for the chart
-        const ctx = document.getElementById('humidityChart').getContext('2d');
-
-        // Create or update the chart
-        new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: humidityData.map((_, index) => index + 1),  // Create dummy labels like [1, 2, 3,...]
-                datasets: [{
-                    label: 'Humidity (%)',
-                    data: humidityData,
-                    borderColor: 'rgba(153, 102, 255, 1)',
-                    fill: false,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        title: {
-                            display: true,
-                            text: 'Data Points'
-                        }
+    // Create or update the chart
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timestamps,  // Use timestamps as x-axis labels
+            datasets: [{
+                label: 'Humidity (%)',
+                data: humidityData,
+                borderColor: 'rgba(153, 102, 255, 1)',
+                fill: false,
+                tension: 0.1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Time'
                     },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Humidity (%)'
-                        }
+                    type: 'time', // This tells Chart.js to treat the x-axis as time
+                    time: {
+                        unit: 'minute', // You can adjust this based on your data
+                        tooltipFormat: 'll HH:mm', // Format for tooltips
+                        unitStepSize: 1
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Humidity (%)'
                     }
                 }
             }
-        });
-    }
+        }
+    });
+}
 
     // Function to clear previous charts (for when new data is loaded)
     function clearCharts() {
