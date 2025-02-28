@@ -55,17 +55,26 @@
         <h3 class="text-center mt-3"><b>🐣</b></h3>
     </div>
 </nav>
-
 <!-- Form for adding an email address -->
 <div class="newsletter-container">
     <h1>Newsletter Subscription</h1>
 
     <form id="newsletterForm" method="POST">
+        {% csrf_token %}
         <div class="form-group">
             <label for="email">Email Address:</label>
             <input type="email" id="email" name="email" placeholder="Enter your email" required>
         </div>
         <button type="submit">Subscribe</button>
+    </form>
+
+    <form id="removeNewsletterForm" method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="removeEmail">Remove Email Address:</label>
+            <input type="email" id="removeEmail" name="removeEmail" placeholder="Enter email to remove" required>
+        </div>
+        <button type="submit">Remove</button>
     </form>
 
     <h2>Subscribers</h2>
