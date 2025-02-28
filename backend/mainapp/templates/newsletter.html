@@ -77,16 +77,17 @@
         Number of subscribers: {{ num_subscribers }}
     </div>
 
+    <!-- Messages -->
+    {% if messages %}
+        <div class="alert-container">
+            {% for message in messages %}
+                <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
 </div>
-
-<!-- Display messages -->
-{% if messages %}
-<ul>
-    {% for message in messages %}
-    <li>{{ message }}</li>
-    {% endfor %}
-</ul>
-{% endif %}
 
 <!-- Footer -->
 <footer class="bg-dark text-center text-white" id="about">
