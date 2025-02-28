@@ -44,19 +44,25 @@ input[type="email"] {
     font-size: 16px;
 }
 
+/* General Button Styles */
 button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
+    width: 100%; /* Make the buttons take up full width of the container */
+    padding: 10px; /* Same padding for all buttons */
+    font-size: 16px; /* Consistent font size */
     border-radius: 4px;
+    border: none;
     cursor: pointer;
-    font-size: 16px;
     transition: background-color 0.3s ease;
-    margin-bottom: 10px; /* Add space between buttons */
 }
 
+/* Specific Button Styling for IR and Start Preview */
+#irButton, #enablePreview {
+    width: auto; /* Allow the button to adjust its size based on the content */
+    padding: 10px 20px; /* Adjust the padding to fit the content */
+    font-size: 16px; /* Consistent font size */
+}
+
+/* Example of button hover states */
 button:hover {
     background-color: #45a049;
 }
@@ -93,8 +99,7 @@ ul li {
 
 /* Navbar styles */
 .navbar-nav .nav-item .nav-link {
-    display: flex;
-    align-items: center; /* Center both the icon and the text vertically */
+    display: block; /* Revert to block instead of flex for the default layout */
     padding-left: 10px;
     padding-right: 10px;
 }
@@ -103,4 +108,30 @@ ul li {
     margin-right: 8px;
     width: 32px;
     height: 32px;
+}
+
+/* Ensure navbar icons don't invert */
+.navbar-nav .nav-item .nav-link .nav-icon {
+    transition: filter 0.3s ease; /* Smooth transition for icon filter */
+}
+
+/* Remove inversion effect */
+.navbar-nav .nav-item .nav-link:hover .nav-icon {
+    filter: none; /* Disable the inversion on hover */
+}
+
+/* Styling for active links in the navbar */
+.navbar-nav .nav-item .nav-link.active {
+    color: #ffffff !important;
+    background-color: #007bff; /* Example active state background */
+}
+
+.navbar-nav .nav-item .nav-link {
+    color: #dee2e6 !important; /* Default link color */
+}
+
+.navbar-nav .nav-item .nav-link:hover {
+    color: #212529 !important;
+    background-color: #dee2e6 !important;
+    border-radius: .75rem !important;
 }
