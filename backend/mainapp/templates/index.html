@@ -172,6 +172,14 @@
         </div>
     </div>
 
+    <div>
+        <button id="period24h">Last 24 Hours</button>
+        <button id="period7d">Last 7 Days</button>
+        <button id="period1m">Last 1 Month</button>
+        <button id="period3m">Last 3 Months</button>
+        <button id="periodAll">All Time</button>
+    </div>
+
     <div class="row mt-3">
         <div class="col-md-6">
             <h4>Temperature</h4>
@@ -216,33 +224,22 @@
 </footer>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Function to fetch and update sensor data
-        function fetchSensorData() {
-            fetch('/get_sensor_data/')
+        // Function to fetch and update sensor data based on the selected period
+        function fetchSensorData(period) {
+            fetch(`/get_sensor_data/?period=${period}`)
                 .then(response => response.json())
                 .then(data => {
-                    // Check if the data exists and update the DOM
-                    if (data.temperature !== null) {
-                        document.getElementById('temperatureValue').textContent = `${data.temperature} °C`;
-                    } else {
-                        document.getElementById('temperatureValue').textContent = 'No data';
-                    }
+                    // Clear previous charts (if any)
+                    clearCharts();
 
-                    if (data.humidity !== null) {
-                        document.getElementById('humidityValue').textContent = `${data.humidity} %`;
-                    } else {
-                        document.getElementById('humidityValue').textContent = 'No data';
-                    }
+                    // Display the data values and create graphs
+                    if (data.length > 0) {
+                        const temperatures = data.map(entry => entry.temperature);
+                        const humidities = data.map(entry => entry.humidity);
+                        const timestamps = data.map(entry => new Date(entry.timestamp).toLocaleString());
 
-                    document.getElementById('motionStatus').textContent = data.motion_triggered ? 'Motion Detected' : 'No Motion';
-
-                    // Create the graphs with the fetched data
-                    if (data.temperature !== null) {
-                        renderTemperatureChart(data.temperature);
-                    }
-
-                    if (data.humidity !== null) {
-                        renderHumidityChart(data.humidity);
+                        renderTemperatureChart(temperatures, timestamps);
+                        renderHumidityChart(humidities, timestamps);
                     }
                 })
                 .catch(error => {
@@ -250,67 +247,58 @@
                 });
         }
 
-        // Fetch data when the page is loaded
-        fetchSensorData();
+        // Fetch data initially for the last 24 hours
+        fetchSensorData('24h');
 
-        // Fetch data every 10 seconds (10000 milliseconds)
-        setInterval(fetchSensorData, 10000); // 10 seconds interval
+        // Set up event listeners for the period selection buttons
+        document.getElementById('period24h').addEventListener('click', () => fetchSensorData('24h'));
+        document.getElementById('period7d').addEventListener('click', () => fetchSensorData('7d'));
+        document.getElementById('period1m').addEventListener('click', () => fetchSensorData('1m'));
+        document.getElementById('period3m').addEventListener('click', () => fetchSensorData('3m'));
+        document.getElementById('periodAll').addEventListener('click', () => fetchSensorData('all'));
     });
 
-    // Function to render the temperature chart
-    function renderTemperatureChart(temperature) {
-        var ctx = document.getElementById('temperatureChart').getContext('2d');
-        var temperatureChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Current'],  // Just showing the most recent value
-                    datasets: [{
-                        label: 'Temperature (°C)',
-                        data: [temperature],
-                        borderColor: 'rgba(255, 99, 132, 1)',
-                        backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                        fill: true,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
+    // Example function to render the temperature chart (you can use a charting library like Chart.js)
+    function renderTemperatureChart(temperatures, timestamps) {
+        const ctx = document.getElementById('temperatureChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timestamps,
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: temperatures,
+                    borderColor: 'rgba(255, 99, 132, 1)',
+                    fill: false
+                }]
             }
-        );
+        });
     }
 
-    // Function to render the humidity chart
-    function renderHumidityChart(humidity) {
-        var ctx = document.getElementById('humidityChart').getContext('2d');
-        var humidityChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Current'],  // Just showing the most recent value
-                    datasets: [{
-                        label: 'Humidity (%)',
-                        data: [humidity],
-                        borderColor: 'rgba(54, 162, 235, 1)',
-                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                        fill: true,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
+    // Example function to render the humidity chart
+    function renderHumidityChart(humidities, timestamps) {
+        const ctx = document.getElementById('humidityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timestamps,
+                datasets: [{
+                    label: 'Humidity (%)',
+                    data: humidities,
+                    borderColor: 'rgba(54, 162, 235, 1)',
+                    fill: false
+                }]
             }
-        );
+        });
+    }
+
+    // Function to clear previous charts (for when new data is loaded)
+    function clearCharts() {
+        const ctxTemperature = document.getElementById('temperatureChart').getContext('2d');
+        const ctxHumidity = document.getElementById('humidityChart').getContext('2d');
+
+        if (window.temperatureChart) window.temperatureChart.destroy();
+        if (window.humidityChart) window.humidityChart.destroy();
     }
 
     document.getElementById("saveImageBtn").addEventListener("click", function () {
