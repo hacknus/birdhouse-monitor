@@ -119,7 +119,7 @@ ul li {
 
 /* Ensure the navbar items have proper alignment and the button width is correct */
 .navbar-nav .nav-item .nav-link {
-    display: flex;  /* Ensures the icon and text are aligned horizontally */
+    /* display: flex;  /* Ensures the icon and text are aligned horizontally */
     align-items: center;  /* Vertically center the content */
     color: black !important;  /* Set the text color to black */
     background-color: transparent !important;  /* Transparent background by default */
