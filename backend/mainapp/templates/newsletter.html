@@ -64,6 +64,7 @@
     </form>
 
     <!-- Remove an Email Address -->
+    <br>
     <h4>Remove an Email Address</h4>
     <form method="post" action="{% url 'remove_email' %}">
         {% csrf_token %}
@@ -72,6 +73,8 @@
     </form>
 
     <!-- Display the current subscribers -->
+        <br>
+
     <h4>Current Subscribers</h4>
     <div id="subscriberCount">
         Number of subscribers: {{ email_list.count }}

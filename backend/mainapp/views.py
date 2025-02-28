@@ -235,5 +235,5 @@ def newsletter_view(request):
 
     # Pass the number of subscribers to the template
     return render(request, 'newsletter.html', {
-        'num_subscribers': len(subscribers),
+        'subscriber_count': len(subscribers),
     })
