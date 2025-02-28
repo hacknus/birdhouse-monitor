@@ -117,53 +117,60 @@ ul li {
     background-color: #0056b3;
 }
 
-/* Ensure the navbar items have proper alignment and the button width is correct */
+/* Navbar Styles */
+.navbar {
+    background-color: #ffffff; /* White background */
+    padding: 0.5rem 1rem; /* Adjust navbar padding */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Optional: Adds a small shadow to the navbar */
+}
+
+/* Navbar items */
+.navbar-nav {
+    display: flex;
+    justify-content: flex-start; /* Items aligned from left to right */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+/* Each navbar item */
+.navbar-nav .nav-item {
+    padding: 0 15px; /* Add padding to space out the items */
+}
+
+/* Navbar links */
 .navbar-nav .nav-item .nav-link {
-    /* display: flex;  /* Ensures the icon and text are aligned horizontally */
+    display: flex;  /* Ensures the icon and text are aligned horizontally */
     align-items: center;  /* Vertically center the content */
     color: black !important;  /* Set the text color to black */
     background-color: transparent !important;  /* Transparent background by default */
     border-radius: .75rem;  /* Rounded corners */
     transition: all 0.3s ease;  /* Smooth transition for hover effect */
-/*    padding: 10px 15px;  /* Add padding for better hover effect */
-    width: auto;  /* Allow the width to adjust based on the content */
+    padding: 10px 15px;  /* Padding for each navbar item */
 }
 
-/* Navbar button hover effects */
+/* Navbar link hover effects */
 .navbar-nav .nav-item .nav-link:hover {
     color: white !important;  /* Text turns white on hover */
     background-color: black !important;  /* Background turns black on hover */
+    border-radius: .75rem !important;  /* Keep rounded corners on hover */
 }
 
-/* Make sure the icon is black by default */
+/* Ensure the icons inside the navbar are black by default */
 .navbar-nav .nav-item .nav-link .nav-icon {
-    filter: invert(0);  /* Default icon color (black) */
-    margin-right: 8px;  /* Add space between icon and text */
-    width: 24px;  /* Set the icon size */
-    height: 24px;  /* Set the icon size */
+    filter: invert(0); /* Default icon color (black) */
+    margin-right: 8px; /* Add space between icon and text */
+    width: 24px; /* Set the icon size */
+    height: 24px; /* Set the icon size */
 }
 
 /* On hover, invert the icon color */
 .navbar-nav .nav-item .nav-link:hover .nav-icon {
-    filter: invert(1);  /* Invert icon color to white */
+    filter: invert(1); /* Invert icon color to white */
 }
 
 /* Optional: Adjust padding for navbar items for better hover effect */
 .navbar-nav .nav-item .nav-link {
     padding-left: 12px;
     padding-right: 12px;
-}
-
-/* Ensure that the navbar link spans the whole button */
-.navbar-nav .nav-item .nav-link {
-    /* display: inline-flex;  /* Allow the link to expand to the full content size */
-    align-items: center;
-    justify-content: center;  /* Center the content within the button */
-}
-
-/* Additional styling to ensure the navbar button is properly sized on hover */
-.navbar-nav .nav-item .nav-link:hover {
-    background-color: black !important;
-    color: white !important;
-    border-radius: .75rem !important;
 }
