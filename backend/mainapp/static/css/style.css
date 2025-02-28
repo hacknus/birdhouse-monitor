@@ -125,7 +125,7 @@ ul li {
     background-color: transparent !important;  /* Transparent background by default */
     border-radius: .75rem;  /* Rounded corners */
     transition: all 0.3s ease;  /* Smooth transition for hover effect */
-    padding: 10px 15px;  /* Add padding for better hover effect */
+/*    padding: 10px 15px;  /* Add padding for better hover effect */
     width: auto;  /* Allow the width to adjust based on the content */
 }
 
