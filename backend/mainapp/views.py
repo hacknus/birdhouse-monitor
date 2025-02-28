@@ -111,44 +111,39 @@ def trigger_ir_led(request):
 
 
 def get_sensor_data(request):
-    # Get the 'period' query parameter (default to '24h' if not provided)
+    # Get the period from the query parameters (default to '24h' if not provided)
     period = request.GET.get('period', '24h')
-
-    # Get the current time
     now = timezone.now()
 
-    # Calculate the start time based on the period
+    # Calculate the time window based on the selected period
     if period == '24h':
-        start_time = now - timedelta(hours=24)
+        time_window = now - timedelta(hours=24)
     elif period == '7d':
-        start_time = now - timedelta(days=7)
+        time_window = now - timedelta(days=7)
     elif period == '1m':
-        start_time = now - timedelta(weeks=4)  # Roughly one month
+        time_window = now - timedelta(weeks=4)  # Approx 1 month
     elif period == '3m':
-        start_time = now - timedelta(weeks=12)  # Roughly three months
+        time_window = now - timedelta(weeks=12)  # Approx 3 months
     elif period == 'all':
-        start_time = None  # No filtering by time
+        time_window = None  # No time limit, fetch all data
     else:
-        start_time = now - timedelta(hours=24)  # Default to '24h' if invalid period
+        time_window = now - timedelta(hours=24)  # Default to '24h' if period is invalid
 
-    print(f"Fetching data for period: {period} (start time: {start_time})")
-
-    # Filter the sensor data by the calculated start time
-    if start_time:
-        sensor_data = SensorData.objects.filter(timestamp__gte=start_time)
+    # Fetch sensor data based on the period
+    if time_window:
+        data = SensorData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
     else:
-        sensor_data = SensorData.objects.all()
+        data = SensorData.objects.all().order_by('timestamp')
 
-    # Prepare the data to send to the client (only send the necessary fields)
-    data = []
-    for entry in sensor_data:
-        data.append({
+    # Prepare the data for the response
+    response_data = [
+        {
             'temperature': entry.temperature,
             'humidity': entry.humidity,
             'motion_triggered': entry.motion_triggered,
-            'timestamp': entry.timestamp.isoformat()  # Send timestamp in a JSON-compatible format
-        })
+            'timestamp': entry.timestamp.isoformat(),
+        }
+        for entry in data
+    ]
 
-    print(f"Data fetched: {data}")
-
-    return JsonResponse(data, safe=False)
+    return JsonResponse(response_data, safe=False)
