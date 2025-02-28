@@ -226,23 +226,6 @@ input[type="email"] {
     font-size: 16px;
 }
 
-/* Button styling */
-button {
-    width: 100%;
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s ease;
-}
-
-button:hover {
-    background-color: #45a049;
-}
-
 /* List styling for subscribers */
 h2 {
     font-size: 20px;
