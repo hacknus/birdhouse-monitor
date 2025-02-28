@@ -218,3 +218,22 @@ def remove_email(request):
             messages.error(request, f"Email {email} is not in the list.")
 
         return redirect('newsletter')
+
+
+def newsletter_view(request):
+    # Path to the CSV file where emails are stored
+    csv_file = 'newsletter_subscribers.csv'
+
+    # Read the current subscribers from the CSV file
+    subscribers = []
+    try:
+        with open(csv_file, mode='r') as file:
+            reader = csv.reader(file)
+            subscribers = list(reader)
+    except FileNotFoundError:
+        pass  # File does not exist yet, no subscribers
+
+    # Pass the number of subscribers to the template
+    return render(request, 'newsletter.html', {
+        'num_subscribers': len(subscribers),
+    })
