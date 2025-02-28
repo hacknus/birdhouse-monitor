@@ -141,8 +141,8 @@ ul li {
 .navbar-nav .nav-item .nav-link {
     display: flex;  /* Ensures the icon and text are aligned horizontally */
     align-items: center;  /* Vertically center the content */
-    color: white !important;  /* Set the text color to white by default */
-    background-color: transparent !important;  /* Transparent background by default */
+    color: white !important;  /* White text by default */
+    background-color: black !important;  /* Black background by default */
     border-radius: .75rem;  /* Rounded corners */
     transition: all 0.3s ease;  /* Smooth transition for hover effect */
     padding: 10px 15px;  /* Padding for each navbar item */
@@ -157,7 +157,7 @@ ul li {
 
 /* Ensure the icons inside the navbar are white by default */
 .navbar-nav .nav-item .nav-link .nav-icon {
-    filter: invert(1); /* Default icon color (white) */
+    filter: invert(1); /* White icon by default */
     margin-right: 8px; /* Add space between icon and text */
     width: 24px; /* Set the icon size */
     height: 24px; /* Set the icon size */
