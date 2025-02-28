@@ -352,7 +352,11 @@
                         document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
 
                         // Convert timestamps to Date objects
-                        const timeLabels = data.map(entry => new Date(entry.timestamp));  // Convert to Date objects
+                        const timeLabels = data.map(entry => {
+                            const date = new Date(entry.timestamp);
+                            console.log(`Converted timestamp ${entry.timestamp} to Date:`, date);  // Log for debugging
+                            return date;
+                        });
                         const temperatureData = data.map(entry => entry.temperature);
                         const humidityData = data.map(entry => entry.humidity);
 
