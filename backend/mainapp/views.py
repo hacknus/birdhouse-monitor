@@ -125,6 +125,4 @@ def get_sensor_data(request):
             'timestamp': None
         }
 
-    print(data)
-
     return JsonResponse(data)

@@ -216,22 +216,30 @@
 </footer>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        // Fetch the sensor data when the page is loaded
-        fetch('/get_sensor_data/')
-            .then(response => response.json())
-            .then(data => {
-                // Display the data values in the respective elements
-                document.getElementById('temperatureValue').textContent = data.temperature ? `${data.temperature} °C` : 'No data';
-                document.getElementById('humidityValue').textContent = data.humidity ? `${data.humidity} %` : 'No data';
-                document.getElementById('motionStatus').textContent = data.motion_triggered ? 'Motion Detected' : 'No Motion';
+        // Function to fetch and update sensor data
+        function fetchSensorData() {
+            fetch('/get_sensor_data/')
+                .then(response => response.json())
+                .then(data => {
+                    // Display the data values in the respective elements
+                    document.getElementById('temperatureValue').textContent = data.temperature ? `${data.temperature} °C` : 'No data';
+                    document.getElementById('humidityValue').textContent = data.humidity ? `${data.humidity} %` : 'No data';
+                    document.getElementById('motionStatus').textContent = data.motion_triggered ? 'Motion Detected' : 'No Motion';
 
-                // Create the graphs with the fetched data
-                renderTemperatureChart(data.temperature);
-                renderHumidityChart(data.humidity);
-            })
-            .catch(error => {
-                console.error('Error fetching sensor data:', error);
-            });
+                    // Create the graphs with the fetched data
+                    renderTemperatureChart(data.temperature);
+                    renderHumidityChart(data.humidity);
+                })
+                .catch(error => {
+                    console.error('Error fetching sensor data:', error);
+                });
+        }
+
+        // Fetch data when the page is loaded
+        fetchSensorData();
+
+        // Fetch data every 10 seconds (10000 milliseconds)
+        setInterval(fetchSensorData, 10000); // 10 seconds interval
     });
 
     // Function to render the temperature chart
@@ -260,55 +268,55 @@
             });
     }
 
-    // Function to render the humidity chart
-    function renderHumidityChart(humidity) {
-        var ctx = document.getElementById('humidityChart').getContext('2d');
-        var humidityChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: ['Current'],  // Just showing the most recent value
-                datasets: [{
-                    label: 'Humidity (%)',
-                    data: [humidity],
-                    borderColor: 'rgba(54, 162, 235, 1)',
-                    backgroundColor: 'rgba(54, 162, 235, 0.2)',
-                    fill: true,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    y: {
-                        beginAtZero: true
+        // Function to render the humidity chart
+        function renderHumidityChart(humidity) {
+            var ctx = document.getElementById('humidityChart').getContext('2d');
+            var humidityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Current'],  // Just showing the most recent value
+                    datasets: [{
+                        label: 'Humidity (%)',
+                        data: [humidity],
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        fill: true,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
                     }
-                }
-            });
-    }
-
-    document.getElementById("saveImageBtn").addEventListener("click", function () {
-        let imgPreview = document.getElementById("imgPreview");
-        let enablePreview = document.getElementById("enablePreview");
-
-        if (!enablePreview.checked || imgPreview.children.length === 0) {
-            document.getElementById("saveMessage").innerText = "⚠️ Please enable the preview first!";
-            return;
+                });
         }
 
-        fetch("/save_image/", {
-            method: "POST",
-            headers: {"X-CSRFToken": "{{ csrf_token }}"}
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    document.getElementById("saveMessage").innerText = "✅ Image saved to gallery!";
-                } else {
-                    document.getElementById("saveMessage").innerText = "❌ Error saving image.";
+            document.getElementById("saveImageBtn").addEventListener("click", function () {
+                let imgPreview = document.getElementById("imgPreview");
+                let enablePreview = document.getElementById("enablePreview");
+
+                if (!enablePreview.checked || imgPreview.children.length === 0) {
+                    document.getElementById("saveMessage").innerText = "⚠️ Please enable the preview first!";
+                    return;
                 }
-            })
-            .catch(error => console.error("Error:", error));
-    });
+
+                fetch("/save_image/", {
+                    method: "POST",
+                    headers: {"X-CSRFToken": "{{ csrf_token }}"}
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            document.getElementById("saveMessage").innerText = "✅ Image saved to gallery!";
+                        } else {
+                            document.getElementById("saveMessage").innerText = "❌ Error saving image.";
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+            });
 </script>
 </body>
 </html>

@@ -36,19 +36,18 @@ def check_motion():
 # Collect sensor data
 def collect_data():
     temperature, humidity = read_temperature_humidity()
-    motion_detected = check_motion()
+    motion_triggered = check_motion()
 
     # Store this data in the database
-    store_sensor_data(temperature, humidity, motion_detected)
+    store_sensor_data(temperature, humidity, motion_triggered)
 
-def store_sensor_data(temperature, humidity, motion_detected):
+def store_sensor_data(temperature, humidity, motion_triggered):
     # Create a new SensorData entry in the database
     sensor_data = SensorData.objects.create(
         temperature=temperature,
         humidity=humidity,
-        motion_triggered=motion_detected
+        motion_triggered=motion_triggered
     )
-    print(sensor_data)
     sensor_data.save()
 
 def worker():
