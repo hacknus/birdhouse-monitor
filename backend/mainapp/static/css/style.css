@@ -122,22 +122,24 @@ ul li {
     transition: filter 0.3s ease; /* smooth transition */
 }
 
-/* On hover, invert the image */
-.navbar-nav .nav-item .nav-link:hover .nav-icon {
-    filter: invert(1); /* Inverts the icon color */
-}
-
-/* Ensure the navbar items are vertically centered */
+/* Default Navbar Button Styles */
 .navbar-nav .nav-item .nav-link {
-    display: flex;
-    align-items: center; /* Center both the icon and the text vertically */
-    padding-left: 10px;   /* Add space before the icon */
-    padding-right: 10px;  /* Optional: Add space after the icon */
+    color: black !important;  /* Make the text black */
+    background-color: transparent !important;  /* Transparent background */
+    border-radius: .75rem;  /* Border radius */
+    padding: 10px 15px;  /* Adjust padding */
+    transition: all 0.3s ease;  /* Smooth transition for hover effect */
 }
 
-/* Add space between the icon and the text */
-.navbar-nav .nav-item .nav-link .nav-icon {
-    margin-right: 8px; /* Increase space between icon and text */
+/* Navbar Button Hover Effects */
+.navbar-nav .nav-item .nav-link:hover {
+    color: white !important;  /* Change text to white on hover */
+    background-color: black !important;  /* Make the background black */
+}
+
+/* Invert the icon on hover */
+.navbar-nav .nav-item .nav-link:hover .nav-icon {
+    filter: invert(1);  /* Invert the icon color */
 }
 
 /* Optionally, you can adjust the size of the icons */
