@@ -236,63 +236,40 @@
     </div>
 </footer>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        const periodSelect = document.getElementById('periodSelect');  // Get the period select element
-        let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
+    function fetchData() {
+        fetch(`/get_sensor_data/?period=${document.getElementById('periodSelect').value}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log("Fetched data:", data); // Debugging log
 
-        // Function to fetch data based on the selected period
-        function fetchData() {
-            fetch(`/get_sensor_data/?period=${selectedPeriod}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log("Fetched data:", data);  // Log the raw data to the console
+                if (!data || data.length === 0) {
+                    console.log('No data available');
+                    document.getElementById('temperatureValue').textContent = 'No data';
+                    document.getElementById('humidityValue').textContent = 'No data';
+                    document.getElementById('motionStatus').textContent = 'No data';
+                    return;
+                }
 
-                    if (data && data.length > 0) {
-                        const latestData = data[data.length - 1]; // Get the most recent data point
+                const latestData = data[data.length - 1]; // Get the most recent data point
 
-                        // Update DOM with the latest data
-                        document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
-                        document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
-                        document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
+                // Update text values
+                document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
+                document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
+                document.getElementById('motionStatus').textContent = latestData.motion_triggered ? 'Motion Detected' : 'No Motion';
 
-                        const formattedTemperature = data.map(entry => ({
-                            x: new Date(entry.timestamp * 1000),
-                            y: entry.temperature
-                        }));
+                // Render charts
+                renderChart("temperature", "temperatureChart", "Temperature (°C)", data, 'rgba(255, 99, 132, 1)');
+                renderChart("humidity", "humidityChart", "Humidity (%)", data, 'rgba(54, 162, 235, 1)');
+            })
+            .catch(error => console.error('Error fetching sensor data:', error));
+    }
 
-                        const formattedHumidity = data.map(entry => ({
-                            x: new Date(entry.timestamp * 1000),
-                            y: entry.humidity
-                        }));
-
-                        if (!data) return;
-
-                        renderChart("temperature", "temperatureChart", "Temperature (°C)", [data], 'rgba(255, 99, 132, 1)');
-                        renderChart("humidity", "humidityChart", "Humidity (%)", [data], 'rgba(54, 162, 235, 1)');
-                    } else {
-                        console.log('No data available');
-                        // Handle the case where there's no data
-                        document.getElementById('temperatureValue').textContent = 'No data';
-                        document.getElementById('humidityValue').textContent = 'No data';
-                        document.getElementById('motionStatus').textContent = 'No data';
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching sensor data:', error);
-                });
-        }
-
-        // Function to handle period selection change
-        periodSelect.addEventListener('change', function () {
-            selectedPeriod = periodSelect.value;  // Update the selected period when the user changes it
-            fetchData();  // Immediately fetch the data based on the new period
-        });
-
-        // Initial data fetch on page load
+    // Fetch data on page load
+    document.addEventListener('DOMContentLoaded', () => {
         fetchData();
+        setInterval(fetchData, 10000); // Refresh every 10 seconds
 
-        // Periodically fetch the data every 10 seconds (adjust the interval as needed)
-        setInterval(fetchData, 10000);  // Fetch data every 10 seconds
+        document.getElementById('periodSelect').addEventListener('change', fetchData);
     });
 
     function renderChart(chartName, canvasId, label, data, color) {
@@ -301,38 +278,40 @@
             return;
         }
 
-        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
-        const chartData = data.map(entry => entry[chartName]); // "temperature" or "humidity"
+        const timeLabels = data.map(entry => new Date(entry.timestamp * 1000).toLocaleTimeString());
+        const chartData = data.map(entry => entry[chartName]); // Extract temperature or humidity
 
         const ctx = document.getElementById(canvasId).getContext('2d');
 
-        if (!window[chartName + 'Chart']) {
-            window[chartName + 'Chart'] = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: timeLabels,
-                    datasets: [{
-                        label: `${label}`,
-                        data: chartData,
-                        borderColor: color,
-                        fill: false,
-                        tension: 0.1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            title: {display: true, text: 'Time'},
-                            ticks: {autoSkip: true, maxTicksLimit: 10}
-                        },
-                        y: {title: {display: true, text: label}}
-                    }
-                }
-            });
-        } else {
-            updateChart(chartName, timeLabels, chartData);
+        // Check if chart exists, destroy it before re-creating to avoid duplication
+        if (window[chartName + 'Chart']) {
+            window[chartName + 'Chart'].destroy();
         }
+
+        // Create a new chart instance
+        window[chartName + 'Chart'] = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: `${label}`,
+                    data: chartData,
+                    borderColor: color,
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {display: true, text: 'Time'},
+                        ticks: {autoSkip: true, maxTicksLimit: 10}
+                    },
+                    y: {title: {display: true, text: label}}
+                }
+            }
+        });
     }
 
     function updateChart(chartName, timeLabels, chartData) {
