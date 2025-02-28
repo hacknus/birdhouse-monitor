@@ -267,13 +267,13 @@
 
                         // Update charts instead of recreating
                         if (window.temperatureChart) {
-                            updateTemperatureChart(window.temperatureChart, formattedTemperature);
+                            updateTemperatureChart(formattedTemperature);
                         } else {
                             renderTemperatureChart(data);
                         }
 
                         if (window.humidityChart) {
-                            updateHumidityChart(window.humidityChart, formattedHumidity);
+                            updateHumidityChart(formattedHumidity);
                         } else {
                             renderHumidityChart(data);
                         }
@@ -303,14 +303,42 @@
         setInterval(fetchData, 10000);  // Fetch data every 10 seconds
     });
 
-    function updateTemperatureChart(chart, newData) {
-        chart.data.datasets[0].data = newData;
-        chart.update('none');  // Disable animation when updating
+    function updateTemperatureChart(data) {
+        if (!window.temperatureChart) {
+            console.error("Temperature chart not initialized yet!");
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            console.warn("No temperature data available.");
+            return;
+        }
+
+        // Update chart data
+        window.temperatureChart.data.labels = data.map(entry => new Date(entry.timestamp * 1000));
+        window.temperatureChart.data.datasets[0].data = data.map(entry => entry.temperature);
+
+        // Refresh chart
+        window.temperatureChart.update();
     }
 
-    function updateHumidityChart(chart, newData) {
-        chart.data.datasets[0].data = newData;
-        chart.update('none');  // No animation
+    function updateHumidityChart(data) {
+        if (!window.humidityChart) {
+            console.error("Humidity chart not initialized yet!");
+            return;
+        }
+
+        if (!data || data.length === 0) {
+            console.warn("No humidity data available.");
+            return;
+        }
+
+        // Update chart data
+        window.humidityChart.data.labels = data.map(entry => new Date(entry.timestamp * 1000));
+        window.humidityChart.data.datasets[0].data = data.map(entry => entry.humidity);
+
+        // Refresh chart
+        window.humidityChart.update();
     }
 
     function renderTemperatureChart(data) {
