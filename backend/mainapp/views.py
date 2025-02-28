@@ -173,14 +173,6 @@ def write_email_list(email_list):
         for email in email_list:
             writer.writerow([email])
 
-
-# View for the newsletter page
-def newsletter(request):
-    # Get the current email list to display it on the page
-    email_list = read_email_list()
-    return render(request, 'newsletter.html', {'email_list': email_list})
-
-
 # Add an email to the list
 def add_email(request):
     if request.method == 'POST':
