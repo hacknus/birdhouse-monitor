@@ -316,7 +316,7 @@
             options: {
                 responsive: true,
                 scales: {
-                    x: [{
+                    x: {
                         type: 'time',
                         time: {
                             displayFormats: {
@@ -324,8 +324,8 @@
                                 // or any desired format
                             }
                         }
-                    }],
-                    y: [{
+                    },
+                    y: {
                         scaleLabel: {
                             display: true,
                             labelString: 'Temperature [°C]',
@@ -334,7 +334,7 @@
                         ticks: {
                             fontFamily: "'Poppins', 'Roboto', 'Helvetica', 'Arial', sans-serif",
                         }
-                    }],
+                    },
                 }
             }
         });
@@ -372,7 +372,7 @@
             options: {
                 responsive: true,
                 scales: {
-                    x: [{
+                    x: {
                         type: 'time',
                         time: {
                             displayFormats: {
@@ -380,8 +380,8 @@
                                 // or any desired format
                             }
                         }
-                    }],
-                    y: [{
+                    },
+                    y: {
                         scaleLabel: {
                             display: true,
                             labelString: 'Humidity [%]',
@@ -390,7 +390,7 @@
                         ticks: {
                             fontFamily: "'Poppins', 'Roboto', 'Helvetica', 'Arial', sans-serif",
                         }
-                    }],
+                    },
                 }
             }
         });
