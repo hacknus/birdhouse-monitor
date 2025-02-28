@@ -285,89 +285,94 @@
     });
 
     let temperatureChart = null;
-let humidityChart = null;
+    let humidityChart = null;
 
-function renderTemperatureChart(data) {
-    if (!data || data.length === 0) {
-        console.log('No data for temperature chart');
-        return;
-    }
+    function renderTemperatureChart(data) {
+        if (!data || data.length === 0) return;
 
-    const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
-    const temperatureData = data.map(entry => entry.temperature);
-    const ctx = document.getElementById('temperatureChart').getContext('2d');
+        // Ensure timestamps are properly formatted
+        const timeLabels = data.map(entry => ({
+            x: new Date(entry.timestamp * 1000), // Convert to Date object
+            y: entry.temperature
+        }));
 
-    if (temperatureChart) {
-        temperatureChart.destroy();  // Destroy old chart
-    }
+        const ctx = document.getElementById('temperatureChart').getContext('2d');
 
-    temperatureChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: timeLabels,
-            datasets: [{
-                label: 'Temperature (°C)',
-                data: temperatureData,
-                borderColor: 'rgba(75, 192, 192, 1)',
-                fill: false,
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    title: { display: true, text: 'Time' },
-                    ticks: { autoSkip: true, maxTicksLimit: 10 }
+        // Destroy previous chart to avoid duplicates
+        if (window.temperatureChart) window.temperatureChart.destroy();
+
+        window.temperatureChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: 'Temperature (°C)',
+                    data: timeLabels, // Directly use time-mapped data
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'time',  // <-- THIS MAKES IT LINEAR
+                        time: {
+                            unit: 'minute', // Adjust to second/hour depending on data range
+                            displayFormats: {
+                                minute: 'HH:mm',
+                                hour: 'HH:mm'
+                            }
+                        },
+                        title: {display: true, text: 'Time'}
+                    },
+                    y: {title: {display: true, text: 'Temperature (°C)'}}
                 },
-                y: {
-                    title: { display: true, text: 'Temperature (°C)' }
+                animation: false  // Disable animations to prevent jumping
+            }
+        });
+    }
+
+    function renderHumidityChart(data) {
+        if (!data || data.length === 0) {
+            console.log('No data for humidity chart');
+            return;
+        }
+
+        const timeLabels = data.map(entry => new Date(entry.timestamp * 1000).toLocaleTimeString());
+        const humidityData = data.map(entry => entry.humidity);
+        const ctx = document.getElementById('humidityChart').getContext('2d');
+
+        if (humidityChart) {
+            humidityChart.destroy();  // Destroy old chart
+        }
+
+        humidityChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: 'Humidity (%)',
+                    data: humidityData,
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {display: true, text: 'Time'},
+                        ticks: {autoSkip: true, maxTicksLimit: 8}  // Adjust for better readability
+                    },
+                    y: {
+                        title: {display: true, text: 'Temperature (°C)'}
+                    }
                 }
             }
-        }
-    });
-}
-
-function renderHumidityChart(data) {
-    if (!data || data.length === 0) {
-        console.log('No data for humidity chart');
-        return;
+        });
     }
-
-    const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());
-    const humidityData = data.map(entry => entry.humidity);
-    const ctx = document.getElementById('humidityChart').getContext('2d');
-
-    if (humidityChart) {
-        humidityChart.destroy();  // Destroy old chart
-    }
-
-    humidityChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: timeLabels,
-            datasets: [{
-                label: 'Humidity (%)',
-                data: humidityData,
-                borderColor: 'rgba(153, 102, 255, 1)',
-                fill: false,
-                tension: 0.1
-            }]
-        },
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                    title: { display: true, text: 'Time' },
-                    ticks: { autoSkip: true, maxTicksLimit: 10 }
-                },
-                y: {
-                    title: { display: true, text: 'Humidity (%)' }
-                }
-            }
-        }
-    });
-}
 
     // Function to clear previous charts (for when new data is loaded)
     function clearCharts() {
