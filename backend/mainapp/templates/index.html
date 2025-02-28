@@ -316,22 +316,25 @@
             options: {
                 responsive: true,
                 scales: {
-                    x: {
-                        title: {
+                    xAxes: [{
+                        type: 'time',
+                        time: {
+                            displayFormats: {
+                                day: 'MMM DD, YYYY'
+                                // or any desired format
+                            }
+                        }
+                    }],
+                    yAxes: [{
+                        scaleLabel: {
                             display: true,
-                            text: 'Time'
+                            labelString: 'Temperature [°C]',
+                            fontFamily: "'Poppins', 'Roboto', 'Helvetica', 'Arial', sans-serif",
                         },
                         ticks: {
-                            autoSkip: true,  // Automatically skip some ticks if there are too many
-                            maxTicksLimit: 10 // Limit the number of x-axis ticks
+                            fontFamily: "'Poppins', 'Roboto', 'Helvetica', 'Arial', sans-serif",
                         }
-                    },
-                    y: {
-                        title: {
-                            display: true,
-                            text: 'Temperature (°C)'
-                        }
-                    }
+                    }],
                 }
             }
         });
