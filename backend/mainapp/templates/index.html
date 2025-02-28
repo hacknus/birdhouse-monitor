@@ -255,9 +255,28 @@
                         document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
                         document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
 
-                        // Render charts with time on the x-axis
-                        renderTemperatureChart(data);
-                        renderHumidityChart(data);
+                        const formattedTemperature = data.map(entry => ({
+                            x: new Date(entry.timestamp * 1000),
+                            y: entry.temperature
+                        }));
+
+                        const formattedHumidity = data.map(entry => ({
+                            x: new Date(entry.timestamp * 1000),
+                            y: entry.humidity
+                        }));
+
+                        // Update charts instead of recreating
+                        if (window.temperatureChart) {
+                            updateChart(window.temperatureChart, formattedTemperature);
+                        } else {
+                            renderTemperatureChart(data);
+                        }
+
+                        if (window.humidityChart) {
+                            updateHumidityChart(window.humidityChart, formattedHumidity);
+                        } else {
+                            renderHumidityChart(data);
+                        }
                     } else {
                         console.log('No data available');
                         // Handle the case where there's no data
@@ -284,8 +303,15 @@
         setInterval(fetchData, 10000);  // Fetch data every 10 seconds
     });
 
-    let temperatureChart = null;
-    let humidityChart = null;
+    function updateTemperatureChart(chart, newData) {
+        chart.data.datasets[0].data = newData;
+        chart.update('none');  // Disable animation when updating
+    }
+
+    function updateHumidityChart(chart, newData) {
+        chart.data.datasets[0].data = newData;
+        chart.update('none');  // No animation
+    }
 
     function renderTemperatureChart(data) {
         if (!data || data.length === 0) return;
@@ -334,27 +360,26 @@
     }
 
     function renderHumidityChart(data) {
-        if (!data || data.length === 0) {
-            console.log('No data for humidity chart');
-            return;
-        }
+        if (!data || data.length === 0) return;
 
-        const timeLabels = data.map(entry => new Date(entry.timestamp * 1000).toLocaleTimeString());
-        const humidityData = data.map(entry => entry.humidity);
+        // Convert timestamps properly
+        const timeLabels = data.map(entry => ({
+            x: new Date(entry.timestamp * 1000),
+            y: entry.humidity
+        }));
+
         const ctx = document.getElementById('humidityChart').getContext('2d');
 
-        if (humidityChart) {
-            humidityChart.destroy();  // Destroy old chart
-        }
+        // Destroy previous chart if it exists
+        if (window.humidityChart) window.humidityChart.destroy();
 
-        humidityChart = new Chart(ctx, {
+        window.humidityChart = new Chart(ctx, {
             type: 'line',
             data: {
-                labels: timeLabels,
                 datasets: [{
                     label: 'Humidity (%)',
-                    data: humidityData,
-                    borderColor: 'rgba(153, 102, 255, 1)',
+                    data: timeLabels,
+                    borderColor: 'rgba(54, 162, 235, 1)',
                     fill: false,
                     tension: 0.1
                 }]
@@ -363,13 +388,19 @@
                 responsive: true,
                 scales: {
                     x: {
-                        title: {display: true, text: 'Time'},
-                        ticks: {autoSkip: true, maxTicksLimit: 8}  // Adjust for better readability
+                        type: 'time',
+                        time: {
+                            unit: 'minute',
+                            displayFormats: {
+                                minute: 'HH:mm',
+                                hour: 'HH:mm'
+                            }
+                        },
+                        title: {display: true, text: 'Time'}
                     },
-                    y: {
-                        title: {display: true, text: 'Temperature (°C)'}
-                    }
-                }
+                    y: {title: {display: true, text: 'Humidity (%)'}}
+                },
+                animation: false  // Prevent jumping
             }
         });
     }
