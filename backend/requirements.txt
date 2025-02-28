@@ -4,4 +4,4 @@ flask
 adafruit-circuitpython-sht4x
 gunicorn
 djangorestframework
-opencv-python-headless==4.9.0.80
+opencv-python
