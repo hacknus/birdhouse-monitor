@@ -3,9 +3,7 @@ body {
     background-color: #f4f4f4;
     margin: 0;
     padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    display: block; /* Remove flex on body */
     height: 100vh; /* Full screen height */
 }
 
@@ -17,10 +15,10 @@ body {
     width: 100%;
     max-width: 400px; /* Limit the width */
     text-align: center;
-    margin: 0 20px; /* Margin around the container */
+    margin: 20px auto; /* Center the container horizontally */
     display: flex;
-    flex-direction: column; /* Ensure everything inside stacks vertically */
-    align-items: center; /* Center the items inside */
+    flex-direction: column; /* Stack the elements vertically */
+    align-items: center; /* Center items inside */
 }
 
 h1 {
@@ -32,8 +30,9 @@ h1 {
 form {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Stack the form elements vertically */
+    align-items: center; /* Stack form elements vertically */
     width: 100%;
+    margin-bottom: 20px; /* Adds space between forms */
 }
 
 input[type="email"] {
@@ -55,6 +54,7 @@ button {
     cursor: pointer;
     font-size: 16px;
     transition: background-color 0.3s ease;
+    margin-bottom: 10px; /* Add space between buttons */
 }
 
 button:hover {
