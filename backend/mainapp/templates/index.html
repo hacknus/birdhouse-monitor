@@ -315,7 +315,7 @@
         }
 
         // Update chart data
-        window.temperatureChart.data.labels = data.map(entry => new Date(entry.timestamp * 1000));
+        window.temperatureChart.data.labels = data.map(entry => new Date(entry.timestamp * 1000).toLocaleTimeString());
         window.temperatureChart.data.datasets[0].data = data.map(entry => entry.temperature);
 
         // Refresh chart
@@ -342,49 +342,59 @@
     }
 
     function renderTemperatureChart(data) {
-        if (!data || data.length === 0) return;
+        if (!data || data.length === 0) {
+            console.log('No data for temperature chart');
+            return;
+        }
 
-        // Ensure timestamps are properly formatted
-        const timeLabels = data.map(entry => ({
-            x: new Date(entry.timestamp * 1000), // Convert to Date object
-            y: entry.temperature
-        }));
+        const timeLabels = data.map(entry => new Date(entry.timestamp * 1000).toLocaleTimeString());
+        const temperatureData = data.map(entry => entry.temperature);
 
+        // Get the canvas element for the chart
         const ctx = document.getElementById('temperatureChart').getContext('2d');
 
-        // Destroy previous chart to avoid duplicates
-        if (window.temperatureChart) window.temperatureChart.destroy();
-
-        window.temperatureChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                datasets: [{
-                    label: 'Temperature (°C)',
-                    data: timeLabels, // Directly use time-mapped data
-                    borderColor: 'rgba(75, 192, 192, 1)',
-                    fill: false,
-                    tension: 0.1
-                }]
-            },
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                        type: 'time',  // <-- THIS MAKES IT LINEAR
-                        time: {
-                            unit: 'minute', // Adjust to second/hour depending on data range
-                            displayFormats: {
-                                minute: 'HH:mm',
-                                hour: 'HH:mm'
+        // Create the chart if it doesn't exist
+        if (!window.temperatureChart) {
+            window.temperatureChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeLabels,  // Time as labels for the x-axis
+                    datasets: [{
+                        label: 'Temperature (°C)',
+                        data: temperatureData,
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        fill: false,
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'Time'
+                            },
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 10
                             }
                         },
-                        title: {display: true, text: 'Time'}
-                    },
-                    y: {title: {display: true, text: 'Temperature (°C)'}}
-                },
-                animation: false  // Disable animations to prevent jumping
-            }
-        });
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'Temperature (°C)'
+                            }
+                        }
+                    }
+                }
+            });
+        } else {
+            // Update the chart data if it exists
+            window.temperatureChart.data.labels = timeLabels;
+            window.temperatureChart.data.datasets[0].data = temperatureData;
+            window.temperatureChart.update();
+        }
     }
 
     function renderHumidityChart(data) {
