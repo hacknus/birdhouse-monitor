@@ -58,24 +58,26 @@
             }
         }
 
-        function saveImageFromStream() {
-            const imgElement = document.querySelector("#imgPreview img"); // Get the preview image
-            if (!imgElement) {
-                console.error("No image found in the preview.");
-                return;
-            }
+        function saveImageToGallery() {
+            fetch("/save_image/", {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": getCSRFToken() // Ensure CSRF token is included
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message) {
+                        document.getElementById('saveMessage').textContent = "Image saved to gallery!";
+                    } else {
+                        document.getElementById('saveMessage').textContent = "Error saving image.";
+                    }
 
-            const imgUrl = imgElement.src; // Get image source
-            const link = document.createElement('a');
-            link.href = imgUrl;
-            link.download = 'livestream_image.jpg'; // Set download filename
-            link.click(); // Trigger download
-
-            // Show confirmation message
-            document.getElementById('saveMessage').textContent = "Image saved successfully!";
-            setTimeout(() => {
-                document.getElementById('saveMessage').textContent = "";
-            }, 3000); // Remove message after 3s
+                    setTimeout(() => {
+                        document.getElementById('saveMessage').textContent = "";
+                    }, 3000); // Remove message after 3s
+                })
+                .catch(error => console.error("Error:", error));
         }
 
         function showStream(e) {
@@ -203,7 +205,7 @@
         <div class="mt-1 mb-2" id="imgPreview"></div>
         <!-- Save Image Button -->
         <div class="text-center mt-3">
-            <button class="btn btn-success" id="saveImageBtn" disabled onclick="saveImageFromStream()">Save Image
+            <button class="btn btn-success" id="saveImageBtn" disabled onclick="saveImageToGallery()">Save Image
             </button>
             <p id="saveMessage" class="text-success mt-2"></p>
         </div>
