@@ -163,27 +163,27 @@
     </div>
 
     <!-- Zobrazenie streamu z kamery -->
-    <div class="row row-border">
-        <h3 class="text-center mt-3"><b>Livestream</b></h3>
-        <div class="text-center mt-1 mb-3">
-            <div class="d-flex justify-content-center">
-                <!-- Enable Preview Checkbox -->
-                <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
-                       onchange="showStream(event)">
-                <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
+<div class="row row-border">
+    <h3 class="text-center mt-3"><b>Livestream</b></h3>
+    <div class="text-center mt-1 mb-3">
+        <div class="d-flex justify-content-center">
+            <!-- Enable Preview Checkbox -->
+            <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
+                   onchange="showStream(event)">
+            <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
 
-                <!-- Button to toggle IR LED (Initially Disabled) -->
-                <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR OFF</button>
-            </div>
-            <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>
+            <!-- Button to toggle IR LED (Initially Disabled) -->
+            <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR OFF</button>
         </div>
-        <div class="mt-1 mb-2" id="imgPreview"></div>
-        <!-- Save Image Button -->
-        <div class="text-center mt-3">
-            <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
-            <p id="saveMessage" class="text-success mt-2"></p>
-        </div>
+        <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>
     </div>
+    <div class="mt-1 mb-2" id="imgPreview"></div>
+    <!-- Save Image Button -->
+    <div class="text-center mt-3">
+        <button class="btn btn-success" id="saveImageBtn" disabled>Save Image</button>
+        <p id="saveMessage" class="text-success mt-2"></p>
+    </div>
+</div>
 
     <select id="periodSelect">
         <option value="24h">24 Hours</option>
@@ -236,76 +236,79 @@
     </div>
 </footer>
 <script>
-    function fetchData() {
-        fetch(`/get_sensor_data/?period=${document.getElementById('periodSelect').value}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log("Fetched data:", data); // Debugging log
+    document.addEventListener('DOMContentLoaded', function () {
+        const periodSelect = document.getElementById('periodSelect');  // Get the period select element
+        let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
 
-                if (!data || data.length === 0) {
-                    console.log('No data available');
-                    document.getElementById('temperatureValue').textContent = 'No data';
-                    document.getElementById('humidityValue').textContent = 'No data';
-                    document.getElementById('motionStatus').textContent = 'No data';
-                    return;
-                }
+        // Function to fetch data based on the selected period
+        function fetchData() {
+            fetch(`/get_sensor_data/?period=${selectedPeriod}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Fetched data:", data);  // Log the raw data to the console
 
-                const latestData = data[data.length - 1]; // Get the most recent data point
+                    if (data && data.length > 0) {
+                        const latestData = data[data.length - 1]; // Get the most recent data point
 
-                // Update text values
-                document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
-                document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
-                document.getElementById('motionStatus').textContent = latestData.motion_triggered ? 'Motion Detected' : 'No Motion';
+                        // Update DOM with the latest data
+                        document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
+                        document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
+                        document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
 
-                // Render charts
-                renderChart("temperature", "temperatureChart", "Temperature (°C)", data, 'rgba(255, 99, 132, 1)');
-                renderChart("humidity", "humidityChart", "Humidity (%)", data, 'rgba(54, 162, 235, 1)');
-            })
-            .catch(error => console.error('Error fetching sensor data:', error));
-    }
+                        // Render charts with time on the x-axis
+                        renderTemperatureChart(data);
+                        renderHumidityChart(data);
+                    } else {
+                        console.log('No data available');
+                        // Handle the case where there's no data
+                        document.getElementById('temperatureValue').textContent = 'No data';
+                        document.getElementById('humidityValue').textContent = 'No data';
+                        document.getElementById('motionStatus').textContent = 'No data';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching sensor data:', error);
+                });
+        }
 
-    // Fetch data on page load
-    document.addEventListener('DOMContentLoaded', () => {
+        // Function to handle period selection change
+        periodSelect.addEventListener('change', function () {
+            selectedPeriod = periodSelect.value;  // Update the selected period when the user changes it
+            fetchData();  // Immediately fetch the data based on the new period
+        });
+
+        // Initial data fetch on page load
         fetchData();
-        setInterval(fetchData, 10000); // Refresh every 10 seconds
 
-        document.getElementById('periodSelect').addEventListener('change', fetchData);
+        // Periodically fetch the data every 10 seconds (adjust the interval as needed)
+        setInterval(fetchData, 10000);  // Fetch data every 10 seconds
     });
 
-    function renderChart(chartName, canvasId, label, data, color) {
+    function renderTemperatureChart(data) {
+        // Check if we have any data to render
         if (!data || data.length === 0) {
-            console.warn(`No data for ${chartName} chart`);
+            console.log('No data for temperature chart');
             return;
         }
 
-        const ctx = document.getElementById(canvasId);
-        if (!ctx) {
-            console.error(`Canvas with ID "${canvasId}" not found!`);
-            return;
-        }
+        // Format time for x-axis labels (you can adjust the format as needed)
+        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());  // Format time (HH:MM:SS)
 
-        const ctx2d = ctx.getContext('2d');
-        if (!ctx2d) {
-            console.error(`Failed to get 2D context for ${canvasId}`);
-            return;
-        }
+        // Prepare temperature data
+        const temperatureData = data.map(entry => entry.temperature);
 
-        // Log before destroying the old chart
-        if (window[chartName + 'Chart']) {
-            console.log(`Destroying previous ${chartName} chart instance`);
-            window[chartName + 'Chart'].destroy();
-        }
+        // Get the canvas element for the chart
+        const ctx = document.getElementById('temperatureChart').getContext('2d');
 
-        console.log(`Creating new ${chartName} chart`);
-
-        window[chartName + 'Chart'] = new Chart(ctx2d, {
+        // Create or update the chart
+        new Chart(ctx, {
             type: 'line',
             data: {
-                labels: data.map(entry => new Date(entry.timestamp).toLocaleTimeString()),
+                labels: timeLabels,  // Use time as labels for x-axis
                 datasets: [{
-                    label: `${label}`,
-                    data: data.map(entry => entry[chartName]),
-                    borderColor: color,
+                    label: 'Temperature (°C)',
+                    data: temperatureData,
+                    borderColor: 'rgba(75, 192, 192, 1)',
                     fill: false,
                     tension: 0.1
                 }]
@@ -313,37 +316,87 @@
             options: {
                 responsive: true,
                 scales: {
-                    x: {title: {display: true, text: 'Time'}},
-                    y: {title: {display: true, text: label}}
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        },
+                        ticks: {
+                            autoSkip: true,  // Automatically skip some ticks if there are too many
+                            maxTicksLimit: 10 // Limit the number of x-axis ticks
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Temperature (°C)'
+                        }
+                    }
                 }
             }
         });
     }
 
-    function updateChart(chartName, timeLabels, chartData) {
-        const chartInstance = window[chartName + 'Chart'];
-
-        if (!chartInstance || !chartInstance.data) {
-            console.error(`Error updating ${chartName} chart: Chart instance is invalid.`, chartInstance);
+    function renderHumidityChart(data) {
+        // Check if we have any data to render
+        if (!data || data.length === 0) {
+            console.log('No data for humidity chart');
             return;
         }
 
-        console.log(`Updating ${chartName} chart with new data:`, chartData);
+        // Format time for x-axis labels (you can adjust the format as needed)
+        const timeLabels = data.map(entry => new Date(entry.timestamp).toLocaleTimeString());  // Format time (HH:MM:SS)
 
-        chartInstance.data.labels = timeLabels;
-        chartInstance.data.datasets[0].data = chartData;
-        chartInstance.update();
-    }
+        // Prepare humidity data
+        const humidityData = data.map(entry => entry.humidity);
 
-    // Function to safely clear charts before re-rendering
-    function clearCharts() {
-        ['temperatureChart', 'humidityChart'].forEach(chartName => {
-            if (window[chartName]) {
-                console.log(`Destroying ${chartName}`);
-                window[chartName].destroy();
-                window[chartName] = null;
+        // Get the canvas element for the chart
+        const ctx = document.getElementById('humidityChart').getContext('2d');
+
+        // Create or update the chart
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,  // Use time as labels for x-axis
+                datasets: [{
+                    label: 'Humidity (%)',
+                    data: humidityData,
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    fill: false,
+                    tension: 0.1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Time'
+                        },
+                        ticks: {
+                            autoSkip: true,  // Automatically skip some ticks if there are too many
+                            maxTicksLimit: 10 // Limit the number of x-axis ticks
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Humidity (%)'
+                        }
+                    }
+                }
             }
         });
+    }
+
+    // Function to clear previous charts (for when new data is loaded)
+    function clearCharts() {
+        const ctxTemperature = document.getElementById('temperatureChart').getContext('2d');
+        const ctxHumidity = document.getElementById('humidityChart').getContext('2d');
+
+        if (window.temperatureChart) window.temperatureChart.destroy();
+        if (window.humidityChart) window.humidityChart.destroy();
     }
 </script>
 </body>
