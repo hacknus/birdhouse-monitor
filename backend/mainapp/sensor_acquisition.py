@@ -11,8 +11,6 @@ from .models import SensorData  # Import your Django model
 
 i2c = board.I2C()
 sensor = adafruit_sht4x.SHT4x(i2c)
-print("setting up SHT")
-print(sensor)
 # Define the GPIO pin for motion detection
 MOTION_PIN = 17  # Pin 17 for motion detection
 
@@ -48,7 +46,7 @@ def store_sensor_data(temperature, humidity, motion_triggered):
         humidity=humidity,
         motion_triggered=motion_triggered
     )
-    print(sensor_data)
+
     sensor_data.save()
 
 def worker():
