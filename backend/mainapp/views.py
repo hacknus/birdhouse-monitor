@@ -131,6 +131,8 @@ def get_sensor_data(request):
     else:
         start_time = now - timedelta(hours=24)  # Default to '24h' if invalid period
 
+    print(f"Fetching data for period: {period} (start time: {start_time})")
+
     # Filter the sensor data by the calculated start time
     if start_time:
         sensor_data = SensorData.objects.filter(timestamp__gte=start_time)
@@ -146,5 +148,7 @@ def get_sensor_data(request):
             'motion_triggered': entry.motion_triggered,
             'timestamp': entry.timestamp.isoformat()  # Send timestamp in a JSON-compatible format
         })
+
+    print(f"Data fetched: {data}")
 
     return JsonResponse(data, safe=False)
