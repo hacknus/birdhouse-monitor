@@ -232,7 +232,7 @@ def newsletter_view(request):
             subscribers = list(reader)
     except FileNotFoundError:
         pass  # File does not exist yet, no subscribers
-
+    print(subscribers)
     # Pass the number of subscribers to the template
     return render(request, 'newsletter.html', {
         'subscriber_count': len(subscribers),
