@@ -243,6 +243,11 @@ button:hover {
     background-color: #45a049;
 }
 
+.btn-sm {
+    padding: 5px 10px;  /* Adjust padding */
+    font-size: 12px;  /* Reduce font size */
+}
+
 /* List styling for subscribers */
 h2 {
     font-size: 20px;
