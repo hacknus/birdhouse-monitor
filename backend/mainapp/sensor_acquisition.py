@@ -17,10 +17,10 @@ i2c = board.I2C()
 sensor = adafruit_sht4x.SHT4x(i2c)
 
 # GPIO Motion Sensor Setup
-MOTION_PIN = 17
+MOTION_PIN = 4
 pir = MotionSensor(MOTION_PIN)
 
-# email callvack
+# email callback
 
 # replace this with custom email-interface
 Voegeli = Reporter("Voeggeli")
@@ -66,11 +66,11 @@ def motion_detected_callback():
 
 time.sleep(1)  # Wait for hardware to settle
 
-# Register interrupt for motion detection (FALLING or RISING can be used)
-pir.when_motion = motion_detected_callback
 
 # Background thread for temperature/humidity logging (runs every 60s)
 def periodic_data_logger():
+    # Register interrupt for motion detection (FALLING or RISING can be used)
+    pir.when_motion = motion_detected_callback
     while True:
         temperature, humidity = read_temperature_humidity()
         store_sensor_data(temperature, humidity, motion_triggered=False)
