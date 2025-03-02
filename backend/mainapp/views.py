@@ -71,14 +71,16 @@ def save_image(request):
 def gallery(request):
     image_dir = os.path.join(settings.MEDIA_URL, "gallery/")
 
-    try:
-        image_files = os.listdir(os.path.join(settings.MEDIA_ROOT, "gallery"))
-    except FileNotFoundError:
-        image_files = []  # If the folder doesn't exist, return an empty list
+    # Get list of image files, ensuring they are sorted by filename (timestamp order)
+    images = sorted(
+        [f for f in os.listdir(os.path.join(settings.MEDIA_ROOT, "gallery")) if f.endswith((".jpg", ".png", ".jpeg"))],
+        reverse=True  # Sort in descending order (newest first)
+    )
 
-    images = [{"url": f"{image_dir}{image}"} for image in image_files]
+    # Convert filenames to URLs
+    image_urls = [os.path.join(settings.MEDIA_URL, "gallery", img) for img in images]
 
-    return render(request, "gallery.html", {"images": images})
+    return render(request, "gallery.html", {"images": image_urls})
 
 
 # Function to toggle the IR LED
@@ -229,6 +231,7 @@ def newsletter_view(request):
     return render(request, 'newsletter.html', {
         'subscriber_count': len(subscribers),
     })
+
 
 def making_of_view(request):
     return render(request, 'making_of.html')

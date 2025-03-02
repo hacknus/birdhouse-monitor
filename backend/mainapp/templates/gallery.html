@@ -44,7 +44,8 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'newsletter' %}">
-                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter" width="32"
+                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter"
+                             width="32"
                              height="32">
                         Newsletter
                     </a>
@@ -69,10 +70,9 @@
         {% for image in images %}
         <div class="col-md-4 mb-4">
             <div class="card">
-                <img src="{{ image.url }}" class="card-img-top" alt="Gallery Image"
-                     onclick="openModal('{{ image.url }}')">
+                <img src="{{ image }}" class="card-img-top" alt="Gallery Image" onclick="openModal('{{ image }}')">
                 <div class="card-body text-center">
-                    <a href="{{ image.url }}" download class="btn btn-primary">
+                    <a href="{{ image }}" download class="btn btn-primary">
                         Download <i class="fa fa-download"></i>
                     </a>
                 </div>
