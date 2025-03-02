@@ -23,7 +23,7 @@ pir = MotionSensor(MOTION_PIN)
 # email callback
 
 # replace this with custom email-interface
-Voegeli = Reporter("Voeggeli")
+Voegeli = Reporter("Voegeli")
 
 
 # Function to read temperature and humidity
