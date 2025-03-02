@@ -57,7 +57,7 @@ def motion_detected_callback():
             for subscriber in subscribers:
                 Voegeli.send_mail(f"Hoi Du!\n I'm moving into the birdhouse! \nBest Regards, Your Vögeli",
                                   subject="Vögeli Motion Alert",
-                                  recipients=subscriber)
+                                  recipients=subscriber[0])
     except FileNotFoundError:
         pass  # File does not exist yet, no subscribers
 
