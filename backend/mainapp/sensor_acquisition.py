@@ -1,6 +1,9 @@
 import csv
+import datetime
+import os
 import threading
 
+from django.conf import settings
 from django.http import HttpRequest, QueryDict
 from gpiozero import MotionSensor
 
@@ -10,10 +13,11 @@ import adafruit_sht4x
 
 # replace this with custom email-interface
 from unibe_mail import Reporter
+import cv2
 
 # Import your Django model
 from .models import SensorData
-from .views import save_image
+from .camera import picam2
 
 # I2C sensor setup
 i2c = board.I2C()
@@ -52,14 +56,14 @@ def motion_detected_callback():
 
     csv_file = 'newsletter_subscribers.csv'
 
-    # Create a dummy POST request
-    request = HttpRequest()
-    request.method = "POST"
-    request.POST = QueryDict("")  # Empty POST data (can add if needed)
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
 
-    # Call the existing save_image function
-    save_image(request)
+    frame = picam2.capture_array()
+    frame = frame[:, :, :-1]
+    frame = cv2.rotate(frame, cv2.ROTATE_180)
 
+    cv2.imwrite(image_path, frame)
     # Read the current subscribers from the CSV file and send emails
     try:
         with open(csv_file, mode='r') as file:

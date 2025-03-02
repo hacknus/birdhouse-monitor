@@ -16,15 +16,10 @@ from .models import SensorData
 import csv
 from django.shortcuts import render, redirect
 from django.contrib import messages
-from picamera2 import Picamera2
 
 from .models import SensorData
-
-# init camera
-picam2 = Picamera2()
-picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (800, 600)}))
-picam2.start()
-
+import mainapp.sensor_acquisition
+from .camera import picam2
 
 def img_generator():
     while True:
