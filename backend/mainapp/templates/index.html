@@ -40,10 +40,15 @@
 
         $(document).ready(function () {
             enablePreview = document.getElementById("enablePreview");
+            imgPreview = document.getElementById("imgPreview");
+            saveImageBtn = document.getElementById("saveImageBtn");
+            toggleIRButton = document.getElementById("toggleIRButton");
+
             if (enablePreview.checked) {
-                imgPreview.appendChild(
-                    createPreview()
-                );
+                imgPreview.appendChild(createPreview());
+                saveImageBtn.disabled = false;
+                toggleIRButton.disabled = false;
+                togglePreviewLabel();
             }
         });
 
@@ -81,7 +86,7 @@
         }
 
         function showStream(e) {
-            enablePreview = document.getElementById("enablePreview");
+            enablePreview = e.target;
             imgPreview = document.getElementById("imgPreview");
             saveImageBtn = document.getElementById("saveImageBtn");
             toggleIRButton = document.getElementById("toggleIRButton");
@@ -90,15 +95,22 @@
                 imgPreview.appendChild(createPreview());
                 saveImageBtn.disabled = false;  // Enable button
                 toggleIRButton.disabled = false;  // Enable the IR button
+
             } else {
                 imgPreview.innerHTML = "";  // Clear preview
                 saveImageBtn.disabled = true;  // Disable button
                 toggleIRButton.disabled = true;  // Disable the IR button
+
             }
 
             // Also update the label text
             togglePreviewLabel();
         }
+
+        // Automatically enable livestream on page load
+        document.addEventListener("DOMContentLoaded", function () {
+            showStream({target: document.getElementById("enablePreview")});
+        });
 
         // Ensure the label updates and the stream shows when toggling
         document.getElementById("enablePreview").addEventListener("change", showStream);
@@ -271,8 +283,6 @@
     document.addEventListener('DOMContentLoaded', function () {
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
         let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
-
-        showStream({target: document.getElementById("enablePreview")});
 
         // Function to fetch data based on the selected period
         function fetchData() {
