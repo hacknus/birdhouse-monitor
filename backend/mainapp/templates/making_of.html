@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Newsletter</title>
+    <title>Making Of</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     {% load static %}
@@ -44,7 +44,8 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'newsletter' %}">
-                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter" width="32"
+                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter"
+                             width="32"
                              height="32">
                         Newsletter
                     </a>
@@ -62,47 +63,51 @@
     </div>
 </nav>
 
-<!-- Newsletter Form -->
-<div class="newsletter-container">
-    <h1>Newsletter Subscription</h1>
+<!-- Making Of Section -->
+<div class="container mt-4">
+    <h3 class="text-center mt-3"><b>Making Of: The Birdhouse Monitor</b></h3>
+    <p class="text-center">A behind-the-scenes look at the creation of Vögeli 🐣.</p>
 
-    <!-- Add an Email Address -->
-    <h4>Add an Email Address</h4>
-    <form method="post" action="{% url 'add_email' %}">
-        {% csrf_token %}
-        <input type="email" name="email" placeholder="Enter your email" required>
-        <button type="submit">Add Email</button>
-    </form>
-
-    <!-- Remove an Email Address -->
-    <br>
-    <h4>Remove an Email Address</h4>
-    <form method="post" action="{% url 'remove_email' %}">
-        {% csrf_token %}
-        <input type="email" name="email" placeholder="Enter email to remove" required>
-        <button type="submit">Remove Email</button>
-    </form>
-
-    <!-- Display the current subscribers -->
-    <br>
-    <h4>Current Subscribers</h4>
-    <div id="subscriberCount">
-        Number of subscribers: {{ subscriber_count }}
-    </div>
-
-    <!-- Display success or error messages -->
-    {% if messages %}
-    <div class="alert-container">
-        {% for message in messages %}
-        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
-            {{ message }}
+    <div class="row">
+        <!-- Step 1: Hardware Setup -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{% static 'img/inside.jpg' %}" class="card-img-top" alt="Hardware Setup">
+                <div class="card-body">
+                    <h5 class="card-title">Camera, motion sensor and temperature/humidity sensor inside of the
+                        birdhouse.</h5>
+                    <p class="card-text">We started by assembling the Raspberry Pi, camera, and motion sensors inside
+                        the birdhouse.</p>
+                </div>
+            </div>
         </div>
-        {% endfor %}
+
+        <!-- Step 2: Coding & Debugging -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{% static 'img/electronics.jpg' %}" class="card-img-top" alt="Raspberry Pi">
+                <div class="card-body">
+                    <h5 class="card-title">Electronics</h5>
+                    <p class="card-text">A Raspberry Pi 3 is controlling the birdhouse and is located on the roof. We
+                        coded the backend using Django and fine-tuned the GPIO motion detection with Python. The
+                        software can be found on <a href="https://github.com/hacknus/birdhouse-monitor"> Github </a></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Step 3: Testing in the Wild -->
+        <div class="col-md-4 mb-4">
+            <div class="card">
+                <img src="{% static 'img/outside.jpg' %}" class="card-img-top" alt="Testing in Nature">
+                <div class="card-body">
+                    <h5 class="card-title">Complete Assembly</h5>
+                    <p class="card-text">Everything was then assembled and is ready to be mounted outside.!</p>
+                </div>
+            </div>
+        </div>
     </div>
-    {% endif %}
 </div>
 
-<!-- Footer -->
 <footer class="bg-dark text-center text-white" id="about">
     <div class="container p-4">
         <h5>Social media</h5>
@@ -123,5 +128,6 @@
         © 2025 Copyright: Linus Leo Stöckli
     </div>
 </footer>
+
 </body>
 </html>

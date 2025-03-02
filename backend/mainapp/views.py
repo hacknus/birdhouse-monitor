@@ -229,3 +229,6 @@ def newsletter_view(request):
     return render(request, 'newsletter.html', {
         'subscriber_count': len(subscribers),
     })
+
+def making_of_view(request):
+    return render(request, 'making_of.html')
