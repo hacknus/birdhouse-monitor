@@ -14,7 +14,10 @@ i2c = board.I2C()
 sensor = adafruit_sht4x.SHT4x(i2c)
 
 # GPIO Motion Sensor Setup
-MOTION_PIN = 17  # Pin 17 for motion detection
+MOTION_PIN = 4  # Pin 4 for motion detection
+
+# Cleanup any existing GPIO settings
+GPIO.cleanup()
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(MOTION_PIN, GPIO.IN)
@@ -62,6 +65,8 @@ def motion_detected_callback(channel):
     print("Motion detected! Data stored.")
 
 
+time.sleep(1)  # Wait for hardware to settle
+
 # Register interrupt for motion detection (FALLING or RISING can be used)
 GPIO.add_event_detect(MOTION_PIN, GPIO.RISING, callback=motion_detected_callback, bouncetime=500)
 
@@ -77,12 +82,3 @@ def periodic_data_logger():
 # Start background thread
 data_thread = threading.Thread(target=periodic_data_logger, daemon=True)
 data_thread.start()
-
-# Keep the main thread alive
-try:
-    while True:
-        time.sleep(1)  # Keep script running to listen for motion interrupts
-except KeyboardInterrupt:
-    print("Exiting...")
-finally:
-    GPIO.cleanup()
