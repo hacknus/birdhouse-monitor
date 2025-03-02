@@ -33,8 +33,8 @@
     <script>
         function createPreview() {
             img = document.createElement("IMG");
-            img.className += "mx-auto d-block rounded cam-stream";    // Zobraz IMG ako block a centruj na stred stranky
-            img.src = "{% url 'video_feed' %}";
+            img.className += "mx-auto d-block rounded cam-stream"; // Center the stream
+            img.src = "{% url 'video_feed' %}?t=" + new Date().getTime(); // Add timestamp
             return img;
         }
 
@@ -45,7 +45,20 @@
             toggleIRButton = document.getElementById("toggleIRButton");
 
             if (enablePreview.checked) {
-                imgPreview.appendChild(createPreview());
+                let img = createPreview();
+                imgPreview.appendChild(img);
+
+                // Force reload on Safari
+                img.onload = function () {
+                    console.log("Livestream loaded successfully.");
+                };
+                img.onerror = function () {
+                    console.log("Error loading stream, retrying...");
+                    setTimeout(() => {
+                        img.src = "{% url 'video_feed' %}?t=" + new Date().getTime(); // Reload stream
+                    }, 1000); // Retry after 1 second
+                };
+
                 saveImageBtn.disabled = false;
                 toggleIRButton.disabled = false;
                 togglePreviewLabel();

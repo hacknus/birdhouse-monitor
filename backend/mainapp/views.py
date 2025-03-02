@@ -38,9 +38,13 @@ def img_generator():
 
 
 def video_feed(request):
-    return StreamingHttpResponse(
+    response = StreamingHttpResponse(
         img_generator(), content_type="multipart/x-mixed-replace;boundary=frame"
     )
+    response["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response["Pragma"] = "no-cache"
+    response["Expires"] = "0"
+    return response
 
 
 def index(request):
