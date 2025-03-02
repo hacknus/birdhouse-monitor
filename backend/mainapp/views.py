@@ -19,7 +19,6 @@ from django.contrib import messages
 from picamera2 import Picamera2
 
 from .models import SensorData
-import mainapp.sensor_acquisition
 
 # init camera
 picam2 = Picamera2()
