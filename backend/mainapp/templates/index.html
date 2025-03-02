@@ -81,7 +81,7 @@
         }
 
         function showStream(e) {
-            enablePreview = e.target;
+            enablePreview = document.getElementById("enablePreview");
             imgPreview = document.getElementById("imgPreview");
             saveImageBtn = document.getElementById("saveImageBtn");
             toggleIRButton = document.getElementById("toggleIRButton");
@@ -90,12 +90,10 @@
                 imgPreview.appendChild(createPreview());
                 saveImageBtn.disabled = false;  // Enable button
                 toggleIRButton.disabled = false;  // Enable the IR button
-
             } else {
                 imgPreview.innerHTML = "";  // Clear preview
                 saveImageBtn.disabled = true;  // Disable button
                 toggleIRButton.disabled = true;  // Disable the IR button
-
             }
 
             // Also update the label text
@@ -171,7 +169,8 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'newsletter' %}">
-                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter" width="32"
+                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter"
+                             width="32"
                              height="32">
                         Newsletter
                     </a>
@@ -200,7 +199,7 @@
         <div class="text-center mt-1 mb-3">
             <div class="d-flex justify-content-center">
                 <!-- Enable Preview Checkbox -->
-                <input type="checkbox" class="btn-check" id="enablePreview" aria-describedby="enablePreviewHelp"
+                <input type="checkbox" class="btn-check" id="enablePreview" checked aria-describedby="enablePreviewHelp"
                        onchange="showStream(event)">
                 <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
 
@@ -272,6 +271,8 @@
     document.addEventListener('DOMContentLoaded', function () {
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
         let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
+
+        showStream({target: document.getElementById("enablePreview")});
 
         // Function to fetch data based on the selected period
         function fetchData() {
