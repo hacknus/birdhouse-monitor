@@ -20,7 +20,6 @@ from picamera2 import Picamera2
 
 from .models import SensorData
 import mainapp.sensor_acquisition
-import mainapp.interrupt
 
 # init camera
 picam2 = Picamera2()

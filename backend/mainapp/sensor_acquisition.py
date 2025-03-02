@@ -1,62 +1,88 @@
+import csv
 import threading
-
 import RPi.GPIO as GPIO
 import time
-
 import board
 import adafruit_sht4x
+from unibe_mail import Reporter
 
-# Function to store the data in the database
-from .models import SensorData  # Import your Django model
+# Import your Django model
+from .models import SensorData
 
+# I2C sensor setup
 i2c = board.I2C()
 sensor = adafruit_sht4x.SHT4x(i2c)
-# Define the GPIO pin for motion detection
+
+# GPIO Motion Sensor Setup
 MOTION_PIN = 17  # Pin 17 for motion detection
 
-# Setup GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(MOTION_PIN, GPIO.IN)
 
-# Function to read temperature and humidity from DHT sensor
+# email callvack
+
+Voegeli = Reporter("Voeggeli")
+
+
+# Function to read temperature and humidity
 def read_temperature_humidity():
     temperature = round(sensor.temperature, 2)
     humidity = round(sensor.relative_humidity, 2)
-    if humidity is not None and temperature is not None:
-        return temperature, humidity
-    else:
-        return None, None
+    return temperature, humidity
 
-# Function to check if motion is detected
-def check_motion():
-    return GPIO.input(MOTION_PIN)
 
-# Collect sensor data
-def collect_data():
-    temperature, humidity = read_temperature_humidity()
-    motion_triggered = check_motion()
-
-    # Store this data in the database
-    store_sensor_data(temperature, humidity, motion_triggered)
-
+# Function to store sensor data in the database
 def store_sensor_data(temperature, humidity, motion_triggered):
-    # Create a new SensorData entry in the database
-    sensor_data = SensorData.objects.create(
+    SensorData.objects.create(
         temperature=temperature,
         humidity=humidity,
         motion_triggered=motion_triggered
     )
 
-    sensor_data.save()
 
-def worker():
-    # Periodically collect data (e.g., every 60 seconds)
+# Motion detection callback (interrupt-based)
+def motion_detected_callback(channel):
+    temperature, humidity = read_temperature_humidity()
+    store_sensor_data(temperature, humidity, motion_triggered=True)
+
+    csv_file = 'newsletter_subscribers.csv'
+
+    # Read the current subscribers from the CSV file
+    try:
+        with open(csv_file, mode='r') as file:
+            reader = csv.reader(file)
+            subscribers = list(reader)
+            for subscriber in subscribers:
+                Voegeli.send_mail(f"Hoi Du!\n I'm moving into the birdhouse! \nBest Regards, Your Vögeli",
+                                  subject="Vögeli Motion Alert",
+                                  recipients=subscriber)
+    except FileNotFoundError:
+        pass  # File does not exist yet, no subscribers
+
+    print("Motion detected! Data stored.")
+
+
+# Register interrupt for motion detection (FALLING or RISING can be used)
+GPIO.add_event_detect(MOTION_PIN, GPIO.RISING, callback=motion_detected_callback, bouncetime=500)
+
+
+# Background thread for temperature/humidity logging (runs every 60s)
+def periodic_data_logger():
     while True:
-        collect_data()
+        temperature, humidity = read_temperature_humidity()
+        store_sensor_data(temperature, humidity, motion_triggered=False)
         time.sleep(60)
 
-# creating thread
-control_thread = threading.Thread(target=worker, daemon=True)
 
-# starting thread
-control_thread.start()
+# Start background thread
+data_thread = threading.Thread(target=periodic_data_logger, daemon=True)
+data_thread.start()
+
+# Keep the main thread alive
+try:
+    while True:
+        time.sleep(1)  # Keep script running to listen for motion interrupts
+except KeyboardInterrupt:
+    print("Exiting...")
+finally:
+    GPIO.cleanup()
