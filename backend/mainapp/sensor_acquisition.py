@@ -1,5 +1,7 @@
 import csv
 import threading
+
+from django.http import HttpRequest, QueryDict
 from gpiozero import MotionSensor
 
 import time
@@ -11,6 +13,7 @@ from unibe_mail import Reporter
 
 # Import your Django model
 from .models import SensorData
+from .views import save_image
 
 # I2C sensor setup
 i2c = board.I2C()
@@ -49,15 +52,24 @@ def motion_detected_callback():
 
     csv_file = 'newsletter_subscribers.csv'
 
+    # Create a dummy POST request
+    request = HttpRequest()
+    request.method = "POST"
+    request.POST = QueryDict("")  # Empty POST data (can add if needed)
+
+    # Call the existing save_image function
+    save_image(request)
+
     # Read the current subscribers from the CSV file and send emails
     try:
         with open(csv_file, mode='r') as file:
             reader = csv.reader(file)
             subscribers = list(reader)
             for subscriber in subscribers:
-                Voegeli.send_mail(f"Hoi Du!\n I'm moving into the birdhouse! \nBest Regards, Your Vögeli",
-                                  subject="Vögeli Motion Alert",
-                                  recipients=subscriber[0])
+                Voegeli.send_mail(
+                    f"Hoi Du!\nI'm moving into the birdhouse!\nCheck me out at http://cgnum.space.ch/voegeli or at http://130.92.145.222\nBest Regards, Your Vögeli",
+                    subject="Vögeli Motion Alert",
+                    recipients=subscriber[0])
     except FileNotFoundError:
         pass  # File does not exist yet, no subscribers
 
