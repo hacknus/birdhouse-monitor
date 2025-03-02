@@ -11,7 +11,7 @@ GPIO.setup(IR_LED_PIN, GPIO.OUT)
 
 # init camera
 picam2 = Picamera2()
-picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (1920, 1080)}))
+picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (4056, 3040)}))
 picam2.start()
 
 def turn_ir_on():
