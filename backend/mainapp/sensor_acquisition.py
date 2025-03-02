@@ -1,9 +1,12 @@
 import csv
 import threading
-import RPi.GPIO as GPIO
+from gpiozero import MotionSensor
+
 import time
 import board
 import adafruit_sht4x
+
+# replace this with custom email-interface
 from unibe_mail import Reporter
 
 # Import your Django model
@@ -14,16 +17,12 @@ i2c = board.I2C()
 sensor = adafruit_sht4x.SHT4x(i2c)
 
 # GPIO Motion Sensor Setup
-MOTION_PIN = 4  # Pin 4 for motion detection
-
-# Cleanup any existing GPIO settings
-GPIO.cleanup()
-
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(MOTION_PIN, GPIO.IN)
+MOTION_PIN = 17
+pir = MotionSensor(MOTION_PIN)
 
 # email callvack
 
+# replace this with custom email-interface
 Voegeli = Reporter("Voeggeli")
 
 
@@ -44,13 +43,13 @@ def store_sensor_data(temperature, humidity, motion_triggered):
 
 
 # Motion detection callback (interrupt-based)
-def motion_detected_callback(channel):
+def motion_detected_callback():
     temperature, humidity = read_temperature_humidity()
     store_sensor_data(temperature, humidity, motion_triggered=True)
 
     csv_file = 'newsletter_subscribers.csv'
 
-    # Read the current subscribers from the CSV file
+    # Read the current subscribers from the CSV file and send emails
     try:
         with open(csv_file, mode='r') as file:
             reader = csv.reader(file)
@@ -68,8 +67,7 @@ def motion_detected_callback(channel):
 time.sleep(1)  # Wait for hardware to settle
 
 # Register interrupt for motion detection (FALLING or RISING can be used)
-GPIO.add_event_detect(MOTION_PIN, GPIO.RISING, callback=motion_detected_callback, bouncetime=500)
-
+pir.when_motion = motion_detected_callback
 
 # Background thread for temperature/humidity logging (runs every 60s)
 def periodic_data_logger():
