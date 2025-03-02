@@ -19,7 +19,8 @@ from django.contrib import messages
 
 from .models import SensorData
 import mainapp.sensor_acquisition
-from .camera import picam2
+from .camera import picam2, turn_ir_on, turn_ir_off
+
 
 def img_generator():
     while True:
@@ -86,21 +87,11 @@ def trigger_ir_led(request):
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Invalid request format.'}, status=400)
 
-        import RPi.GPIO as GPIO
-        # Toggle IR LED (ON or OFF)
-
-        # Setup GPIO mode
-        GPIO.setmode(GPIO.BCM)
-
-        # Set the GPIO pin that controls the IR LED
-        IR_LED_PIN = 17  # Change this pin number to match your setup
-        GPIO.setup(IR_LED_PIN, GPIO.OUT)
-
         if action == 'on':
-            GPIO.output(IR_LED_PIN, GPIO.HIGH)  # Turn the IR LED on
+            turn_ir_on()
             return JsonResponse({'success': True, 'message': 'IR LED is ON.'})
         elif action == 'off':
-            GPIO.output(IR_LED_PIN, GPIO.LOW)  # Turn the IR LED off
+            turn_ir_off()
             return JsonResponse({'success': True, 'message': 'IR LED is OFF.'})
         else:
             return JsonResponse({'success': False, 'message': 'Invalid action.'}, status=400)

@@ -4,7 +4,6 @@ import os
 import threading
 
 from django.conf import settings
-from django.http import HttpRequest, QueryDict
 from gpiozero import MotionSensor
 
 import time
@@ -17,7 +16,7 @@ import cv2
 
 # Import your Django model
 from .models import SensorData
-from .camera import picam2
+from .camera import picam2, turn_ir_on, turn_ir_off
 
 # I2C sensor setup
 i2c = board.I2C()
@@ -54,7 +53,8 @@ def motion_detected_callback():
     temperature, humidity = read_temperature_humidity()
     store_sensor_data(temperature, humidity, motion_triggered=True)
 
-    csv_file = 'newsletter_subscribers.csv'
+    turn_ir_on()
+    time.sleep(1)
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
@@ -64,8 +64,11 @@ def motion_detected_callback():
     frame = cv2.rotate(frame, cv2.ROTATE_180)
 
     cv2.imwrite(image_path, frame)
+
+    turn_ir_off()
     # Read the current subscribers from the CSV file and send emails
     try:
+        csv_file = 'newsletter_subscribers.csv'
         with open(csv_file, mode='r') as file:
             reader = csv.reader(file)
             subscribers = list(reader)
