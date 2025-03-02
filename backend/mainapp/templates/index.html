@@ -107,11 +107,6 @@
             togglePreviewLabel();
         }
 
-        // Automatically enable livestream on page load
-        document.addEventListener("DOMContentLoaded", function () {
-            showStream({target: document.getElementById("enablePreview")});
-        });
-
         // Ensure the label updates and the stream shows when toggling
         document.getElementById("enablePreview").addEventListener("change", showStream);
 
