@@ -53,8 +53,9 @@ def motion_detected_callback():
     temperature, humidity = read_temperature_humidity()
     store_sensor_data(temperature, humidity, motion_triggered=True)
 
+    # todo: only do this if the light is not on
     turn_ir_on()
-    time.sleep(1)
+    time.sleep(3)
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")

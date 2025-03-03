@@ -62,7 +62,7 @@ def save_image(request):
 
         cv2.imwrite(image_path, frame)
 
-        return JsonResponse({"message": "Image saved!", "image_url": f"/media/gallery/{timestamp}.jpg"})
+        return JsonResponse({"message": "Image saved! (this ma take a couple of seconds)", "image_url": f"/media/gallery/{timestamp}.jpg"})
 
     return JsonResponse({"error": "Invalid request"}, status=400)
 
