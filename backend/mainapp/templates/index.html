@@ -77,7 +77,7 @@
         }
 
         function saveImageToGallery() {
-            fetch("voegeli/save_image/", {
+            fetch("/save_image/", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCSRFToken() // Ensure CSRF token is included
@@ -134,7 +134,7 @@
             const action = button.textContent === "IR Light ON" ? "off" : "on"; // Determine if action is "on" or "off"
 
             // Send the request to toggle the IR LED
-            fetch("voegeli/trigger_ir_led/", {
+            fetch("/trigger_ir_led/", {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": getCSRFToken(), // Get the CSRF token from the meta tag
@@ -224,8 +224,7 @@
                 <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
 
                 <!-- Button to toggle IR LED (Initially Disabled) -->
-                <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR Light OFF
-                </button>
+                <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR Light OFF</button>
             </div>
             <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>
         </div>
@@ -296,7 +295,7 @@
 
         // Function to fetch data based on the selected period
         function fetchData() {
-            fetch(`voegeli/get_sensor_data/?period=${selectedPeriod}`)
+            fetch(`/get_sensor_data/?period=${selectedPeriod}`)
                 .then(response => response.json())
                 .then(data => {
                     console.log("Fetched data:", data);  // Log the raw data to the console
