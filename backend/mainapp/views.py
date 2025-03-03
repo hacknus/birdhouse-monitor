@@ -68,8 +68,6 @@ def save_image(request):
 
 
 def gallery(request):
-    image_dir = os.path.join(settings.MEDIA_URL, "gallery/")
-
     # Get list of image files, ensuring they are sorted by filename (timestamp order)
     images = sorted(
         [f for f in os.listdir(os.path.join(settings.MEDIA_ROOT, "gallery")) if f.endswith((".jpg", ".png", ".jpeg"))],
