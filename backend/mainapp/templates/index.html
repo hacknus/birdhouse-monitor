@@ -146,7 +146,7 @@
                 .then(data => {
                     if (data.success) {
                         // Update the button text depending on the action
-                        button.textContent = action === "off" ? "IR Light OFF" : "IR ON";
+                        button.textContent = action === "off" ? "IR Light OFF" : "IR Light ON";
                     } else {
                         console.error("Error toggling IR LED:", data.message);
                     }
