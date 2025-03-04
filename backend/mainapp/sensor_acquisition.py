@@ -48,38 +48,52 @@ def store_sensor_data(temperature, humidity, motion_triggered):
     )
 
 
-# Motion detection callback (interrupt-based)
+# Track last image save time and last email sent time
+last_image_time = 0
+last_email_time = 0
+
+
 def motion_detected_callback():
+    global last_image_time, last_email_time
+
+    current_time = time.time()
     temperature, humidity = read_temperature_humidity()
     store_sensor_data(temperature, humidity, motion_triggered=True)
 
-    # todo: only do this if the light is not on
-    turn_ir_on()
-    time.sleep(3)
+    # Save an image only if at least an hour has passed
+    if current_time - last_image_time >= 3600:
+        # todo: only do this if the light is not on
+        turn_ir_on()
+        time.sleep(3)
 
-    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
-    image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
+        timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+        image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
 
-    frame = picam2.capture_array()
-    frame = frame[:, :, :-1]
-    frame = cv2.rotate(frame, cv2.ROTATE_180)
+        frame = picam2.capture_array()
+        frame = frame[:, :, :-1]
+        frame = cv2.rotate(frame, cv2.ROTATE_180)
 
-    cv2.imwrite(image_path, frame)
+        cv2.imwrite(image_path, frame)
+        last_image_time = current_time
 
-    turn_ir_off()
-    # Read the current subscribers from the CSV file and send emails
-    try:
-        csv_file = 'newsletter_subscribers.csv'
-        with open(csv_file, mode='r') as file:
-            reader = csv.reader(file)
-            subscribers = list(reader)
-            for subscriber in subscribers:
-                Voegeli.send_mail(
-                    f"Hoi Du!\nI'm moving into the birdhouse!\nCheck me out at http://cgnum.space.ch/voegeli or at http://130.92.145.222\nBest Regards, Your Vögeli",
-                    subject="Vögeli Motion Alert",
-                    recipients=subscriber[0])
-    except FileNotFoundError:
-        pass  # File does not exist yet, no subscribers
+        turn_ir_off()
+
+    # Send an email only if at least a day has passed
+    if current_time - last_email_time >= 86400:
+        try:
+            csv_file = 'newsletter_subscribers.csv'
+            with open(csv_file, mode='r') as file:
+                reader = csv.reader(file)
+                subscribers = list(reader)
+                for subscriber in subscribers:
+                    Voegeli.send_mail(
+                        f"Hoi Du!\nI'm moving into the birdhouse!\nCheck me out at http://cgnum.space.ch/voegeli or at http://130.92.145.222\nBest Regards, Your Vögeli",
+                        subject="Vögeli Motion Alert",
+                        recipients=subscriber[0]
+                    )
+            last_email_time = current_time
+        except FileNotFoundError:
+            pass  # File does not exist yet, no subscribers
 
     print("Motion detected! Data stored.")
 
