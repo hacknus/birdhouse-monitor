@@ -167,8 +167,9 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (!data.success) {
+                    if (data.success) {
                         getIRLEDState()
+                    } else {
                         console.error("Error toggling IR LED:", data.message);
                     }
                 })
