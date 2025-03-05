@@ -128,11 +128,6 @@
             return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         }
 
-        document.addEventListener('DOMContentLoaded', function () {
-            console.log('DOM fully loaded');
-            getIRLEDState();
-        });
-
         function getIRLEDState() {
             const toggleIRButton = document.getElementById("toggleIRButton");
             console.log('Fetching IR LED state...');
@@ -362,6 +357,9 @@
             selectedPeriod = periodSelect.value;  // Update the selected period when the user changes it
             fetchData();  // Immediately fetch the data based on the new period
         });
+
+        console.log('DOM fully loaded');
+        getIRLEDState();
 
         // Initial data fetch on page load
         fetchData();
