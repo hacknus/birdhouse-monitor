@@ -129,11 +129,12 @@
         }
 
         document.addEventListener('DOMContentLoaded', function () {
-            const toggleIRButton = document.getElementById("toggleIRButton");
             getIRLEDState()
         });
 
         function getIRLEDState() {
+            const toggleIRButton = document.getElementById("toggleIRButton");
+
             // Fetch the current IR LED state on page load
             fetch('/voegeli/get_ir_led_state/')
                 .then(response => response.json())
