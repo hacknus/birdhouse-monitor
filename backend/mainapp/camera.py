@@ -19,3 +19,6 @@ def turn_ir_on():
 
 def turn_ir_off():
     GPIO.output(IR_LED_PIN, GPIO.LOW)
+
+def get_ir_led_state():
+    GPIO.input(IR_LED_PIN)

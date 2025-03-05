@@ -128,7 +128,6 @@
             return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         }
 
-        // JavaScript function to toggle the IR LED and update the button label
         function toggleIRLED() {
             const button = document.getElementById("toggleIRButton");
             const action = button.textContent === "IR Light ON" ? "off" : "on"; // Determine if action is "on" or "off"
@@ -153,6 +152,28 @@
                 })
                 .catch(error => console.error("Error:", error));
         }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            // Fetch the current IR state on page load
+            fetch('/voegeli/get_ir_state/')
+                .then(response => response.json())
+                .then(data => {
+                    const irState = data.ir_state;
+                    const irButton = document.getElementById("toggleIRButton");
+
+                    // Update the button text based on the IR state
+                    if (irState === "on") {
+                        irButton.textContent = "IR Light ON";
+                    } else {
+                        irButton.textContent = "IR Light OFF";
+                    }
+                })
+                .catch(error => {
+                    console.error("Error fetching IR state:", error);
+                });
+
+            // Rest of the existing code...
+        });
 
     </script>
     <meta name="csrf-token" content="{{ csrf_token }}">

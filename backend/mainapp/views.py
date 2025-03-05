@@ -19,7 +19,7 @@ from django.contrib import messages
 
 from .models import SensorData
 import mainapp.sensor_acquisition
-from .camera import picam2, turn_ir_on, turn_ir_off
+from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
 
 
 def img_generator():
@@ -100,6 +100,12 @@ def trigger_ir_led(request):
 
     return JsonResponse({'success': False, 'message': 'Invalid request method.'}, status=400)
 
+def get_ir_state(request):
+    # You can access the IR state from wherever it's stored (e.g., in a variable, database, or hardware device)
+    # For now, let's assume it’s stored in a variable or a simple flag.
+    ir_state = "on" if get_ir_led_state() else "off"  # Replace 'ir_led_on' with the actual method/variable to fetch state.
+
+    return JsonResponse({'ir_state': ir_state})
 
 def get_sensor_data(request):
     # Get the period from the query parameters (default to '24h' if not provided)
