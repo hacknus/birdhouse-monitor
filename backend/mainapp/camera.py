@@ -2,6 +2,9 @@ import time
 
 from picamera2 import Picamera2
 import RPi.GPIO as GPIO
+
+from .ignore_motion import ignore_motion_for
+
 # Toggle IR LED (ON or OFF)
 
 # Setup GPIO mode
@@ -18,15 +21,19 @@ picam2.start()
 
 ir_led_state = False
 
+
 def turn_ir_on():
     global ir_led_state
     ir_led_state = True
     GPIO.output(IR_LED_PIN, GPIO.HIGH)
 
+
 def turn_ir_off():
+    ignore_motion_for(5)
     global ir_led_state
     ir_led_state = False
     GPIO.output(IR_LED_PIN, GPIO.LOW)
+
 
 def get_ir_led_state():
     global ir_led_state

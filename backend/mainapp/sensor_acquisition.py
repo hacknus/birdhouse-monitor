@@ -14,6 +14,7 @@ import adafruit_sht4x
 from unibe_mail import Reporter
 import cv2
 
+from .ignore_motion import ignore_motion_until
 # Import your Django model
 from .models import SensorData
 from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
@@ -51,13 +52,6 @@ def store_sensor_data(temperature, humidity, motion_triggered):
 # Track last image save time and last email sent time
 last_image_time = 0
 last_email_time = 0
-ignore_motion_until = 0  # Timestamp until which motion detection is ignored
-
-
-def ignore_motion_for(seconds):
-    """Temporarily disable motion detection for a given number of seconds."""
-    global ignore_motion_until
-    ignore_motion_until = time.time() + seconds
 
 
 def motion_detected_callback():
