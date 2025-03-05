@@ -16,7 +16,7 @@ import cv2
 
 # Import your Django model
 from .models import SensorData
-from .camera import picam2, turn_ir_on, turn_ir_off
+from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
 
 # I2C sensor setup
 i2c = board.I2C()
@@ -51,12 +51,25 @@ def store_sensor_data(temperature, humidity, motion_triggered):
 # Track last image save time and last email sent time
 last_image_time = 0
 last_email_time = 0
+ignore_motion_until = 0  # Timestamp until which motion detection is ignored
+
+
+def ignore_motion_for(seconds):
+    """Temporarily disable motion detection for a given number of seconds."""
+    global ignore_motion_until
+    ignore_motion_until = time.time() + seconds
 
 
 def motion_detected_callback():
-    global last_image_time, last_email_time
+    global last_image_time, last_email_time, ignore_motion_until
 
     current_time = time.time()
+
+    # Check if motion detection should be ignored
+    if current_time < ignore_motion_until or get_ir_led_state():
+        print("Motion detection ignored temporarily.")
+        return
+
     temperature, humidity = read_temperature_humidity()
     store_sensor_data(temperature, humidity, motion_triggered=True)
 
