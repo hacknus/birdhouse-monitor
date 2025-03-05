@@ -1,3 +1,5 @@
+import time
+
 from picamera2 import Picamera2
 import RPi.GPIO as GPIO
 # Toggle IR LED (ON or OFF)
@@ -28,4 +30,5 @@ def turn_ir_off():
 
 def get_ir_led_state():
     global ir_led_state
+    time.sleep(0.1)
     return ir_led_state
