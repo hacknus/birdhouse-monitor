@@ -125,7 +125,6 @@
 
         function toggleIRLED() {
             const switchElement = document.getElementById("irLedSwitch");
-            const indicator = document.getElementById("irStateIndicator");
             const action = switchElement.checked ? "on" : "off";  // Action based on switch state
 
             // Send the request to toggle the IR LED
@@ -139,15 +138,7 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        if (action === "on") {
-                            indicator.style.backgroundColor = "green";  // Green when ON
-                            indicator.style.display = "inline-block";  // Show indicator
-                        } else {
-                            indicator.style.backgroundColor = "red";  // Red when OFF
-                            indicator.style.display = "inline-block";  // Show indicator
-                        }
-                    } else {
+                    if (!data.success) {
                         console.error("Error toggling IR LED:", data.message);
                     }
                 })
@@ -164,16 +155,11 @@
                 .then(response => response.json())
                 .then(data => {
                     const switchElement = document.getElementById("irLedSwitch");
-                    const indicator = document.getElementById("irStateIndicator");
 
                     if (data.state) {
                         switchElement.checked = true;
-                        indicator.style.backgroundColor = "green";
-                        indicator.style.display = "inline-block";
                     } else {
                         switchElement.checked = false;
-                        indicator.style.backgroundColor = "red";
-                        indicator.style.display = "inline-block";
                     }
                 })
                 .catch(error => console.error("Error fetching IR LED state:", error));
