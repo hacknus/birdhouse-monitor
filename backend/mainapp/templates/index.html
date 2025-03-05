@@ -128,9 +128,30 @@
             return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
         }
 
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggleIRButton = document.getElementById("toggleIRButton");
+
+            // Fetch the current IR LED state on page load
+            fetch('/voegeli/get_ir_led_state/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ir_led_state) {
+                        // Set the button text and enable it based on the current state
+                        if (data.ir_led_state === "on") {
+                            toggleIRButton.textContent = "IR Light ON";  // Button text should reflect current state
+                            toggleIRButton.disabled = false;  // Enable the button
+                        } else {
+                            toggleIRButton.textContent = "IR Light OFF";  // Button text should reflect current state
+                            toggleIRButton.disabled = false;  // Enable the button
+                        }
+                    }
+                })
+                .catch(error => console.error("Error fetching IR LED state:", error));
+        });
+
         function toggleIRLED() {
             const button = document.getElementById("toggleIRButton");
-            const action = button.textContent === "IR Light ON" ? "off" : "on"; // Determine if action is "on" or "off"
+            const action = button.textContent === "IR Light ON" ? "off" : "on";  // Determine if action is "on" or "off"
 
             // Send the request to toggle the IR LED
             fetch("/voegeli/trigger_ir_led/", {
@@ -152,28 +173,6 @@
                 })
                 .catch(error => console.error("Error:", error));
         }
-
-        document.addEventListener('DOMContentLoaded', function () {
-            // Fetch the current IR state on page load
-            fetch('/voegeli/get_ir_state/')
-                .then(response => response.json())
-                .then(data => {
-                    const irState = data.ir_state;
-                    const irButton = document.getElementById("toggleIRButton");
-
-                    // Update the button text based on the IR state
-                    if (irState === "on") {
-                        irButton.textContent = "IR Light ON";
-                    } else {
-                        irButton.textContent = "IR Light OFF";
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching IR state:", error);
-                });
-
-            // Rest of the existing code...
-        });
 
     </script>
     <meta name="csrf-token" content="{{ csrf_token }}">
