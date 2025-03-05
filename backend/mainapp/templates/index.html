@@ -224,11 +224,17 @@
                 <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
 
                 <!-- Button to toggle IR LED (Initially Disabled) -->
-                <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR Light OFF</button>
+                <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR Light OFF
+                </button>
             </div>
             <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>
         </div>
         <div class="mt-1 mb-2" id="imgPreview"></div>
+
+        <div id="redshift" class="text-center">
+            <p>The image might appear red-shifted since the sensor has no IR filter (for night vision).</p>
+        </div>
+
         <!-- Save Image Button -->
         <div class="text-center mt-3">
             <button class="btn btn-success" id="saveImageBtn" disabled onclick="saveImageToGallery()">Save Image to
