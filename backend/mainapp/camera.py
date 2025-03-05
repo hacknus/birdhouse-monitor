@@ -29,7 +29,7 @@ def turn_ir_on():
 
 
 def turn_ir_off():
-    ignore_motion_for(5)
+    ignore_motion_for(10)
     global ir_led_state
     ir_led_state = False
     GPIO.output(IR_LED_PIN, GPIO.LOW)
