@@ -15,6 +15,8 @@ picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888',
 picam2.start()
 
 def turn_ir_on():
+    print("TURNING IR ON")
+    print(GPIO.input(IR_LED_PIN))
     GPIO.output(IR_LED_PIN, GPIO.HIGH)
 
 def turn_ir_off():
