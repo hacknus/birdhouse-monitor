@@ -164,10 +164,7 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        // Update the button text depending on the action
-                        button.textContent = action === "off" ? "IR Light OFF" : "IR Light ON";
-                    } else {
+                    if (!data.success) {
                         console.error("Error toggling IR LED:", data.message);
                     }
                 })
