@@ -89,7 +89,7 @@ def trigger_ir_led(request):
             action = data.get('action')
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Invalid request format.'}, status=400)
-
+        print(action)
         if action == 'on':
             turn_ir_on()
             return JsonResponse({'success': True, 'message': 'IR LED is ON.'})
@@ -106,6 +106,7 @@ def get_ir_state(request):
     # You can access the IR state from wherever it's stored (e.g., in a variable, database, or hardware device)
     # For now, let's assume it’s stored in a variable or a simple flag.
     ir_led_state = "on" if get_ir_led_state() else "off"  # Replace 'ir_led_on' with the actual method/variable to fetch state.
+    print(ir_led_state)
     return JsonResponse({'state': ir_led_state})
 
 
