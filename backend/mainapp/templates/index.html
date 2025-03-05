@@ -156,7 +156,7 @@
                 .then(data => {
                     const switchElement = document.getElementById("irLedSwitch");
                     console.log(data.state);
-                    switchElement.checked = !data.state;
+                    switchElement.checked = data.state === "on";
                     console.log(data.state);
 
                 })
