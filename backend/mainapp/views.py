@@ -20,18 +20,24 @@ from django.contrib import messages
 from .models import SensorData
 import mainapp.sensor_acquisition
 from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
+import numpy as np
 
-def gray_world_white_balance(image):
-    """ Applies the Gray World White Balance algorithm. """
-    wb = cv2.xphoto.createGrayworldWB()
-    return wb.balanceWhite(image)
+def histogram_white_balance(image):
+    """ Auto white balance using per-channel normalization. """
+    result = np.zeros_like(image, dtype=np.float32)
+    for i in range(3):  # Iterate over B, G, R channels
+        channel = image[:, :, i]
+        result[:, :, i] = cv2.normalize(channel, None, 0, 255, cv2.NORM_MINMAX)
+    return np.clip(result, 0, 255).astype(np.uint8)
+
 
 def img_generator():
     while True:
         frame = picam2.capture_array()
         frame = frame[:, :, :-1]
         frame = cv2.rotate(frame, cv2.ROTATE_180)
-        frame = gray_world_white_balance(frame)
+        frame = histogram_white_balance(frame)
+
         # compression
         ret, jpeg = cv2.imencode(".jpg", frame)
 
@@ -63,7 +69,7 @@ def save_image(request):
         frame = picam2.capture_array()
         frame = frame[:, :, :-1]
         frame = cv2.rotate(frame, cv2.ROTATE_180)
-        frame = gray_world_white_balance(frame)
+        frame = histogram_white_balance(frame)
 
         cv2.imwrite(image_path, frame)
 
