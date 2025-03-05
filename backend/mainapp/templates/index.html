@@ -152,6 +152,7 @@
                     }
                 })
                 .catch(error => console.error("Error:", error));
+            getIRLEDState();
         }
 
         function getCSRFToken() {
@@ -159,31 +160,23 @@
         }
 
         function getIRLEDState() {
-            fetch('/voegeli/get_ir_led_state/')
+            fetch("/voegeli/get_ir_led_state/")
                 .then(response => response.json())
                 .then(data => {
-                    if (data.ir_led_state) {
-                        updateIRButton(data.ir_led_state);
+                    const switchElement = document.getElementById("irLedSwitch");
+                    const indicator = document.getElementById("irStateIndicator");
+
+                    if (data.state) {
+                        switchElement.checked = true;
+                        indicator.style.backgroundColor = "green";
+                        indicator.style.display = "inline-block";
+                    } else {
+                        switchElement.checked = false;
+                        indicator.style.backgroundColor = "red";
+                        indicator.style.display = "inline-block";
                     }
                 })
                 .catch(error => console.error("Error fetching IR LED state:", error));
-        }
-
-        function updateIRButton(state) {
-            const button = document.getElementById("toggleIRButton");
-            const statusIndicator = document.getElementById("irStatusIndicator");
-
-            if (state === "on") {
-                button.textContent = "IR Light: ON";
-                button.classList.remove("btn-danger");
-                button.classList.add("btn-success");
-                statusIndicator.style.backgroundColor = "green";
-            } else {
-                button.textContent = "IR Light: OFF";
-                button.classList.remove("btn-success");
-                button.classList.add("btn-danger");
-                statusIndicator.style.backgroundColor = "red";
-            }
         }
 
     </script>
@@ -249,20 +242,17 @@
     <div class="row row-border">
         <h3 class="text-center mt-3"><b>Livestream</b></h3>
         <div class="d-flex justify-content-center align-items-center">
-            <!-- Enable Preview Checkbox -->
             <input type="checkbox" class="btn-check" id="enablePreview" checked aria-describedby="enablePreviewHelp"
                    onchange="showStream(event)">
-            <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
+            <label class="btn btn-outline-dark me-4" for="enablePreview">Enable preview</label>
+            <!-- Increased spacing with 'me-4' -->
 
             <!-- IR LED Switch -->
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="irLedSwitch" onchange="toggleIRLED()">
-                <label class="form-check-label" for="irLedSwitch">IR Light</label>
+                <input class="form-check-input" type="checkbox" id="irLedSwitch" onchange="toggleIRLED()"
+                       style="transform: scale(1.4);">
+                <label class="form-check-label ms-2" for="irLedSwitch">IR Light</label> <!-- Adjusted spacing -->
             </div>
-
-            <!-- Indicator for IR LED state -->
-            <div id="irStateIndicator" class="ms-2"
-                 style="height: 20px; width: 20px; border-radius: 50%; background-color: red; display: none;"></div>
         </div>
         <div class="mt-1 mb-2" id="imgPreview"></div>
 
