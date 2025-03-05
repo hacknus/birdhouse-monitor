@@ -42,7 +42,7 @@
             enablePreview = document.getElementById("enablePreview");
             imgPreview = document.getElementById("imgPreview");
             saveImageBtn = document.getElementById("saveImageBtn");
-            toggleIRButton = document.getElementById("toggleIRButton");
+            witchElement = document.getElementById("irLedSwitch");
 
             if (enablePreview.checked) {
                 let img = createPreview();
@@ -60,7 +60,7 @@
                 };
 
                 saveImageBtn.disabled = false;
-                toggleIRButton.disabled = false;
+                witchElement.disabled = false;
                 togglePreviewLabel();
             }
         });
@@ -102,17 +102,17 @@
             enablePreview = e.target;
             imgPreview = document.getElementById("imgPreview");
             saveImageBtn = document.getElementById("saveImageBtn");
-            toggleIRButton = document.getElementById("toggleIRButton");
+            witchElement = document.getElementById("irLedSwitch");
 
             if (enablePreview.checked) {
                 imgPreview.appendChild(createPreview());
                 saveImageBtn.disabled = false;  // Enable button
-                toggleIRButton.disabled = false;  // Enable the IR button
+                witchElement.disabled = false;  // Enable the IR button
 
             } else {
                 imgPreview.innerHTML = "";  // Clear preview
                 saveImageBtn.disabled = true;  // Disable button
-                toggleIRButton.disabled = true;  // Disable the IR button
+                witchElement.disabled = true;  // Disable the IR button
 
             }
 
@@ -123,35 +123,42 @@
         // Ensure the label updates and the stream shows when toggling
         document.getElementById("enablePreview").addEventListener("change", showStream);
 
-        // Function to get CSRF token from the meta tag
-        function getCSRFToken() {
-            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        }
-
-        // JavaScript function to toggle the IR LED and update the button label
         function toggleIRLED() {
-            const button = document.getElementById("toggleIRButton");
-            const action = button.textContent === "IR Light ON" ? "off" : "on"; // Determine if action is "on" or "off"
+            const switchElement = document.getElementById("irLedSwitch");
+            const action = switchElement.checked ? "on" : "off";  // Action based on switch state
 
             // Send the request to toggle the IR LED
             fetch("/voegeli/trigger_ir_led/", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": getCSRFToken(), // Get the CSRF token from the meta tag
-                    "Content-Type": "application/json"  // Ensure the content type is application/json
+                    "X-CSRFToken": getCSRFToken(),
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify({action: action})  // Send the action ("on" or "off")
+                body: JSON.stringify({action: action})
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        // Update the button text depending on the action
-                        button.textContent = action === "off" ? "IR Light OFF" : "IR Light ON";
-                    } else {
+                    if (!data.success) {
                         console.error("Error toggling IR LED:", data.message);
                     }
                 })
                 .catch(error => console.error("Error:", error));
+            getIRLEDState();
+        }
+
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        function getIRLEDState() {
+            fetch("/voegeli/get_ir_led_state/")
+                .then(response => response.json())
+                .then(data => {
+                    const switchElement = document.getElementById("irLedSwitch");
+                    switchElement.checked = data.state === "on";
+
+                })
+                .catch(error => console.error("Error fetching IR LED state:", error));
         }
 
     </script>
@@ -216,18 +223,18 @@
     <!-- Zobrazenie streamu z kamery -->
     <div class="row row-border">
         <h3 class="text-center mt-3"><b>Livestream</b></h3>
-        <div class="text-center mt-1 mb-3">
-            <div class="d-flex justify-content-center">
-                <!-- Enable Preview Checkbox -->
-                <input type="checkbox" class="btn-check" id="enablePreview" checked aria-describedby="enablePreviewHelp"
-                       onchange="showStream(event)">
-                <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
+        <div class="d-flex justify-content-center align-items-center">
+            <input type="checkbox" class="btn-check" id="enablePreview" checked aria-describedby="enablePreviewHelp"
+                   onchange="showStream(event)">
+            <label class="btn btn-outline-dark me-4" for="enablePreview">Enable preview</label>
+            <!-- Increased spacing with 'me-4' -->
 
-                <!-- Button to toggle IR LED (Initially Disabled) -->
-                <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()" disabled>IR Light OFF
-                </button>
+            <!-- IR LED Switch -->
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="irLedSwitch" onchange="toggleIRLED()"
+                       style="transform: scale(1.4);">
+                <label class="form-check-label ms-2" for="irLedSwitch">IR Light</label> <!-- Adjusted spacing -->
             </div>
-            <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>
         </div>
         <div class="mt-1 mb-2" id="imgPreview"></div>
 
@@ -337,6 +344,8 @@
             selectedPeriod = periodSelect.value;  // Update the selected period when the user changes it
             fetchData();  // Immediately fetch the data based on the new period
         });
+
+        getIRLEDState();
 
         // Initial data fetch on page load
         fetchData();
