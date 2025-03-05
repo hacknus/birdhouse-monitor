@@ -67,7 +67,7 @@ def motion_detected_callback():
 
     # Check if motion detection should be ignored
     if current_time < ignore_motion_until or get_ir_led_state():
-        print("Motion detection ignored temporarily.")
+        print("Motion detection ignored.")
         return
 
     temperature, humidity = read_temperature_humidity()

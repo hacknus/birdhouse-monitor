@@ -27,6 +27,7 @@ def img_generator():
         frame = picam2.capture_array()
         frame = frame[:, :, :-1]
         frame = cv2.rotate(frame, cv2.ROTATE_180)
+        frame = cv2.xphoto.createSimpleWB().balanceWhite(frame)
 
         # compression
         ret, jpeg = cv2.imencode(".jpg", frame)
@@ -59,6 +60,7 @@ def save_image(request):
         frame = picam2.capture_array()
         frame = frame[:, :, :-1]
         frame = cv2.rotate(frame, cv2.ROTATE_180)
+        frame = cv2.xphoto.createSimpleWB().balanceWhite(frame)
 
         cv2.imwrite(image_path, frame)
 
