@@ -42,7 +42,7 @@
             enablePreview = document.getElementById("enablePreview");
             imgPreview = document.getElementById("imgPreview");
             saveImageBtn = document.getElementById("saveImageBtn");
-            toggleIRButton = document.getElementById("toggleIRButton");
+            witchElement = document.getElementById("irLedSwitch");
 
             if (enablePreview.checked) {
                 let img = createPreview();
@@ -60,7 +60,7 @@
                 };
 
                 saveImageBtn.disabled = false;
-                toggleIRButton.disabled = false;
+                witchElement.disabled = false;
                 togglePreviewLabel();
             }
         });
@@ -102,17 +102,17 @@
             enablePreview = e.target;
             imgPreview = document.getElementById("imgPreview");
             saveImageBtn = document.getElementById("saveImageBtn");
-            toggleIRButton = document.getElementById("toggleIRButton");
+            witchElement = document.getElementById("irLedSwitch");
 
             if (enablePreview.checked) {
                 imgPreview.appendChild(createPreview());
                 saveImageBtn.disabled = false;  // Enable button
-                toggleIRButton.disabled = false;  // Enable the IR button
+                witchElement.disabled = false;  // Enable the IR button
 
             } else {
                 imgPreview.innerHTML = "";  // Clear preview
                 saveImageBtn.disabled = true;  // Disable button
-                toggleIRButton.disabled = true;  // Disable the IR button
+                witchElement.disabled = true;  // Disable the IR button
 
             }
 
@@ -155,12 +155,7 @@
                 .then(response => response.json())
                 .then(data => {
                     const switchElement = document.getElementById("irLedSwitch");
-
-                    if (data.state) {
-                        switchElement.checked = true;
-                    } else {
-                        switchElement.checked = false;
-                    }
+                    switchElement.checked = !!data.state;
                 })
                 .catch(error => console.error("Error fetching IR LED state:", error));
         }
