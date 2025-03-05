@@ -9,6 +9,6 @@ def ignore_motion_for(seconds):
 
 def are_we_still_blocked():
     if time.time() < ignore_motion_until:
-        return False
-    else:
         return True
+    else:
+        return False
