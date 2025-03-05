@@ -87,7 +87,7 @@ def motion_detected_callback():
                 subscribers = list(reader)
                 for subscriber in subscribers:
                     Voegeli.send_mail(
-                        f"Hoi Du!\nI'm moving into the birdhouse!\nCheck me out at http://cgnum.space.ch/voegeli or at http://130.92.145.222\nBest Regards, Your Vögeli",
+                        f"Hoi Du!\nI'm moving into the birdhouse!\nCheck me out at http://cgnum.space.unibe.ch/voegeli\nBest Regards, Your Vögeli",
                         subject="Vögeli Motion Alert",
                         recipients=subscriber[0]
                     )
