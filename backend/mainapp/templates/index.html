@@ -123,55 +123,61 @@
         // Ensure the label updates and the stream shows when toggling
         document.getElementById("enablePreview").addEventListener("change", showStream);
 
-        // Function to get CSRF token from the meta tag
-        function getCSRFToken() {
-            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-        }
-
-        function getIRLEDState() {
-            const toggleIRButton = document.getElementById("toggleIRButton");
-            console.log('Fetching IR LED state...');
-
-            // Fetch the current IR LED state on page load
-            fetch('/voegeli/get_ir_led_state/')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.ir_led_state) {
-                        // Set the button text and enable it based on the current state
-                        if (data.ir_led_state === "on") {
-                            toggleIRButton.textContent = "IR Light ON";  // Button text should reflect current state
-                            toggleIRButton.disabled = false;  // Enable the button
-                        } else {
-                            toggleIRButton.textContent = "IR Light OFF";  // Button text should reflect current state
-                            toggleIRButton.disabled = false;  // Enable the button
-                        }
-                    }
-                })
-                .catch(error => console.error("Error fetching IR LED state:", error));
-        }
-
         function toggleIRLED() {
             const button = document.getElementById("toggleIRButton");
-            const action = button.textContent === "IR Light ON" ? "off" : "on";  // Determine if action is "on" or "off"
+            const statusIndicator = document.getElementById("irStatusIndicator");
 
-            // Send the request to toggle the IR LED
+            const action = button.textContent === "IR Light: ON" ? "off" : "on";  // Toggle the state
+
             fetch("/voegeli/trigger_ir_led/", {
                 method: "POST",
                 headers: {
-                    "X-CSRFToken": getCSRFToken(), // Get the CSRF token from the meta tag
-                    "Content-Type": "application/json"  // Ensure the content type is application/json
+                    "X-CSRFToken": getCSRFToken(),
+                    "Content-Type": "application/json"
                 },
-                body: JSON.stringify({action: action})  // Send the action ("on" or "off")
+                body: JSON.stringify({action: action})
             })
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        getIRLEDState()
+                        updateIRButton(action);
                     } else {
                         console.error("Error toggling IR LED:", data.message);
                     }
                 })
                 .catch(error => console.error("Error:", error));
+        }
+
+        function getCSRFToken() {
+            return document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        }
+
+        function getIRLEDState() {
+            fetch('/voegeli/get_ir_led_state/')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.ir_led_state) {
+                        updateIRButton(data.ir_led_state);
+                    }
+                })
+                .catch(error => console.error("Error fetching IR LED state:", error));
+        }
+
+        function updateIRButton(state) {
+            const button = document.getElementById("toggleIRButton");
+            const statusIndicator = document.getElementById("irStatusIndicator");
+
+            if (state === "on") {
+                button.textContent = "IR Light: ON";
+                button.classList.remove("btn-danger");
+                button.classList.add("btn-success");
+                statusIndicator.style.backgroundColor = "green";
+            } else {
+                button.textContent = "IR Light: OFF";
+                button.classList.remove("btn-success");
+                button.classList.add("btn-danger");
+                statusIndicator.style.backgroundColor = "red";
+            }
         }
 
     </script>
@@ -243,8 +249,14 @@
                        onchange="showStream(event)">
                 <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
 
-                <!-- Button to toggle IR LED (Initially Disabled) -->
-                <button id="toggleIRButton" class="btn btn-primary" onclick="toggleIRLED()">IR Light OFF
+                <div class="d-flex justify-content-center">
+                    <!-- IR LED Toggle Button -->
+                    <button id="toggleIRButton" class="btn btn-danger" onclick="toggleIRLED()">IR Light: OFF</button>
+                    <!-- Status Indicator -->
+                    <div id="irStatusIndicator"
+                         style="width: 20px; height: 20px; border-radius: 50%; margin-left: 10px; background-color: red;"></div>
+                </div>
+
                 </button>
             </div>
             <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>

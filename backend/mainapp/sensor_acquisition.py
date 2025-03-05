@@ -24,7 +24,7 @@ sensor = adafruit_sht4x.SHT4x(i2c)
 
 # GPIO Motion Sensor Setup
 MOTION_PIN = 4
-pir = MotionSensor(MOTION_PIN, queue_len=10)
+pir = MotionSensor(MOTION_PIN)
 
 # email callback
 

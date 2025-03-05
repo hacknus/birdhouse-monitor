@@ -23,8 +23,8 @@ def turn_ir_on():
 
 def turn_ir_off():
     global ir_led_state
-    GPIO.output(IR_LED_PIN, GPIO.LOW)
     ir_led_state = False
+    GPIO.output(IR_LED_PIN, GPIO.LOW)
 
 def get_ir_led_state():
     global ir_led_state
