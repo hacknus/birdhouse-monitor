@@ -156,8 +156,9 @@
                 .then(data => {
                     const switchElement = document.getElementById("irLedSwitch");
                     console.log(data.state);
+                    switchElement.checked = !data.state;
+                    console.log(data.state);
 
-                    switchElement.checked = !!data.state;
                 })
                 .catch(error => console.error("Error fetching IR LED state:", error));
         }
