@@ -14,7 +14,7 @@ import adafruit_sht4x
 from unibe_mail import Reporter
 import cv2
 
-from .ignore_motion import ignore_motion_until
+from .ignore_motion import are_we_still_blocked
 # Import your Django model
 from .models import SensorData
 from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
@@ -55,18 +55,17 @@ last_email_time = 0
 
 
 def motion_detected_callback():
-    global last_image_time, last_email_time, ignore_motion_until
-
-    current_time = time.time()
+    global last_image_time, last_email_time
 
     # Check if motion detection should be ignored
-    if current_time < ignore_motion_until:
+    if are_we_still_blocked():
         print("Motion detection temporarily ignored.")
         return
     if get_ir_led_state():
         print("Motion detection ignored because IR LED is on.")
         return
 
+    current_time = time.time()
     temperature, humidity = read_temperature_humidity()
     store_sensor_data(temperature, humidity, motion_triggered=True)
 
