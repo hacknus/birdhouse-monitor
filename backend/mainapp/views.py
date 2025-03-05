@@ -21,14 +21,17 @@ from .models import SensorData
 import mainapp.sensor_acquisition
 from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
 
+def gray_world_white_balance(image):
+    """ Applies the Gray World White Balance algorithm. """
+    wb = cv2.xphoto.createGrayworldWB()
+    return wb.balanceWhite(image)
 
 def img_generator():
     while True:
         frame = picam2.capture_array()
         frame = frame[:, :, :-1]
         frame = cv2.rotate(frame, cv2.ROTATE_180)
-        frame = cv2.xphoto.createSimpleWB().balanceWhite(frame)
-
+        frame = gray_world_white_balance(frame)
         # compression
         ret, jpeg = cv2.imencode(".jpg", frame)
 
@@ -60,7 +63,7 @@ def save_image(request):
         frame = picam2.capture_array()
         frame = frame[:, :, :-1]
         frame = cv2.rotate(frame, cv2.ROTATE_180)
-        frame = cv2.xphoto.createSimpleWB().balanceWhite(frame)
+        frame = gray_world_white_balance(frame)
 
         cv2.imwrite(image_path, frame)
 
