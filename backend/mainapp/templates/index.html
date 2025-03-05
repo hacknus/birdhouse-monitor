@@ -124,11 +124,11 @@
         document.getElementById("enablePreview").addEventListener("change", showStream);
 
         function toggleIRLED() {
-            const button = document.getElementById("toggleIRButton");
-            const statusIndicator = document.getElementById("irStatusIndicator");
+            const switchElement = document.getElementById("irLedSwitch");
+            const indicator = document.getElementById("irStateIndicator");
+            const action = switchElement.checked ? "on" : "off";  // Action based on switch state
 
-            const action = button.textContent === "IR Light: ON" ? "off" : "on";  // Toggle the state
-
+            // Send the request to toggle the IR LED
             fetch("/voegeli/trigger_ir_led/", {
                 method: "POST",
                 headers: {
@@ -140,7 +140,13 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        updateIRButton(action);
+                        if (action === "on") {
+                            indicator.style.backgroundColor = "green";  // Green when ON
+                            indicator.style.display = "inline-block";  // Show indicator
+                        } else {
+                            indicator.style.backgroundColor = "red";  // Red when OFF
+                            indicator.style.display = "inline-block";  // Show indicator
+                        }
                     } else {
                         console.error("Error toggling IR LED:", data.message);
                     }
@@ -242,24 +248,21 @@
     <!-- Zobrazenie streamu z kamery -->
     <div class="row row-border">
         <h3 class="text-center mt-3"><b>Livestream</b></h3>
-        <div class="text-center mt-1 mb-3">
-            <div class="d-flex justify-content-center">
-                <!-- Enable Preview Checkbox -->
-                <input type="checkbox" class="btn-check" id="enablePreview" checked aria-describedby="enablePreviewHelp"
-                       onchange="showStream(event)">
-                <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
+        <div class="d-flex justify-content-center align-items-center">
+            <!-- Enable Preview Checkbox -->
+            <input type="checkbox" class="btn-check" id="enablePreview" checked aria-describedby="enablePreviewHelp"
+                   onchange="showStream(event)">
+            <label class="btn btn-outline-dark me-2" for="enablePreview">Enable preview</label>
 
-                <div class="d-flex justify-content-center">
-                    <!-- IR LED Toggle Button -->
-                    <button id="toggleIRButton" class="btn btn-danger" onclick="toggleIRLED()">IR Light: OFF</button>
-                    <!-- Status Indicator -->
-                    <div id="irStatusIndicator"
-                         style="width: 20px; height: 20px; border-radius: 50%; margin-left: 10px; background-color: red;"></div>
-                </div>
-
-                </button>
+            <!-- IR LED Switch -->
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="irLedSwitch" onchange="toggleIRLED()">
+                <label class="form-check-label" for="irLedSwitch">IR Light</label>
             </div>
-            <div id="enablePreviewHelp" class="form-text">Please click above to tune into the live-stream.</div>
+
+            <!-- Indicator for IR LED state -->
+            <div id="irStateIndicator" class="ms-2"
+                 style="height: 20px; width: 20px; border-radius: 50%; background-color: red; display: none;"></div>
         </div>
         <div class="mt-1 mb-2" id="imgPreview"></div>
 
