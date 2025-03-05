@@ -44,7 +44,8 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" href="{% url 'newsletter' %}">
-                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter" width="32"
+                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter"
+                             width="32"
                              height="32">
                         Newsletter
                     </a>
@@ -65,6 +66,10 @@
 <!-- Newsletter Form -->
 <div class="newsletter-container">
     <h1>Newsletter Subscription</h1>
+
+    <div id="newsletter_disclaimer" class="text-center">
+        <p> Get notified if there is movement in the birdhouse! Maximum one e-mail per day.</p>
+    </div>
 
     <!-- Add an Email Address -->
     <h4>Add an Email Address</h4>
