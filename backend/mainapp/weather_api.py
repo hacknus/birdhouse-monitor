@@ -17,12 +17,12 @@ def get_access_token():
     # Encode the credentials in Base64
     credentials = f"{CLIENT_ID}:{CLIENT_SECRET}"
     encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
-    correct_encoded = encoded_credentials.rstrip("\n")  # Remove any accidental newline characters
-    print(correct_encoded)
+    encoded_credentials[-1] = "="  # Remove any accidental newline characters
+    print(encoded_credentials)
     # Define the API request
     url = "https://api.srgssr.ch/oauth/v1/accesstoken?grant_type=client_credentials"
     headers = {
-        "Authorization": f"Basic {correct_encoded}",
+        "Authorization": f"Basic {encoded_credentials}",
         "Content-Type": "application/x-www-form-urlencoded"
     }
 
