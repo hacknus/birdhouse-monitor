@@ -57,6 +57,7 @@ def get_location_data(access_token, zip_code):
         id = location_data[0]["geolocation"]["id"]
     else:
         print("Failed to retrieve location data:", response.status_code, response.text)
+        return None
     return id
 
 
@@ -86,6 +87,7 @@ def get_weather_forecast(access_token, geolocation_id):
                 return entry.get('TTT_C', 'N/A')
     else:
         print("Failed to retrieve weather forecast:", response.status_code, response.text)
+        return None
 
 
 # Function to store sensor data in the database
@@ -101,9 +103,11 @@ def periodic_data_logger():
     while True:
         access_token = get_access_token()  # Get the access token
         if access_token:
-            id = get_location_data(access_token, 3012)  # Use the token to fetch weather data
-            temperature = get_weather_forecast(access_token, id)
-            store_weather_data(temperature)
+            id = get_location_data(access_token, 3012)  # Use the token to fetch weather data in Bern
+            if id is not None:
+                temperature = get_weather_forecast(access_token, id)
+                if temperature is not None:
+                    store_weather_data(temperature)
         time.sleep(60 * 60)
 
 
