@@ -31,6 +31,7 @@ pir = MotionSensor(MOTION_PIN, threshold=0.8, queue_len=10)
 
 # replace this with custom email-interface
 Voegeli = Reporter("Voegeli")
+base_url = "http://cgnum.space.unibe.ch/voegeli/unsubscribe/"  # Change this to your actual unsubscribe URL
 
 
 # Function to read temperature and humidity
@@ -95,10 +96,21 @@ def motion_detected_callback():
                 reader = csv.reader(file)
                 subscribers = list(reader)
                 for subscriber in subscribers:
+                    email = subscriber[0]
+                    unsubscribe_link = f"{base_url}{email}/"  # Dynamic unsubscribe link
+
+                    email_body = (
+                        "Hoi Du!\n"
+                        "I'm moving into the birdhouse!\n"
+                        "Check me out at http://cgnum.space.unibe.ch/voegeli\n"
+                        "Best Regards, Your Vögeli\n\n"
+                        f'<a href="{unsubscribe_link}">Unsubscribe</a>'
+                    )
+
                     Voegeli.send_mail(
-                        f"Hoi Du!\nI'm moving into the birdhouse!\nCheck me out at http://cgnum.space.unibe.ch/voegeli\nBest Regards, Your Vögeli",
+                        email_body,
                         subject="Vögeli Motion Alert",
-                        recipients=subscriber[0]
+                        recipients=email
                     )
             last_email_time = current_time
         except FileNotFoundError:

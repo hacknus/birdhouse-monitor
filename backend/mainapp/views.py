@@ -7,7 +7,7 @@ import cv2
 import os
 
 from django.conf import settings
-from django.http import HttpResponse, JsonResponse, StreamingHttpResponse
+from django.http import HttpResponse, JsonResponse, StreamingHttpResponse, HttpResponseNotFound
 from django.shortcuts import render
 from datetime import timedelta
 from django.utils import timezone
@@ -206,6 +206,19 @@ def remove_email(request):
             messages.error(request, f"Email {email} is not in the list.")
 
         return redirect('newsletter')
+
+
+def unsubscribe_email(request, email):
+    """Handle the email unsubscription request."""
+    email_list = read_email_list()
+    if email in email_list:
+        email_list.remove(email)
+        write_email_list(email_list)
+        messages.success(request, f"{email} has been unsubscribed successfully.")
+    else:
+        messages.error(request, f"{email} was not found in the subscriber list.")
+
+    return render(request, 'unsubscribe.html', {'email': email, 'removed': removed})
 
 
 def newsletter_view(request):
