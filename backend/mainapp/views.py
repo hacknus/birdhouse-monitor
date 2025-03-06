@@ -157,10 +157,10 @@ def get_guru_data(request):
 
     # Fetch sensor data based on the period
     data = SensorData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
-    entry = data.latest()
+    entry = data.latest("timestamp")
 
     data = WeatherData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
-    bern_entry = data.latest()
+    bern_entry = data.latest("timestamp")
     # Prepare the data for the response
 
     # load JSON data
