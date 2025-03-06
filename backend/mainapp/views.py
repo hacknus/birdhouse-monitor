@@ -157,11 +157,15 @@ def get_guru_data(request):
 
     # Fetch sensor data based on the period
     data = SensorData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
-    entry = data.latest("timestamp")
+    local_temperature = data.latest("timestamp").temperature
 
-    data = WeatherData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
-    bern_entry = data.latest("timestamp")
-    # Prepare the data for the response
+    try:
+
+        data = WeatherData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
+        bern_temperature = data.latest("timestamp").temperature
+        # Prepare the data for the response
+    except WeatherData.DoesNotExist:
+        bern_temperature = local_temperature
 
     # load JSON data
     with open("mainapp/phrases.json", "r") as file:
@@ -169,14 +173,14 @@ def get_guru_data(request):
         phrase = ""
         for key in data.keys():
             start, end = map(int, key.split(".."))  # Extract range bounds
-            if start <= float(entry.temperature) <= end:  # Check if value falls in the range
+            if start <= float(local_temperature) <= end:  # Check if value falls in the range
                 phrase = random.choice(data[key])  # Pick a random element from the list
                 break
 
     response_data = [
         {
-            'temperatureValue': entry.temperature,
-            'temperatureBern': bern_entry.temperature,
+            'temperatureValue': local_temperature,
+            'temperatureBern': bern_temperature,
             'phrase': phrase,
         }
     ]
