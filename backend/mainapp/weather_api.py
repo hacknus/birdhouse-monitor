@@ -17,6 +17,7 @@ def get_access_token():
     # Encode the credentials in Base64
     credentials = f"{CLIENT_ID}:{CLIENT_SECRET}"
     encoded_credentials = base64.b64encode(credentials.encode()).decode()
+    print(encoded_credentials)
 
     # Define the API request
     url = "https://api.srgssr.ch/oauth/v1/accesstoken?grant_type=client_credentials"

@@ -160,7 +160,6 @@ def get_guru_data(request):
     entry = data.latest("timestamp")
 
     data = WeatherData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
-    print(data)
     bern_entry = data.latest("timestamp")
     # Prepare the data for the response
 
