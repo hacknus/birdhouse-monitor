@@ -1,3 +1,4 @@
+import base64
 import threading
 import time
 from datetime import datetime, timedelta, timezone
@@ -13,10 +14,17 @@ import requests
 
 # Function to get the access token
 def get_access_token():
+    # Encode the credentials in Base64
+    credentials = f"{CLIENT_ID}:{CLIENT_SECRET}"
+    encoded_credentials = base64.b64encode(credentials.encode()).decode()
+
+    # Define the API request
     url = "https://api.srgssr.ch/oauth/v1/accesstoken?grant_type=client_credentials"
     headers = {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        "Authorization": f"Basic {encoded_credentials}",
+        "Content-Type": "application/x-www-form-urlencoded"
     }
+
     data = {
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET

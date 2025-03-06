@@ -165,7 +165,7 @@ def get_guru_data(request):
     # Prepare the data for the response
 
     # load JSON data
-    with open("phrases.json", "r") as file:
+    with open("mainapp/phrases.json", "r") as file:
         data = json.load(file)
         phrase = ""
         for key in data.keys():
