@@ -104,7 +104,7 @@ def periodic_data_logger():
             id = get_location_data(access_token, 3012)  # Use the token to fetch weather data
             temperature = get_weather_forecast(access_token, id)
             store_weather_data(temperature)
-        time.sleep(60)
+        time.sleep(60 * 60)
 
 
 # Start background thread
