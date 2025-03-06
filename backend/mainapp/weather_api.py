@@ -22,7 +22,7 @@ def get_access_token():
         'client_secret': CLIENT_SECRET
     }
 
-    response = requests.post(url, headers=headers, data=data)
+    response = requests.post(url, headers=headers, data=data, allow_redirects=True)
 
     if response.status_code == 200:
         # Extract access token from the response
@@ -40,7 +40,7 @@ def get_location_data(access_token, zip_code):
     headers = {
         'Authorization': f'Bearer {access_token}'
     }
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, allow_redirects=True)
 
     if response.status_code == 200:
         # Process and print the location data
@@ -56,7 +56,7 @@ def get_weather_forecast(access_token, geolocation_id):
     headers = {
         'Authorization': f'Bearer {access_token}'
     }
-    response = requests.get(url, headers=headers)
+    response = requests.get(url, headers=headers, allow_redirects=True)
 
     if response.status_code == 200:
         forecast_data = response.json()
