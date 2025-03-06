@@ -110,7 +110,8 @@ def motion_detected_callback():
                     Voegeli.send_mail(
                         email_body,
                         subject="Vögeli Motion Alert",
-                        recipients=email
+                        recipients=email,
+                        is_html=True,
                     )
             last_email_time = current_time
         except FileNotFoundError:
