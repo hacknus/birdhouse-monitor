@@ -1,7 +1,7 @@
 import json
 import time
 import datetime
-from random import random
+import random
 
 import cv2
 import os
@@ -12,7 +12,7 @@ from django.shortcuts import render
 from datetime import timedelta
 from django.utils import timezone
 from django.http import JsonResponse
-from .models import SensorData
+from .models import SensorData, WeatherData
 import csv
 from django.shortcuts import render, redirect
 from django.contrib import messages
@@ -151,6 +151,39 @@ def get_sensor_data(request):
     return JsonResponse(response_data, safe=False)
 
 
+def get_guru_data(request):
+    now = timezone.now()
+    time_window = now - timedelta(hours=1)
+
+    # Fetch sensor data based on the period
+    data = SensorData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
+    entry = data[-1]
+
+    data = WeatherData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
+    bern_entry = data[-1]
+    # Prepare the data for the response
+
+    # load JSON data
+    with open("phrases.json", "r") as file:
+        data = json.load(file)
+        phrase = ""
+        for key in data.keys():
+            start, end = map(int, key.split(".."))  # Extract range bounds
+            if start <= float(entry.temperature) <= end:  # Check if value falls in the range
+                phrase = random.choice(data[key])  # Pick a random element from the list
+                break
+
+    response_data = [
+        {
+            'temperatureValue': entry.temperature,
+            'temperatureBern': bern_entry.temperature,
+            'phrase': phrase,
+        }
+    ]
+
+    return JsonResponse(response_data, safe=False)
+
+
 # Path to the CSV file where emails are stored
 CSV_FILE_PATH = 'newsletter_subscribers.csv'
 
@@ -222,7 +255,7 @@ def unsubscribe_email(request, email):
     else:
         messages.error(request, f"{email} was not found in the subscriber list.")
 
-    return render(request, 'unsubscribe.html', {'email': email, 'removed': removed})
+    return render(request, 'unsubscribe.html', {'email': email})
 
 
 def newsletter_view(request):

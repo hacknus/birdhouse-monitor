@@ -96,9 +96,9 @@
     <!-- Temperature Display -->
     <div class="container text-center mt-5">
         <div class="temperature" id="temperatureValue">--°</div>
-        <p>Indoor Temp °C</p>
+        <p>Birdhaustemp. (°C)</p>
         <h3 id="phrase">Fetching data...</h3>
-        <div class="temperature" id="bern-temp">--°</div>
+        <div class="temperature" id="temperatureBern">--°</div>
         <p>Bern Temp °C</p>
     </div>
 </div>
@@ -130,38 +130,21 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        async function fetchBernTemperature() {
-            try {
-                const response = await fetch("https://www.meteoschweiz.admin.ch/home.html?tab=overview");
-                const data = await response.text();
-                const tempMatch = data.match(/Bern.*?(\d+\.\d+)/);
-                if (tempMatch) {
-                    document.getElementById("bern-temp").textContent = tempMatch[1] + "°";
-                } else {
-                    document.getElementById("bern-temp").textContent = "N/A";
-                }
-            } catch (error) {
-                console.error("Error fetching Bern temperature:", error);
-                document.getElementById("bern-temp").textContent = "Error";
-            }
-        }
-
-        function fetchData() {
-            fetch(`/voegeli/get_sensor_data/?period=24h`)
+        function fetchGuruData() {
+            fetch(`/voegeli/get_guru_data/`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log("Fetched data:", data);  // Log the raw data to the console
-
-                    if (data && data.length > 0) {
-                        const latestData = data[data.length - 1]; // Get the most recent data point
-
+                    if (data) {
                         // Update DOM with the latest data
-                        document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
-
+                        document.getElementById('temperatureValue').textContent = data.temperatureValue ? `${data.temperatureValue} °C` : 'No data';
+                        document.getElementById('temperatureBern').textContent = data.temperatureBern ? `${data.temperatureBern} °C` : 'No data';
+                        document.getElementById('phrase').textContent = data.phrase ? `${data.phrase} °C` : 'I weiss o nid..';
                     } else {
                         console.log('No data available');
                         // Handle the case where there's no data
                         document.getElementById('temperatureValue').textContent = 'No data';
+                        document.getElementById('temperatureBern').textContent = 'No data';
+                        document.getElementById('phrase').textContent = 'I weiss o nid..';
                     }
                 })
                 .catch(error => {
@@ -171,12 +154,10 @@
         }
 
         // Initial data fetch on page load
-        fetchData();
-        fetchBernTemperature();
+        fetchGuruData();
 
         // Periodically fetch the data every 10 seconds (adjust the interval as needed)
-        setInterval(fetchData, 10000);  // Fetch data every 10 seconds
-        setInterval(fetchBernTemperature, 10000);  // Fetch data every 10 seconds
+        setInterval(fetchGuruData, 10000);  // Fetch data every 10 seconds
     });
 </script>
 </body>

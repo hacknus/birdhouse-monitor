@@ -11,6 +11,7 @@ urlpatterns = [
     path('trigger_ir_led/', views.trigger_ir_led, name='trigger_ir_led'),
     path('get_ir_led_state/', views.get_ir_state, name='get_ir_state'),
     path('get_sensor_data/', views.get_sensor_data, name='get_sensor_data'),
+    path('get_guru_data/', views.get_guru_data, name='get_guru_data'),
     path('unsubscribe/<str:email>/', views.unsubscribe_email, name='unsubscribe_email'),
     path('newsletter/', views.newsletter_view, name='newsletter'),  # Add this path
     path('newsletter/add/', views.add_email, name='add_email'),  # Add this path for adding emails
