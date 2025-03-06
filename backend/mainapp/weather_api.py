@@ -1,12 +1,6 @@
 import threading
 import time
-from typing import Final
 from datetime import datetime, timedelta, timezone
-import json
-
-import requests
-from swissweather.api import getCurrentForecast
-import asyncio
 
 from .models import WeatherData
 
@@ -15,7 +9,6 @@ with open('srfmeteo.key') as f:
     CLIENT_SECRET = f.readline()
 
 import requests
-import json
 
 
 # Function to get the access token
@@ -67,7 +60,6 @@ def get_weather_forecast(access_token, geolocation_id):
 
     if response.status_code == 200:
         forecast_data = response.json()
-        print(json.dumps(forecast_data, indent=4))
         # Get the current time and round to the next full hour
         current_time = datetime.now(timezone.utc)  # Use UTC for consistency
         next_hour = (current_time + timedelta(hours=1)).replace(minute=0, second=0, microsecond=0)
@@ -85,18 +77,6 @@ def get_weather_forecast(access_token, geolocation_id):
                 return entry.get('TTT_C', 'N/A')
     else:
         print("Failed to retrieve weather forecast:", response.status_code, response.text)
-
-
-# Main function to handle the flow
-def main():
-    access_token = get_access_token()  # Get the access token
-
-    if access_token:
-        id = get_location_data(access_token, 3012)  # Use the token to fetch weather data
-        t = get_weather_forecast(access_token, id)
-        print(t)
-    else:
-        print("Error: Unable to retrieve access token.")
 
 
 # Function to store sensor data in the database
