@@ -17,8 +17,8 @@ import csv
 from django.shortcuts import render, redirect
 from django.contrib import messages
 
-from .models import SensorData
 import mainapp.sensor_acquisition
+import mainapp.weather_api
 from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
 
 
@@ -160,6 +160,7 @@ def get_guru_data(request):
     entry = data.latest("timestamp")
 
     data = WeatherData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
+    print(data)
     bern_entry = data.latest("timestamp")
     # Prepare the data for the response
 
