@@ -147,7 +147,7 @@
         }
 
         function fetchData() {
-            fetch(`/voegeli/get_sensor_data/?period=${selectedPeriod}`)
+            fetch(`/voegeli/get_sensor_data/?period=24h`)
                 .then(response => response.json())
                 .then(data => {
                     console.log("Fetched data:", data);  // Log the raw data to the console
