@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Home</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    {% load static %}
+    <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+
+    <style>
+        body {
+            background-color: #2be6ff;
+        }
+
+        /* Background overlay */
+        .aarewasser {
+            background-image: url("{% static 'svg/aare-guru-pattern-hoch.svg'%}");
+            background-size: 100vw auto;
+        }
+
+        @media (min-width: 786px) {
+            .aarewasser {
+                background-image: url("{% static 'svg/aare-guru-pattern-quer.svg'%}");
+            }
+        }
+
+        @font-face {
+            font-family: 'DINNextLTPro-Condensed';
+            src: url("{% static 'webfonts/2D81A6_0_0.eot' %}");
+            src: url("{% static 'webfonts/2D81A6_0_0.eot' %}?#iefix") format("embedded-opentype"),
+            url("{% static 'webfonts/2D81A6_0_0.woff2' %}") format("woff2"),
+            url("{% static 'webfonts/2D81A6_0_0.woff' %}") format("woff"),
+            url("{% static 'webfonts/2D81A6_0_0.ttf' %}") format("truetype"),
+            url("{% static 'webfonts/2D81A6_0_0.svg#wf' %}") format("svg");
+        }
+
+        .temperature {
+            font-family: 'DINNextLTPro-Condensed', sans-serif;
+            font-size: 6rem;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body class="d-flex flex-column min-vh-100">
+<!-- Navbar -->
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <div class="container-fluid">
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#collapsibleNavbar">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="collapsibleNavbar">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'index' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/home.png' %}" alt="Home" width="32"
+                             height="32">
+                        Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'gallery' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/gallery.png' %}" alt="Gallery" width="32"
+                             height="32">
+                        Gallery
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'making_of' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/making_of.png' %}" alt="Making Of" width="32"
+                             height="32">
+                        Making Of
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" href="{% url 'newsletter' %}">
+                        <img class="rounded nav-icon" src="{% static 'img/newsletter.png' %}" alt="Newsletter"
+                             width="32" height="32">
+                        Newsletter
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#about">
+                        <img class="rounded nav-icon" src="{% static 'img/about.png' %}" alt="About" width="32"
+                             height="32">
+                        About
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <h3 class="text-center mt-3"><b>🐣</b></h3>
+    </div>
+</nav>
+<div class="aarewasser">
+
+    <!-- Temperature Display -->
+    <div class="container text-center mt-5">
+        <div class="temperature" id="indoor-temp">--°</div>
+        <p>Indoor Temp °C</p>
+        <h3 id="phrase">Fetching data...</h3>
+        <div class="temperature" id="bern-temp">--°</div>
+        <p>Bern Temp °C</p>
+    </div>
+</div>
+
+<!-- Footer -->
+<footer class="bg-dark text-center text-white mt-auto p-4">
+    <div class="container">
+        <h5>Social Media</h5>
+        <section class="mb-4">
+            <a class="btn btn-outline-light btn-floating m-1" href="https://github.com/hacknus/birdhouse-monitor"
+               role="button">
+                <i class="fa fa-github"></i>
+            </a>
+        </section>
+        <h5>About Us</h5>
+        <section class="mb-4">
+            Vögeli 🐣 is an open-source project that uses a Raspberry Pi to monitor your birdhouse. The codebase is
+            inspired by <a href="https://github.com/markub3327/AIGarden" target="_blank" rel="noopener noreferrer">AIGarden</a>
+            (Martin Kubovčík).
+            Special thanks to Rafael Ottersberg and Ruben Tandon for their support.
+        </section>
+    </div>
+    <div class="text-center p-3">
+        © 2025 Copyright: Linus Leo Stöckli
+    </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    async function fetchBernTemperature() {
+        try {
+            const response = await fetch("https://www.meteoschweiz.admin.ch/home.html?tab=overview");
+            const data = await response.text();
+            const tempMatch = data.match(/Bern.*?(\d+\.\d+)/);
+            if (tempMatch) {
+                document.getElementById("bern-temp").textContent = tempMatch[1] + "°";
+            } else {
+                document.getElementById("bern-temp").textContent = "N/A";
+            }
+        } catch (error) {
+            console.error("Error fetching Bern temperature:", error);
+            document.getElementById("bern-temp").textContent = "Error";
+        }
+    }
+
+    fetchBernTemperature();
+</script>
+</body>
+</html>
