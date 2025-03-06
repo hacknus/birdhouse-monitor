@@ -180,6 +180,7 @@ def get_guru_data(request):
             'phrase': phrase,
         }
     ]
+    print(response_data)
 
     return JsonResponse(response_data, safe=False)
 

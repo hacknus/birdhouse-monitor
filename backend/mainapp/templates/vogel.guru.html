@@ -135,6 +135,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
+                        console.log(data);
                         // Update DOM with the latest data
                         document.getElementById('temperatureValue').textContent = data.temperatureValue ? `${data.temperatureValue} °C` : 'No data';
                         document.getElementById('temperatureBern').textContent = data.temperatureBern ? `${data.temperatureBern} °C` : 'No data';
