@@ -4,7 +4,7 @@ from datetime import datetime, timedelta, timezone
 
 from .models import WeatherData
 
-with open('srfmeteo.key') as f:
+with open('mainapp/srfmeteo.key') as f:
     CLIENT_ID = f.readline()
     CLIENT_SECRET = f.readline()
 
