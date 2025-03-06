@@ -95,7 +95,7 @@
 
     <!-- Temperature Display -->
     <div class="container text-center mt-5">
-        <div class="temperature" id="indoor-temp">--°</div>
+        <div class="temperature" id="temperatureValue">--°</div>
         <p>Indoor Temp °C</p>
         <h3 id="phrase">Fetching data...</h3>
         <div class="temperature" id="bern-temp">--°</div>
@@ -128,23 +128,66 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    async function fetchBernTemperature() {
-        try {
-            const response = await fetch("https://www.meteoschweiz.admin.ch/home.html?tab=overview");
-            const data = await response.text();
-            const tempMatch = data.match(/Bern.*?(\d+\.\d+)/);
-            if (tempMatch) {
-                document.getElementById("bern-temp").textContent = tempMatch[1] + "°";
-            } else {
-                document.getElementById("bern-temp").textContent = "N/A";
-            }
-        } catch (error) {
-            console.error("Error fetching Bern temperature:", error);
-            document.getElementById("bern-temp").textContent = "Error";
-        }
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const periodSelect = document.getElementById('periodSelect');  // Get the period select element
+        let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
 
-    fetchBernTemperature();
+        async function fetchBernTemperature() {
+            try {
+                const response = await fetch("https://www.meteoschweiz.admin.ch/home.html?tab=overview");
+                const data = await response.text();
+                const tempMatch = data.match(/Bern.*?(\d+\.\d+)/);
+                if (tempMatch) {
+                    document.getElementById("bern-temp").textContent = tempMatch[1] + "°";
+                } else {
+                    document.getElementById("bern-temp").textContent = "N/A";
+                }
+            } catch (error) {
+                console.error("Error fetching Bern temperature:", error);
+                document.getElementById("bern-temp").textContent = "Error";
+            }
+        }
+
+        function fetchData() {
+            fetch(`/voegeli/get_sensor_data/?period=${selectedPeriod}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("Fetched data:", data);  // Log the raw data to the console
+
+                    if (data && data.length > 0) {
+                        const latestData = data[data.length - 1]; // Get the most recent data point
+
+                        // Update DOM with the latest data
+                        document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
+                        document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
+                        document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
+
+                        // Render charts with time on the x-axis
+                        renderTemperatureChart(data);
+                        renderHumidityChart(data);
+                        renderMotionChart(data);
+                    } else {
+                        console.log('No data available');
+                        // Handle the case where there's no data
+                        document.getElementById('temperatureValue').textContent = 'No data';
+                        document.getElementById('humidityValue').textContent = 'No data';
+                        document.getElementById('motionStatus').textContent = 'No data';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching sensor data:', error);
+                });
+
+        }
+
+        // Initial data fetch on page load
+        fetchData();
+        fetchBernTemperature();
+
+        // Periodically fetch the data every 10 seconds (adjust the interval as needed)
+        setInterval(fetchData, 10000);  // Fetch data every 10 seconds
+        setInterval(fetchBernTemperature, 10000);  // Fetch data every 10 seconds
+    });
 </script>
 </body>
 </html>
