@@ -52,7 +52,7 @@ def index(request):
 
 
 def vogelguru(request):
-    return render(request, "vogel.guru.html")
+    return render(request, "vogel_guru.html")
 
 
 def save_image(request):
