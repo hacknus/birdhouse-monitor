@@ -34,10 +34,22 @@
             url("{% static 'webfonts/2D81A6_0_0.svg#wf' %}") format("svg");
         }
 
+        .container {
+            font-family: 'DINNextLTPro-Condensed', sans-serif; /* Apply the cool font to the entire container */
+        }
+
         .temperature {
             font-family: 'DINNextLTPro-Condensed', sans-serif;
-            font-size: 6rem;
+            font-size: 6rem; /* Font size remains the same */
             font-weight: bold;
+        }
+
+        #phrase {
+            font-family: 'DINNextLTPro-Condensed', sans-serif; /* Ensure the cool font is also applied here */
+        }
+
+        p {
+            font-family: 'DINNextLTPro-Condensed', sans-serif; /* Apply the cool font to p elements as well */
         }
     </style>
 </head>
