@@ -51,6 +51,10 @@ def index(request):
     return render(request, "index.html")
 
 
+def vogelguru(request):
+    return render(request, "vogel.guru.html")
+
+
 def save_image(request):
     if request.method == "POST":
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
