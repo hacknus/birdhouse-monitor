@@ -16,24 +16,24 @@
 
         /* Background overlay */
         .aarewasser {
-            background-image: url("{% static 'svg/aare-guru-pattern-hoch.svg'%}");
+            background-image: url("/static/svg/aareguru-pattern-hoch.svg");
             background-size: 100vw auto;
         }
 
         @media (min-width: 786px) {
             .aarewasser {
-                background-image: url("{% static 'svg/aare-guru-pattern-quer.svg'%}");
+                background-image: url("/static/svg/aareguru-pattern-quer.svg");
             }
         }
 
         @font-face {
             font-family: 'DINNextLTPro-Condensed';
-            src: url("{% static 'webfonts/2D81A6_0_0.eot' %}");
-            src: url("{% static 'webfonts/2D81A6_0_0.eot' %}?#iefix") format("embedded-opentype"),
-            url("{% static 'webfonts/2D81A6_0_0.woff2' %}") format("woff2"),
-            url("{% static 'webfonts/2D81A6_0_0.woff' %}") format("woff"),
-            url("{% static 'webfonts/2D81A6_0_0.ttf' %}") format("truetype"),
-            url("{% static 'webfonts/2D81A6_0_0.svg#wf' %}") format("svg");
+            src: url("static/2D81A6_0_0.eot");
+            src: url("webfonts/2D81A6_0_0.eot?#iefix") format("embedded-opentype"),
+            url("webfonts/2D81A6_0_0.woff2") format("woff2"),
+            url("webfonts/2D81A6_0_0.woff") format("woff"),
+            url("webfonts/2D81A6_0_0.ttf") format("truetype"),
+            url("webfonts/2D81A6_0_0.svg#wf") format("svg");
         }
 
         .temperature {
