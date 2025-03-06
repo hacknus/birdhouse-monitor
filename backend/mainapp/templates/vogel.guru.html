@@ -129,8 +129,6 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-        const periodSelect = document.getElementById('periodSelect');  // Get the period select element
-        let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
 
         async function fetchBernTemperature() {
             try {
@@ -159,19 +157,11 @@
 
                         // Update DOM with the latest data
                         document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
-                        document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
-                        document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
 
-                        // Render charts with time on the x-axis
-                        renderTemperatureChart(data);
-                        renderHumidityChart(data);
-                        renderMotionChart(data);
                     } else {
                         console.log('No data available');
                         // Handle the case where there's no data
                         document.getElementById('temperatureValue').textContent = 'No data';
-                        document.getElementById('humidityValue').textContent = 'No data';
-                        document.getElementById('motionStatus').textContent = 'No data';
                     }
                 })
                 .catch(error => {
