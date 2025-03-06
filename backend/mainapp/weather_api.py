@@ -16,7 +16,7 @@ import requests
 def get_access_token():
     # Encode the credentials in Base64
     credentials = f"{CLIENT_ID}:{CLIENT_SECRET}"
-    encoded_credentials = base64.b64encode(credentials.encode()).decode()
+    encoded_credentials = base64.b64encode(credentials.encode("utf-8")).decode("utf-8")
     print(encoded_credentials)
 
     # Define the API request
