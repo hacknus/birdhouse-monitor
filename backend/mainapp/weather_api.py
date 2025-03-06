@@ -13,7 +13,7 @@ import requests
 
 # Function to get the access token
 def get_access_token():
-    url = "https://api.srgssr.ch/oauth/v2/accesstoken?grant_type=client_credentials"
+    url = "https://api.srgssr.ch/oauth/v1/accesstoken?grant_type=client_credentials"
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
