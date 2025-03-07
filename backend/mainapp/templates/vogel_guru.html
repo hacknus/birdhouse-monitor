@@ -40,18 +40,45 @@
             font-size: 1.5rem; /* Font size remains the same */
         }
 
-        .temperature {
+        /* Ensures the number is centered while keeping the degree symbol close */
+        .temp-wrapper {
+            display: inline-flex;
+            align-items: flex-start; /* Aligns the degree symbol properly */
+            position: relative;
+        }
+
+        /* Ensures the temperature is centered */
+        .temperature_big, .temperature {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-family: 'DINNextLTPro-Condensed', sans-serif;
             color: #306FB2;
-            font-size: 6rem; /* Font size remains the same */
             font-weight: bold;
         }
 
-        .temperature_big {
-            font-family: 'DINNextLTPro-Condensed', sans-serif;
-            color: #306FB2;
-            font-size: 12rem; /* Font size remains the same */
-            font-weight: bold;
+        /* Adjusts the temperature font size */
+        .temperature_big span:first-child {
+            font-size: 12rem;
+        }
+
+        .temperature span:first-child {
+            font-size: 6rem;
+        }
+
+        /* Positions the degree symbol slightly higher */
+        .degree_big {
+            font-size: 6rem;
+            position: relative;
+            top: -1.5rem; /* Adjust as needed */
+            left: -0.5rem; /* Move slightly closer */
+        }
+
+        .degree {
+            font-size: 3rem;
+            position: relative;
+            top: -0.8rem; /* Adjust to match text height */
+            left: -0.3rem;
         }
 
         #phrase {
@@ -125,10 +152,22 @@
 
     <!-- Temperature Display -->
     <div class="container text-center mt-5">
-        <div class="temperature_big" id="temperatureValue">--°</div>
+        <div class="temperature_big">
+            <div class="temp-wrapper">
+                <span id="temperatureValue">--</span>
+                <span class="degree_big">°</span>
+            </div>
+        </div>
         <p>Voguhuustemp. (°C)</p>
+
         <h3 id="phrase">Fetching data...</h3>
-        <div class="temperature" id="temperatureBern">--°</div>
+
+        <div class="temperature">
+            <div class="temp-wrapper">
+                <span id="temperatureBern">--</span>
+                <span class="degree">°</span>
+            </div>
+        </div>
         <p>Temperatur i ca. 2 stung</p>
     </div>
 </div>
@@ -168,8 +207,8 @@
                         const item = data[0];  // Get the first item from the array
 
                         // Update DOM with the latest data
-                        document.getElementById('temperatureValue').textContent = item.temperatureValue ? `${item.temperatureValue} °` : 'No data';
-                        document.getElementById('temperatureBern').textContent = item.temperatureBern ? `${item.temperatureBern} °` : 'No data';
+                        document.getElementById('temperatureValue').textContent = item.temperatureValue ? `${item.temperatureValue}` : 'No data';
+                        document.getElementById('temperatureBern').textContent = item.temperatureBern ? `${item.temperatureBern}` : 'No data';
                         document.getElementById('phrase').textContent = item.phrase ? `${item.phrase}` : 'I weiss o nid..';
                     } else {
                         console.log('No data available');
