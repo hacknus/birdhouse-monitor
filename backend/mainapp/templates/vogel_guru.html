@@ -195,31 +195,16 @@
     document.addEventListener('DOMContentLoaded', function () {
 
         function fetchGuruData() {
-            fetch(/voegeli/g
-            et_guru_data /
-        )
-        .
-            then(response => response.json())
+            fetch(`/voegeli/get_guru_data/`)
+                .then(response => response.json())
                 .then(data => {
                     if (data && data.length > 0) {
                         const item = data[0];  // Get the first item from the array
 
                         // Update DOM with the latest data
-                        document.getElementById('temperatureValue').textContent = item.temperatureValue ? ${
-                            item
-                            .temperatureValue
-                        }
-                    :
-                        'No data';
-                        document.getElementById('temperatureBern').textContent = item.temperatureBern ? ${
-                            item
-                            .temperatureBern
-                        }
-                    :
-                        'No data';
-                        document.getElementById('phrase').textContent = item.phrase ? ${item.phrase}
-                    :
-                        'I weiss o nid..';
+                        document.getElementById('temperatureValue').textContent = item.temperatureValue ? `${item.temperatureValue}` : 'No data';
+                        document.getElementById('temperatureBern').textContent = item.temperatureBern ? `${item.temperatureBern}` : 'No data';
+                        document.getElementById('phrase').textContent = item.phrase ? `${item.phrase}` : 'I weiss o nid..';
                     } else {
                         console.log('No data available');
                         // Handle the case where there's no data
