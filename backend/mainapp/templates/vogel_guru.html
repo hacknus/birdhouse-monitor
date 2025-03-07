@@ -1,3 +1,5 @@
+that is still not aligned.. can you please center just the temperature values and then append the ° without centering it again?
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -42,38 +44,40 @@
             font-size: 1.5rem; /* Font size remains the same */
         }
 
-        /* Center the entire temperature container */
+        /* Wrapper ensures the number and degree symbol stay together */
+        .temp-wrapper {
+            display: flex;
+            justify-content: center; /* Center both elements horizontally */
+            align-items: center; /* Keep them aligned properly */
+            gap: 4px; /* Small spacing between number and degree */
+        }
+
+        /* Temperature styling */
         .temperature_big, .temperature {
-            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             font-family: 'DINNextLTPro-Condensed', sans-serif;
             color: #306FB2;
             font-weight: bold;
-            display: flex;
-            justify-content: center; /* Ensures perfect centering */
-            align-items: center; /* Aligns degree symbol naturally */
-            gap: 5px; /* Adds a slight spacing between number and degree */
         }
 
-        /* Style the temperature number */
-        .temperature-value {
-            font-size: 12rem; /* Large size for big temperature */
-            font-weight: bold;
-            line-height: 1; /* Prevents weird spacing issues */
+        /* Ensure correct font sizes */
+        .temperature_big span:first-child {
+            font-size: 12rem;
         }
 
-        /* Degree symbol */
-        .degree-symbol {
-            font-size: 6rem; /* Smaller than number */
-            line-height: 1; /* Keeps it in line */
-        }
-
-        /* Smaller temperature section */
-        .temperature .temperature-value {
+        .temperature span:first-child {
             font-size: 6rem;
         }
 
-        .temperature .degree-symbol.small {
-            font-size: 3rem;
+        /* Degree symbol without any position shifting */
+        .degree_big {
+            font-size: 6rem; /* Match number size */
+        }
+
+        .degree {
+            font-size: 3rem; /* Match number size */
         }
 
         #phrase {
@@ -148,16 +152,18 @@
     <!-- Temperature Display -->
     <div class="container text-center mt-5">
         <div class="temperature_big">
-            <span class="temperature-value" id="temperatureValue">--</span>
-            <span class="degree-symbol">°</span>
+            <div class="temp-wrapper">
+                <span id="temperatureValue">--</span><span class="degree_big">°</span>
+            </div>
         </div>
         <p>Voguhuustemp. (°C)</p>
 
         <h3 id="phrase">Fetching data...</h3>
 
         <div class="temperature">
-            <span class="temperature-value" id="temperatureBern">--</span>
-            <span class="degree-symbol small">°</span>
+            <div class="temp-wrapper">
+                <span id="temperatureBern">--</span><span class="degree">°</span>
+            </div>
         </div>
         <p>Temperatur i ca. 2 stung</p>
     </div>
@@ -191,16 +197,31 @@
     document.addEventListener('DOMContentLoaded', function () {
 
         function fetchGuruData() {
-            fetch(`/voegeli/get_guru_data/`)
-                .then(response => response.json())
+            fetch(/voegeli/g
+            et_guru_data /
+        )
+        .
+            then(response => response.json())
                 .then(data => {
                     if (data && data.length > 0) {
                         const item = data[0];  // Get the first item from the array
 
                         // Update DOM with the latest data
-                        document.getElementById('temperatureValue').textContent = item.temperatureValue ? `${item.temperatureValue}` : 'No data';
-                        document.getElementById('temperatureBern').textContent = item.temperatureBern ? `${item.temperatureBern}` : 'No data';
-                        document.getElementById('phrase').textContent = item.phrase ? `${item.phrase}` : 'I weiss o nid..';
+                        document.getElementById('temperatureValue').textContent = item.temperatureValue ? ${
+                            item
+                            .temperatureValue
+                        }
+                    :
+                        'No data';
+                        document.getElementById('temperatureBern').textContent = item.temperatureBern ? ${
+                            item
+                            .temperatureBern
+                        }
+                    :
+                        'No data';
+                        document.getElementById('phrase').textContent = item.phrase ? ${item.phrase}
+                    :
+                        'I weiss o nid..';
                     } else {
                         console.log('No data available');
                         // Handle the case where there's no data
