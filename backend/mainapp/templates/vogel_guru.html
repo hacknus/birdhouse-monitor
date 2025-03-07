@@ -36,10 +36,12 @@
 
         .container {
             font-family: 'DINNextLTPro-Condensed', sans-serif; /* Apply the cool font to the entire container */
+            color: #306FB2;
         }
 
         .temperature {
             font-family: 'DINNextLTPro-Condensed', sans-serif;
+            color: #306FB2;
             font-size: 6rem; /* Font size remains the same */
             font-weight: bold;
         }
@@ -158,8 +160,8 @@
                         const item = data[0];  // Get the first item from the array
 
                         // Update DOM with the latest data
-                        document.getElementById('temperatureValue').textContent = item.temperatureValue ? `${item.temperatureValue} °C` : 'No data';
-                        document.getElementById('temperatureBern').textContent = item.temperatureBern ? `${item.temperatureBern} °C` : 'No data';
+                        document.getElementById('temperatureValue').textContent = item.temperatureValue ? `${item.temperatureValue} °` : 'No data';
+                        document.getElementById('temperatureBern').textContent = item.temperatureBern ? `${item.temperatureBern} °` : 'No data';
                         document.getElementById('phrase').textContent = item.phrase ? `${item.phrase}` : 'I weiss o nid..';
                     } else {
                         console.log('No data available');
