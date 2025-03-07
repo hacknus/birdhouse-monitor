@@ -8,6 +8,8 @@
     <link rel="icon" type="image/png" href="{% static 'img/logo.png' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css">
     <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" type="text/css"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
     <style>
         /* Background overlay */
@@ -40,45 +42,38 @@
             font-size: 1.5rem; /* Font size remains the same */
         }
 
-        /* Ensures the number is centered while keeping the degree symbol close */
-        .temp-wrapper {
-            display: inline-flex;
-            align-items: flex-start; /* Aligns the degree symbol properly */
-            position: relative;
-        }
-
-        /* Ensures the temperature is centered */
+        /* Center the entire temperature container */
         .temperature_big, .temperature {
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            text-align: center;
             font-family: 'DINNextLTPro-Condensed', sans-serif;
             color: #306FB2;
             font-weight: bold;
+            display: flex;
+            justify-content: center; /* Ensures perfect centering */
+            align-items: center; /* Aligns degree symbol naturally */
+            gap: 5px; /* Adds a slight spacing between number and degree */
         }
 
-        /* Adjusts the temperature font size */
-        .temperature_big span:first-child {
-            font-size: 12rem;
+        /* Style the temperature number */
+        .temperature-value {
+            font-size: 12rem; /* Large size for big temperature */
+            font-weight: bold;
+            line-height: 1; /* Prevents weird spacing issues */
         }
 
-        .temperature span:first-child {
+        /* Degree symbol */
+        .degree-symbol {
+            font-size: 6rem; /* Smaller than number */
+            line-height: 1; /* Keeps it in line */
+        }
+
+        /* Smaller temperature section */
+        .temperature .temperature-value {
             font-size: 6rem;
         }
 
-        /* Positions the degree symbol slightly higher */
-        .degree_big {
-            font-size: 6rem;
-            position: relative;
-            top: -1.5rem; /* Adjust as needed */
-            left: -0.5rem; /* Move slightly closer */
-        }
-
-        .degree {
+        .temperature .degree-symbol.small {
             font-size: 3rem;
-            position: relative;
-            top: -0.8rem; /* Adjust to match text height */
-            left: -0.3rem;
         }
 
         #phrase {
@@ -153,20 +148,16 @@
     <!-- Temperature Display -->
     <div class="container text-center mt-5">
         <div class="temperature_big">
-            <div class="temp-wrapper">
-                <span id="temperatureValue">--</span>
-                <span class="degree_big">°</span>
-            </div>
+            <span class="temperature-value" id="temperatureValue">--</span>
+            <span class="degree-symbol">°</span>
         </div>
         <p>Voguhuustemp. (°C)</p>
 
         <h3 id="phrase">Fetching data...</h3>
 
         <div class="temperature">
-            <div class="temp-wrapper">
-                <span id="temperatureBern">--</span>
-                <span class="degree">°</span>
-            </div>
+            <span class="temperature-value" id="temperatureBern">--</span>
+            <span class="degree-symbol small">°</span>
         </div>
         <p>Temperatur i ca. 2 stung</p>
     </div>
