@@ -16,7 +16,10 @@
         .aarewasser {
             background-color: #2be6ff;
             background-image: url("{% static 'svg/aare-guru-pattern-hoch.svg'%}");
-            background-size: 100vw auto;
+            background-size: auto; /* Keeps original pattern size */
+            background-repeat: repeat; /* Repeat the pattern */
+            background-position: top left; /* Align pattern from the top left */
+            min-height: 100vh; /* Ensure it covers full height */
         }
 
         @media (min-width: 786px) {
