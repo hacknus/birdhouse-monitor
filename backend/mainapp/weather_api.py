@@ -103,12 +103,11 @@ def periodic_data_logger():
     while True:
         access_token = get_access_token()  # Get the access token
         if access_token:
-            id = get_location_data(access_token, 3012)  # Use the token to fetch weather data in Bern
-            print(id)
-            if id is not None:
-                temperature = get_weather_forecast(access_token, id)
-                if temperature is not None:
-                    store_weather_data(temperature)
+            # id = get_location_data(access_token, 3012)  # Use the token to fetch weather data in Bern
+            id = "46.9548,7.4320" # id of Bern
+            temperature = get_weather_forecast(access_token, id)
+            if temperature is not None:
+                store_weather_data(temperature)
         time.sleep(60 * 60)
 
 
