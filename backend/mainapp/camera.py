@@ -19,11 +19,8 @@ GPIO.output(IR_LED_PIN, GPIO.LOW)
 # init camera
 
 picam2 = Picamera2()
-picam2.configure(picam2.create_preview_configuration(main={"format": 'XBGR8888', "size": (800, 600)}))
+picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (800, 600)}))
 picam2.start()
-
-# picam2.set_controls({"AwbMode": libcamera.controls.AwbModeEnum.Daylight})  # Try values: 0 (auto), 1 (incandescent), 2 (tungsten), etc.
-# picam2.set_controls({"AwbEnable": False, "ColourGains": (1.0, 2.0)})  # Adjust the 1.0 (red) and 2.5 (blue) values
 
 ir_led_state = False
 
