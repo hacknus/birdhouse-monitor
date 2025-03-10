@@ -17,5 +17,9 @@ from django.urls import include, path
 from django.conf import settings
 from django.conf.urls.static import static
 
-urlpatterns = [path("voegeli/", include("mainapp.urls"))]
+
+urlpatterns = [
+    path('', lambda request: redirect('/voegeli/', permanent=True)),  # Redirect root to /voegeli/
+    path("voegeli/", include("mainapp.urls")),
+]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
