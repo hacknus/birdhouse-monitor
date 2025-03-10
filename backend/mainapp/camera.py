@@ -18,6 +18,8 @@ GPIO.output(IR_LED_PIN, GPIO.LOW)
 # init camera
 picam2 = Picamera2()
 picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (800, 600)}))
+picam2.set_controls({"AwbMode": "greyworld"})  # Try "auto", "sunlight", or "shade"
+
 picam2.start()
 
 ir_led_state = False
