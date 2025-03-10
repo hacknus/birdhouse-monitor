@@ -21,7 +21,7 @@ picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888',
 picam2.start()
 
 # picam2.set_controls({"AwbEnable": True, "AwbMode": 7})  # Try values: 0 (auto), 1 (incandescent), 2 (tungsten), etc.
-picam2.set_controls({"AwbEnable": False, "ColourGains": (1.0, 2.5)})  # Adjust the 1.0 (red) and 2.5 (blue) values
+picam2.set_controls({"AwbEnable": False, "ColourGains": (1.2, 2.0)})  # Adjust the 1.0 (red) and 2.5 (blue) values
 
 ir_led_state = False
 
