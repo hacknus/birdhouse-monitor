@@ -81,8 +81,15 @@ def gallery(request):
 
     # Convert filenames to URLs
     image_urls = [os.path.join(settings.MEDIA_URL, "gallery", img) for img in images]
+    images = []
 
-    return render(request, "gallery.html", {"images": image_urls})
+    for image_url in image_urls:  # Replace with your actual image fetching logic
+        filename = image_url.split("/")[-1].replace(".jpg", "")  # Extract filename
+        dt = datetime.strptime(filename, "%Y%m%d_%H%M%S")  # Convert to datetime object
+        formatted_datetime = dt.strftime("%Y-%m-%d %H:%M:%S")  # Format for display
+        images.append({"url": image_url, "timestamp": formatted_datetime})
+
+    return render(request, "gallery.html", {"images": images})
 
 
 # Function to toggle the IR LED
