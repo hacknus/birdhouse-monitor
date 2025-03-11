@@ -85,7 +85,7 @@ def gallery(request):
 
     for image_url in image_urls:  # Replace with your actual image fetching logic
         filename = image_url.split("/")[-1].replace(".jpg", "")  # Extract filename
-        dt = datetime.strptime(filename, "%Y%m%d_%H%M%S")  # Convert to datetime object
+        dt = datetime.datetime.strptime(filename, "%Y%m%d_%H%M%S")  # Convert to datetime object
         formatted_datetime = dt.strftime("%Y-%m-%d %H:%M:%S")  # Format for display
         images.append({"url": image_url, "timestamp": formatted_datetime})
 
