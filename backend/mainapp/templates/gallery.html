@@ -76,17 +76,19 @@
     <h3 class="text-center mt-3"><b>Image Gallery</b></h3>
     <div class="row">
         {% for image in images %}
+        {% with image|cut:"/"|last|slice:":-4" as filename %} {# Extract filename without extension #}
+        {% with filename|slice:":4" as year %}
+        {% with filename|slice:"4:6" as month %}
+        {% with filename|slice:"6:8" as day %}
+        {% with filename|slice:"9:11" as hour %}
+        {% with filename|slice:"11:13" as minute %}
+        {% with filename|slice:"13:15" as second %}
+
         <div class="col-md-4 mb-4">
             <div class="card text-center">
-                {% if image|cut:"/"|last|add:"0" is not None %}
-                {% with image|cut:"/"|last|slice:":-4" as timestamp %}
-                {% with timestamp|add:"0"|date:"Y-m-d H:i:s" as formatted_datetime %}
                 <div class="card-header">
-                    <strong>{{ formatted_datetime }}</strong>
+                    <strong>{{ year }}-{{ month }}-{{ day }} {{ hour }}:{{ minute }}:{{ second }}</strong>
                 </div>
-                {% endwith %}
-                {% endwith %}
-                {% endif %}
                 <img src="{{ image }}" class="card-img-top" alt="Gallery Image" onclick="openModal('{{ image }}')">
                 <div class="card-body">
                     <a href="{{ image }}" download class="btn btn-primary">
@@ -95,6 +97,17 @@
                 </div>
             </div>
         </div>
+
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+        {% empty %}
+        <p class="text-center">No images available.</p>
+        {% endfor %}
         {% empty %}
         <p class="text-center">No images available.</p>
         {% endfor %}
