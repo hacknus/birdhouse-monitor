@@ -77,9 +77,18 @@
     <div class="row">
         {% for image in images %}
         <div class="col-md-4 mb-4">
-            <div class="card">
+            <div class="card text-center">
+                {% if image|cut:"/"|last|add:"0" is not None %}
+                {% with image|cut:"/"|last|slice:":-4" as timestamp %}
+                {% with timestamp|add:"0"|date:"Y-m-d H:i:s" as formatted_datetime %}
+                <div class="card-header">
+                    <strong>{{ formatted_datetime }}</strong>
+                </div>
+                {% endwith %}
+                {% endwith %}
+                {% endif %}
                 <img src="{{ image }}" class="card-img-top" alt="Gallery Image" onclick="openModal('{{ image }}')">
-                <div class="card-body text-center">
+                <div class="card-body">
                     <a href="{{ image }}" download class="btn btn-primary">
                         Download <i class="fa fa-download"></i>
                     </a>
