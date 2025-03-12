@@ -18,7 +18,7 @@ GPIO.setup(IR_LED_PIN, GPIO.OUT)
 ignore_motion_for(10)
 GPIO.output(IR_LED_PIN, GPIO.LOW)
 # init camera
-tuning = Picamera2.load_tuning_file("ov5647_noir.json")
+tuning = Picamera2.load_tuning_file("/usr/share/libcamera/ipa/rpi/vc4/ov5647_noir.json")
 
 picam2 = Picamera2(tuning=tuning)
 logging.info(picam2)
