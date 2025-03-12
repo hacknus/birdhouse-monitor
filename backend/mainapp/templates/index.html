@@ -361,6 +361,7 @@
 
         // Periodically fetch the data every 10 seconds (adjust the interval as needed)
         setInterval(fetchData, 10000);  // Fetch data every 10 seconds
+        setInterval(getIRLEDState, 10000);  // Fetch IR LED state every 5 seconds
     });
 
     let temperatureChart = null;
