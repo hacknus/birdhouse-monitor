@@ -20,12 +20,13 @@ GPIO.output(IR_LED_PIN, GPIO.LOW)
 # init camera
 tuning = Picamera2.load_tuning_file("ov5647_noir.json")
 picam2 = Picamera2(tuning=tuning)
+picam2.load_tuning_file("ov5647_noir.json")
 
-print(picam2.camera.config)
+print(picam2.camera)
 picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (800, 600)}))
-print(picam2.camera.config)
+print(picam2.camera)
 picam2.start()
-print(picam2.camera.config)
+print(picam2.camera)
 
 ir_led_state = False
 
