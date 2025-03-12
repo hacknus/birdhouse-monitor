@@ -157,7 +157,7 @@ def periodic_data_logger():
         if turn_off_ir_led is None and get_ir_led_state():
             # set turn-off to now + 5 minutes
             turn_off_ir_led = time.time() + 5 * 60
-        if turn_off_ir_led < time.time() and get_ir_led_state():
+        if turn_off_ir_led is not None and turn_off_ir_led < time.time() and get_ir_led_state():
             turn_off_ir_led = None
             turn_ir_off()
         time.sleep(60)
