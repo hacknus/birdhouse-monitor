@@ -29,7 +29,7 @@ else:
 picam2 = Picamera2(tuning=tuning)
 
 print(picam2.camera)
-picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (800, 600)}))
+picam2.configure(picam2.create_preview_configuration(main={"format": 'RGB888', "size": (800, 600)}))
 print(picam2.camera)
 picam2.start()
 print(picam2.camera)
