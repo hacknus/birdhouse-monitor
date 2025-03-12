@@ -150,9 +150,16 @@ time.sleep(1)  # Wait for hardware to settle
 def periodic_data_logger():
     # Register interrupt for motion detection (FALLING or RISING can be used)
     pir.when_motion = motion_detected_callback
+    turn_off_ir_led = None
     while True:
         temperature, humidity = read_temperature_humidity()
         store_sensor_data(temperature, humidity, motion_triggered=False)
+        if turn_off_ir_led is None and get_ir_led_state():
+            # set turn-off to now + 5 minutes
+            turn_off_ir_led = time.time() + 5 * 60
+        if turn_off_ir_led < time.time() and get_ir_led_state():
+            turn_off_ir_led = None
+            turn_ir_off()
         time.sleep(60)
 
 
