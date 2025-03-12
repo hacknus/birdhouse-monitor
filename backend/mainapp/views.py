@@ -25,7 +25,6 @@ from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
 def img_generator():
     while True:
         frame = picam2.capture_array()
-        frame = frame[:, :, :-1]
         frame = cv2.rotate(frame, cv2.ROTATE_180)
 
         # compression
