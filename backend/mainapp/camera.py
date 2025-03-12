@@ -17,10 +17,16 @@ IR_LED_PIN = 17  # Change this pin number to match your setup
 GPIO.setup(IR_LED_PIN, GPIO.OUT)
 ignore_motion_for(10)
 GPIO.output(IR_LED_PIN, GPIO.LOW)
-# init camera
+
+# Set tuning for ov5647_noir
 tuning = Picamera2.load_tuning_file("ov5647_noir.json")
+algo = Picamera2.find_tuning_algo(tuning, "rpi.agc")
+if "channels" in algo:
+    algo["channels"][0]["exposure_modes"]["normal"] = {"shutter": [100, 66666], "gain": [1.0, 8.0]}
+else:
+    algo["exposure_modes"]["normal"] = {"shutter": [100, 66666], "gain": [1.0, 8.0]}
+
 picam2 = Picamera2(tuning=tuning)
-picam2.load_tuning_file("ov5647_noir.json")
 
 print(picam2.camera)
 picam2.configure(picam2.create_preview_configuration(main={"format": 'XRGB8888', "size": (800, 600)}))
