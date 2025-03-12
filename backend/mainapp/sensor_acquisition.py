@@ -57,11 +57,10 @@ def store_sensor_data(temperature, humidity, motion_triggered):
 
 # Track last image save time and last email sent time
 last_image_time = 0
-last_email_time = 0
 
 
 def motion_detected_callback():
-    global last_image_time, last_email_time
+    global last_image_time
 
     # Check if motion detection should be ignored
     if are_we_still_blocked():
@@ -94,6 +93,25 @@ def motion_detected_callback():
         turn_ir_off()
 
     # Send an email only if at least a day has passed
+    file_path = "last_email_sent.txt"
+
+    # Read the existing timestamp or initialize it
+    try:
+        with open(file_path, "r+") as f:
+            content = f.readline().strip()
+            last_email_time = int(content) if content else 0  # Convert to int, default to 0 if empty
+            # Overwrite with the new timestamp
+            f.seek(0)  # Move to the beginning of the file
+            new_timestamp = int(current_time)
+            f.write(str(new_timestamp) + "\n")
+            f.truncate()  # Remove any leftover content after the new write
+    except FileNotFoundError:
+        # If the file doesn't exist, create it and write the timestamp
+        with open(file_path, "w") as f:
+            new_timestamp = int(current_time)
+            last_email_time = 0
+            f.write(str(new_timestamp) + "\n")
+
     if current_time - last_email_time >= 86400:
         try:
             csv_file = 'newsletter_subscribers.csv'
@@ -118,7 +136,7 @@ def motion_detected_callback():
                         recipients=email,
                         is_html=True,
                     )
-            last_email_time = current_time
+            last_email_time = new_timestamp
         except FileNotFoundError:
             pass  # File does not exist yet, no subscribers
 
