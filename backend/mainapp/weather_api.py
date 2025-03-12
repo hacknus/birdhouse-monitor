@@ -1,7 +1,10 @@
 import base64
+import sqlite3
 import threading
 import time
 from datetime import datetime, timedelta, timezone
+
+from django.db.utils import OperationalError
 
 from .models import WeatherData
 
@@ -92,9 +95,12 @@ def get_weather_forecast(access_token, geolocation_id):
 
 # Function to store sensor data in the database
 def store_weather_data(temperature):
-    WeatherData.objects.create(
-        temperature=temperature,
-    )
+    try:
+        WeatherData.objects.create(
+            temperature=temperature,
+        )
+    except (OperationalError, sqlite3.OperationalError):
+        pass
 
 
 # Background thread for temperature/humidity logging (runs every 60s)
@@ -104,7 +110,7 @@ def periodic_data_logger():
         access_token = get_access_token()  # Get the access token
         if access_token:
             # id = get_location_data(access_token, 3012)  # Use the token to fetch weather data in Bern
-            id = "46.9548,7.4320" # id of Bern
+            id = "46.9548,7.4320"  # id of Bern
             temperature = get_weather_forecast(access_token, id)
             if temperature is not None:
                 store_weather_data(temperature)

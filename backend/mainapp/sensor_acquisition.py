@@ -1,9 +1,11 @@
 import csv
 import datetime
 import os
+import sqlite3
 import threading
 
 from django.conf import settings
+from django.db.utils import OperationalError
 from gpiozero import MotionSensor
 
 import time
@@ -43,11 +45,14 @@ def read_temperature_humidity():
 
 # Function to store sensor data in the database
 def store_sensor_data(temperature, humidity, motion_triggered):
-    SensorData.objects.create(
-        temperature=temperature,
-        humidity=humidity,
-        motion_triggered=motion_triggered
-    )
+    try:
+        SensorData.objects.create(
+            temperature=temperature,
+            humidity=humidity,
+            motion_triggered=motion_triggered
+        )
+    except (OperationalError, sqlite3.OperationalError):
+        pass
 
 
 # Track last image save time and last email sent time
