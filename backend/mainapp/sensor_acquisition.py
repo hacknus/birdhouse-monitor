@@ -20,7 +20,7 @@ import cv2
 from .ignore_motion import are_we_still_blocked
 # Import your Django model
 from .models import SensorData
-from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state, fix_white_balance
+from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
 from .push_notifications import send_push_notification
 
 # I2C sensor setup
@@ -91,7 +91,7 @@ def motion_detected_callback():
 
         frame = picam2.capture_array()
         frame = cv2.rotate(frame, cv2.ROTATE_180)
-        frame = fix_white_balance(frame)
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
 
         cv2.imwrite(image_path, frame)
         last_image_time = current_time
