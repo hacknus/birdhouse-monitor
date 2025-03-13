@@ -42,7 +42,7 @@
             enablePreview = document.getElementById("enablePreview");
             imgPreview = document.getElementById("imgPreview");
             saveImageBtn = document.getElementById("saveImageBtn");
-            witchElement = document.getElementById("irLedSwitch");
+            switchElement = document.getElementById("irLedSwitch");
 
             if (enablePreview.checked) {
                 let img = createPreview();
@@ -60,7 +60,7 @@
                 };
 
                 saveImageBtn.disabled = false;
-                witchElement.disabled = false;
+                switchElement.disabled = false;
                 togglePreviewLabel();
             }
         });
@@ -102,17 +102,17 @@
             enablePreview = e.target;
             imgPreview = document.getElementById("imgPreview");
             saveImageBtn = document.getElementById("saveImageBtn");
-            witchElement = document.getElementById("irLedSwitch");
+            switchElement = document.getElementById("irLedSwitch");
 
             if (enablePreview.checked) {
                 imgPreview.appendChild(createPreview());
                 saveImageBtn.disabled = false;  // Enable button
-                witchElement.disabled = false;  // Enable the IR button
+                switchElement.disabled = false;  // Enable the IR button
 
             } else {
                 imgPreview.innerHTML = "";  // Clear preview
                 saveImageBtn.disabled = true;  // Disable button
-                witchElement.disabled = true;  // Disable the IR button
+                switchElement.disabled = true;  // Disable the IR button
 
             }
 
@@ -130,6 +130,60 @@
                 icon: data.icon,
             });
         });
+
+        function registerServiceWorkerAndSubscribe() {
+            navigator.serviceWorker.register("/static/js/service-worker.js")
+                .then(reg => {
+                    console.log("Service Worker Registered!", reg);
+
+                    reg.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: urlBase64ToUint8Array("{{ public_vapid_key }}")
+                    }).then(sub => {
+                        return fetch("/save-subscription/", {
+                            method: "POST",
+                            body: JSON.stringify(sub),
+                            headers: {
+                                "X-CSRFToken": "{{ csrf_token }}",
+                                "Content-Type": "application/json",
+                            },
+                        });
+                    }).then(response => response.json())
+                        .then(data => console.log("Subscription saved:", data))
+                        .catch(error => console.error("Subscription error:", error));
+                })
+                .catch(err => console.error("Service Worker Error", err));
+        }
+
+        function urlBase64ToUint8Array(base64String) {
+            const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+            const base64 = (base64String + padding)
+                .replace(/\-/g, "+")
+                .replace(/_/g, "/");
+
+            const rawData = window.atob(base64);
+            return new Uint8Array([...rawData].map(char => char.charCodeAt(0)));
+        }
+
+        function togglePushNotifications() {
+            let isEnabled = document.getElementById('pushNotificationSwitch').checked;
+
+            if (isEnabled) {
+                // Logic to enable push notifications
+                console.log("Push Notifications Enabled");
+                Notification.requestPermission().then(permission => {
+                    console.log("Notification Permission:", permission);
+                    if (permission === "granted") {
+                        registerServiceWorkerAndSubscribe();
+                    }
+                });
+                // You can add API calls here to register for push notifications
+            } else {
+                // Logic to disable push notifications
+                console.log("Push Notifications Disabled");
+                // Add logic to unsubscribe from push notifications if needed
+            }
+        }
 
         function toggleIRLED() {
             const switchElement = document.getElementById("irLedSwitch");
@@ -251,6 +305,13 @@
                        style="transform: scale(1.4);">
                 <label class="form-check-label ms-2" for="irLedSwitch">IR Light</label> <!-- Adjusted spacing -->
             </div>
+
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="pushNotificationSwitch"
+                       onchange="togglePushNotifications()"
+                       style="transform: scale(1.4);">
+                <label class="form-check-label ms-2" for="pushNotificationSwitch">Enable Push Notifications</label>
+            </div>
         </div>
         <div class="mt-1 mb-2" id="imgPreview"></div>
 
@@ -321,7 +382,6 @@
 </footer>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
-
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
         let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
 
