@@ -322,12 +322,11 @@
 <script>
     document.addEventListener('DOMContentLoaded', function () {
 
-        if ("serviceWorker" in navigator) {
-            navigator.serviceWorker.register("/static/js/service-worker.js")
-                .then(reg => {
-                    console.log("Service Worker Registered!", reg);
-                })
-                .catch(err => console.error("Service Worker Error", err));
+        document.getElementById("notify-btn").addEventListener("click", function () {
+            if (!("Notification" in window)) {
+                alert("This browser does not support push notifications.");
+                return;
+            }
 
             Notification.requestPermission().then(permission => {
                 if (permission === "granted") {
@@ -348,7 +347,8 @@
                     });
                 }
             });
-        }
+        });
+
 
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
         let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
