@@ -35,7 +35,14 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "mainapp",
+    'webpush',
 ]
+
+WEBPUSH_SETTINGS = {
+    "VAPID_PUBLIC_KEY": "YOUR_PUBLIC_VAPID_KEY",
+    "VAPID_PRIVATE_KEY": "YOUR_PRIVATE_VAPID_KEY",
+    "VAPID_ADMIN_EMAIL": "your@email.com",
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
