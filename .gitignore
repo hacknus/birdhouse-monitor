@@ -1,4 +1,8 @@
 __pycache__/
 db.sqlite3
+backend/birdhouse.sqlite3
+backend/last_email_sent.txt
+backend/newsletter_subscribers.csv
+
 .env
 media/
