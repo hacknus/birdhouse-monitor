@@ -12,6 +12,9 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from dotenv import dotenv_values
+
+env_values = dotenv_values("mainapp/bird.env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-m%louv&ad%9q%r115j7l#g84)wo@k-+41ti&6d$cvhz8d5tj9b"
+SECRET_KEY = env_values['SECRET_KEY'] # "django-insecure-m%louv&ad%9q%r115j7l#g84)wo@k-+41ti&6d$cvhz8d5tj9b"
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -39,9 +42,9 @@ INSTALLED_APPS = [
 ]
 
 WEBPUSH_SETTINGS = {
-    "VAPID_PUBLIC_KEY": "YOUR_PUBLIC_VAPID_KEY",
-    "VAPID_PRIVATE_KEY": "YOUR_PRIVATE_VAPID_KEY",
-    "VAPID_ADMIN_EMAIL": "your@email.com",
+    "VAPID_PUBLIC_KEY": env_values['VAPID_PUBLIC_KEY'],
+    "VAPID_PRIVATE_KEY": env_values['VAPID_PRIVATE_KEY'],
+    "VAPID_ADMIN_EMAIL": "linus.stoeckli@unibe.ch",
 }
 
 MIDDLEWARE = [

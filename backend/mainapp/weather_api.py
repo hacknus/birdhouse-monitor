@@ -7,10 +7,12 @@ from datetime import datetime, timedelta, timezone
 from django.db.utils import OperationalError
 
 from .models import WeatherData
+from dotenv import dotenv_values
 
-with open('mainapp/srfmeteo.key') as f:
-    CLIENT_ID = f.readline()
-    CLIENT_SECRET = f.readline()
+env_values = dotenv_values("mainapp/bird.env")
+
+CLIENT_ID = env_values['CLIENT_ID']
+CLIENT_SECRET = env_values['CLIENT_SECRET']
 
 import requests
 
