@@ -17,10 +17,36 @@ import csv
 from django.shortcuts import render, redirect
 from django.contrib import messages
 import numpy as np
+import json
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from webpush import send_user_notification
+from django.contrib.auth.models import User
 
 import mainapp.sensor_acquisition
 import mainapp.weather_api
 from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state, fix_white_balance
+
+
+@csrf_exempt
+def save_subscription(request):
+    """ Save the push subscription """
+    if request.method == "POST":
+        data = json.loads(request.body)
+        request.user.webpush_info = data
+        request.user.save()
+        return JsonResponse({"message": "Subscription saved successfully!"}, status=201)
+    return JsonResponse({"error": "Invalid request"}, status=400)
+
+
+def send_push_notification(user):
+    """ Send a push notification when motion is detected """
+    payload = {
+        "head": "Motion Alert 🚨",
+        "body": "Motion detected in your birdhouse!",
+        "icon": "/static/img/motion_alert.png",
+    }
+    send_user_notification(user=user, payload=payload, ttl=1000)
 
 
 def img_generator():
