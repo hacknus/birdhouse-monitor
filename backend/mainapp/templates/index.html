@@ -123,6 +123,14 @@
         // Ensure the label updates and the stream shows when toggling
         document.getElementById("enablePreview").addEventListener("change", showStream);
 
+        self.addEventListener("push", function (event) {
+            const data = event.data.json();
+            self.registration.showNotification(data.head, {
+                body: data.body,
+                icon: data.icon,
+            });
+        });
+
         function toggleIRLED() {
             const switchElement = document.getElementById("irLedSwitch");
             const action = switchElement.checked ? "on" : "off";  // Action based on switch state
@@ -313,6 +321,35 @@
 </footer>
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+
+        if ("serviceWorker" in navigator) {
+            navigator.serviceWorker.register("/static/js/service-worker.js")
+                .then(reg => {
+                    console.log("Service Worker Registered!", reg);
+                })
+                .catch(err => console.error("Service Worker Error", err));
+
+            Notification.requestPermission().then(permission => {
+                if (permission === "granted") {
+                    navigator.serviceWorker.ready.then(reg => {
+                        reg.pushManager.subscribe({
+                            userVisibleOnly: true,
+                            applicationServerKey: "{{ public_vapid_key }}"
+                        }).then(sub => {
+                            fetch("/save-subscription/", {
+                                method: "POST",
+                                body: JSON.stringify(sub),
+                                headers: {
+                                    "X-CSRFToken": "{{ csrf_token }}",
+                                    "Content-Type": "application/json",
+                                },
+                            });
+                        });
+                    });
+                }
+            });
+        }
+
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
         let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
 

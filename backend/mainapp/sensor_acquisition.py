@@ -3,6 +3,7 @@ import datetime
 import os
 import sqlite3
 import threading
+from django.contrib.auth.models import User
 
 from django.conf import settings
 from django.db.utils import OperationalError
@@ -20,6 +21,7 @@ from .ignore_motion import are_we_still_blocked
 # Import your Django model
 from .models import SensorData
 from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state, fix_white_balance
+from .push_notifications import send_push_notification
 
 # I2C sensor setup
 i2c = board.I2C()
@@ -73,6 +75,10 @@ def motion_detected_callback():
     current_time = time.time()
     temperature, humidity = read_temperature_humidity()
     store_sensor_data(temperature, humidity, motion_triggered=True)
+
+    users = User.objects.all()
+    for user in users:
+        send_push_notification(user)
 
     # Save an image only if at least an hour has passed
     if current_time - last_image_time >= 3600:

@@ -20,7 +20,6 @@ import numpy as np
 import json
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from webpush import send_user_notification
 from django.contrib.auth.models import User
 
 import mainapp.sensor_acquisition
@@ -37,17 +36,6 @@ def save_subscription(request):
         request.user.save()
         return JsonResponse({"message": "Subscription saved successfully!"}, status=201)
     return JsonResponse({"error": "Invalid request"}, status=400)
-
-
-def send_push_notification(user):
-    """ Send a push notification when motion is detected """
-    payload = {
-        "head": "Motion Alert 🚨",
-        "body": "Motion detected in your birdhouse!",
-        "icon": "/static/img/motion_alert.png",
-    }
-    send_user_notification(user=user, payload=payload, ttl=1000)
-
 
 def img_generator():
     while True:
