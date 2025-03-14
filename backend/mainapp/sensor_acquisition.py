@@ -106,45 +106,43 @@ def motion_detected_callback():
         with open(file_path, "r+") as f:
             content = f.readline().strip()
             last_email_time = int(content) if content else 0  # Convert to int, default to 0 if empty
-            # Overwrite with the new timestamp
-            f.seek(0)  # Move to the beginning of the file
-            new_timestamp = int(current_time)
-            f.write(str(new_timestamp) + "\n")
-            f.truncate()  # Remove any leftover content after the new write
+            if current_time - last_email_time >= 86400:
+                try:
+                    csv_file = 'newsletter_subscribers.csv'
+                    with open(csv_file, mode='r') as file:
+                        reader = csv.reader(file)
+                        subscribers = list(reader)
+                        for subscriber in subscribers:
+                            email = subscriber[0]
+                            unsubscribe_link = f"{base_url}{email}/"  # Dynamic unsubscribe link
+
+                            email_body = (
+                                "Hoi Du!\n"
+                                "I'm moving into the birdhouse!\n"
+                                "Check me out at http://cgnum.space.unibe.ch/voegeli\n"
+                                "Best Regards, Your Vögeli\n\n"
+                                f'<a href="{unsubscribe_link}">Unsubscribe</a>'
+                            )
+
+                            Voegeli.send_mail(
+                                email_body,
+                                subject="Vögeli Motion Alert",
+                                recipients=email,
+                                is_html=True,
+                            )
+                except FileNotFoundError:
+                    pass  # File does not exist yet, no subscribers
+                # Overwrite with the new timestamp
+                f.seek(0)  # Move to the beginning of the file
+                new_timestamp = int(current_time)
+                f.write(str(new_timestamp))
+                f.truncate()  # Remove any leftover content after the new write
     except FileNotFoundError:
         # If the file doesn't exist, create it and write the timestamp
         with open(file_path, "w") as f:
             new_timestamp = int(current_time)
             last_email_time = 0
-            f.write(str(new_timestamp) + "\n")
-
-    if current_time - last_email_time >= 86400:
-        try:
-            csv_file = 'newsletter_subscribers.csv'
-            with open(csv_file, mode='r') as file:
-                reader = csv.reader(file)
-                subscribers = list(reader)
-                for subscriber in subscribers:
-                    email = subscriber[0]
-                    unsubscribe_link = f"{base_url}{email}/"  # Dynamic unsubscribe link
-
-                    email_body = (
-                        "Hoi Du!\n"
-                        "I'm moving into the birdhouse!\n"
-                        "Check me out at http://cgnum.space.unibe.ch/voegeli\n"
-                        "Best Regards, Your Vögeli\n\n"
-                        f'<a href="{unsubscribe_link}">Unsubscribe</a>'
-                    )
-
-                    Voegeli.send_mail(
-                        email_body,
-                        subject="Vögeli Motion Alert",
-                        recipients=email,
-                        is_html=True,
-                    )
-            last_email_time = new_timestamp
-        except FileNotFoundError:
-            pass  # File does not exist yet, no subscribers
+            f.write(str(new_timestamp))
 
     print("Motion detected! Data stored.")
 
