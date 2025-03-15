@@ -12,6 +12,8 @@ from django.shortcuts import render
 from datetime import timedelta
 from django.utils import timezone
 from django.http import JsonResponse
+
+from .encoding import decode_email
 from .models import SensorData, WeatherData
 import csv
 from django.shortcuts import render, redirect
@@ -36,6 +38,7 @@ def save_subscription(request):
         request.user.save()
         return JsonResponse({"message": "Subscription saved successfully!"}, status=201)
     return JsonResponse({"error": "Invalid request"}, status=400)
+
 
 def img_generator():
     while True:
@@ -272,9 +275,10 @@ def remove_email(request):
         return redirect('newsletter')
 
 
-def unsubscribe_email(request, email):
+def unsubscribe_email(request, encoded_email):
     """Handle the email unsubscription request."""
     email_list = read_email_list()
+    email = decode_email(encoded_email)
     if email in email_list:
         email_list.remove(email)
         write_email_list(email_list)

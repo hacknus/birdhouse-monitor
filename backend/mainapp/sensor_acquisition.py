@@ -17,6 +17,7 @@ import adafruit_sht4x
 from unibe_mail import Reporter
 import cv2
 
+from .encoding import encode_email
 from .ignore_motion import are_we_still_blocked
 # Import your Django model
 from .models import SensorData
@@ -114,8 +115,8 @@ def motion_detected_callback():
                         subscribers = list(reader)
                         for subscriber in subscribers:
                             email = subscriber[0]
-                            unsubscribe_link = f"{base_url}{email}/"  # Dynamic unsubscribe link
-
+                            encoded_email = encode_email(email)
+                            unsubscribe_link = f"{base_url}{encoded_email}/"
                             email_body = (
                                 "Hoi Du!<br>"
                                 "I'm moving into the birdhouse!<br>"
