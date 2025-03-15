@@ -117,10 +117,10 @@ def motion_detected_callback():
                             unsubscribe_link = f"{base_url}{email}/"  # Dynamic unsubscribe link
 
                             email_body = (
-                                "Hoi Du!\n"
-                                "I'm moving into the birdhouse!\n"
-                                "Check me out at http://cgnum.space.unibe.ch/voegeli\n"
-                                "Best Regards, Your Vögeli\n\n"
+                                "Hoi Du!<br>"
+                                "I'm moving into the birdhouse!<br>"
+                                "Check me out at http://linusleo.synology.me:8000/voegeli/<br>"
+                                "Best Regards, Your Vögeli<br><br>"
                                 f'<a href="{unsubscribe_link}">Unsubscribe</a>'
                             )
 
