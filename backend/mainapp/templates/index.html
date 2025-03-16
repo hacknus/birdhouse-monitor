@@ -29,7 +29,21 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+    <style>
+        #imgPreview {
+            max-width: 90vw; /* 90% of the viewport width */
+            max-height: 90vh; /* 90% of the viewport height */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
 
+        #imgPreview img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain; /* Ensures the image scales while maintaining aspect ratio */
+        }
+    </style>
     <script>
         function createPreview() {
             img = document.createElement("IMG");
@@ -43,19 +57,6 @@
             img.style.height = "auto";
             img.style.display = "block";
             img.style.margin = "auto"; // Centering
-
-            // Append image first
-            let previewContainer = document.getElementById("imgPreview");
-            previewContainer.innerHTML = ""; // Clear previous content
-            previewContainer.appendChild(img);
-
-            // Adjust parent size dynamically
-            img.onload = function () {
-                let parent = previewContainer.parentElement; // Selects .row-border
-                parent.style.width = img.clientWidth + "px";
-                parent.style.height = img.clientHeight + "px";
-                console.log("Updated parent size:", parent.style.width, parent.style.height);
-            };
             return img;
         }
 
