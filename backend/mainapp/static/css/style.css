@@ -107,31 +107,34 @@ nav .nav-link:hover {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    width: 90vw; /* Responsive width */
-    max-width: 900px; /* Prevents excessive scaling */
-    min-width: 300px; /* Ensures it doesn’t get too small */
+    width: 90vw !important; /* Force smooth width scaling */
+    max-width: 90%; /* Keeps it within 90% of the viewport width */
+    min-width: 300px; /* Prevents collapse */
+    height: auto; /* Ensures it adjusts dynamically */
     padding: 10px;
-    border: 2px solid #ccc; /* Keeps the border */
-    background: white; /* Ensures visibility */
-    overflow: hidden; /* Prevents scrollbars */
+    border: 2px solid #ccc;
+    background: white;
+    overflow: hidden;
+    box-sizing: border-box; /* Prevents unintended expansion */
 }
 
+/* Make imgPreview fill the container */
 #imgPreview {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 90%; /* Ensures it adapts to the container */
+    width: 100%;
     max-width: 90vw;
     max-height: 90vh;
-    aspect-ratio: auto; /* Maintains aspect ratio */
     overflow: hidden;
-    border: 1px solid #ddd; /* Optional: border around preview */
 }
 
+/* Ensure image scales properly */
 #imgPreview img {
     max-width: 100%;
     max-height: 100%;
-    object-fit: contain; /* Maintains aspect ratio inside container */
+    object-fit: contain;
+    display: block;
 }
 
 /* Center the modal and make it responsive */
