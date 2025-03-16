@@ -314,19 +314,30 @@
     <!-- Zobrazenie streamu z kamery -->
     <div class="row-border">
         <h3 class="text-center mt-3"><b>Livestream</b></h3>
-
         <div class="d-flex justify-content-center align-items-center">
-            <input type="checkbox" class="btn-check" id="enablePreview" checked onchange="showStream(event)">
+            <input type="checkbox" class="btn-check" id="enablePreview" checked aria-describedby="enablePreviewHelp"
+                   onchange="showStream(event)">
             <label class="btn btn-outline-dark me-4" for="enablePreview">Enable preview</label>
+            <!-- Increased spacing with 'me-4' -->
 
+            <!-- IR LED Switch -->
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="irLedSwitch" onchange="toggleIRLED()"
                        style="transform: scale(1.4);">
-                <label class="form-check-label ms-2" for="irLedSwitch">IR Light</label>
+                <label class="form-check-label ms-2" for="irLedSwitch">IR Light</label> <!-- Adjusted spacing -->
             </div>
+
+            <!--            <div class="form-check form-switch">-->
+            <!--                <input class="form-check-input" type="checkbox" id="pushNotificationSwitch"-->
+            <!--                       onchange="togglePushNotifications()"-->
+            <!--                       style="transform: scale(1.4);">-->
+            <!--                <label class="form-check-label ms-2" for="pushNotificationSwitch">Enable Push Notifications</label>-->
+            <!--            </div>-->
+
         </div>
 
-        <div class="mt-1 mb-2" id="imgPreview">
+        <div class="mt-1 mb-2 d-flex justify-content-center" id="imgPreview">
+            <!-- The livestream image will be displayed here -->
             <img id="livestreamImage" src="" alt="Livestream Preview" style="display: none;">
         </div>
 
@@ -334,6 +345,7 @@
             <p>The image might appear red-shifted since the sensor has no IR filter (for night vision).</p>
         </div>
 
+        <!-- Save Image Button -->
         <div class="text-center mt-3">
             <button class="btn btn-success" id="saveImageBtn" disabled onclick="saveImageToGallery()">Save Image to
                 Gallery
