@@ -407,7 +407,23 @@
     </div>
 </footer>
 <script>
+    function adjustRowBorderSize() {
+        let img = document.querySelector("#imgPreview img");
+        let rowBorder = document.querySelector(".row-border");
+
+        if (img && rowBorder) {
+            rowBorder.style.width = img.clientWidth + "px";
+            rowBorder.style.height = img.clientHeight + "px";
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
+        let img = document.querySelector("#imgPreview img");
+
+        if (img) {
+            img.onload = adjustRowBorderSize;
+        }
+
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
         let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
 
