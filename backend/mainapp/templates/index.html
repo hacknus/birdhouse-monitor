@@ -408,38 +408,6 @@
 </footer>
 <script>
 
-    function adjustRowBorderSize() {
-        let img = document.querySelector("#livestreamImage");
-        let rowBorder = document.querySelector(".row-border");
-
-        if (img.complete && img.naturalWidth > 0) {
-            let imgRatio = img.naturalWidth / img.naturalHeight;
-            let maxWidth = window.innerWidth * 0.9;
-            let maxHeight = window.innerHeight * 0.9;
-
-            let newWidth = maxWidth;
-            let newHeight = maxWidth / imgRatio;
-
-            if (newHeight > maxHeight) {
-                newHeight = maxHeight;
-                newWidth = maxHeight * imgRatio;
-            }
-
-            rowBorder.style.width = `${newWidth}px`;
-            rowBorder.style.height = `${newHeight}px`;
-        }
-    }
-
-    // Run on load & resize
-    document.addEventListener("DOMContentLoaded", () => {
-        let img = document.querySelector("#livestreamImage");
-
-        if (img) {
-            img.onload = adjustRowBorderSize;
-            window.addEventListener("resize", adjustRowBorderSize);
-        }
-    });
-
     document.addEventListener('DOMContentLoaded', function () {
 
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
