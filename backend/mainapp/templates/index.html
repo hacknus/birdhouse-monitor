@@ -377,33 +377,9 @@
     </div>
 </footer>
 <script>
-
-    function scaleContainer() {
-        const container = document.querySelector('.row-border');
-        const containerWidth = container.offsetWidth;
-        const containerHeight = container.offsetHeight;
-
-        // Calculate the scaling factor based on the aspect ratio
-        const aspectRatio = 16 / 9; // You can adjust this ratio as needed
-        let scaleFactor = 1;
-
-        // Check width
-        if (containerWidth / containerHeight > aspectRatio) {
-            scaleFactor = containerHeight * aspectRatio / containerWidth;
-        } else {
-            scaleFactor = containerWidth / (containerHeight * aspectRatio);
-        }
-
-        // Apply scale transformation
-        container.style.transform = `scale(${scaleFactor})`;
-        container.style.transformOrigin = 'top left';
-    }
-
     document.addEventListener('DOMContentLoaded', function () {
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
         let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
-        window.addEventListener('load', scaleContainer);
-        window.addEventListener('resize', scaleContainer);
 
         // Function to fetch data based on the selected period
         function fetchData() {
