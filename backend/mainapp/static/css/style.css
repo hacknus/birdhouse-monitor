@@ -107,8 +107,28 @@ nav .nav-link:hover {
     border-radius: 25px;
     max-width: 90vw;
     max-height: 90vh;
-    width: auto; /* Maintain aspect ratio */
-    height: auto; /* Maintain aspect ratio */
+    width: 100%; /* Allow width to be dynamic */
+    height: auto; /* Allow height to adjust for aspect ratio */
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0 auto; /* Center the element */
+}
+
+/* Maintain aspect ratio (16:9 for example) */
+.row-border::before {
+    content: '';
+    display: block;
+    padding-top: 56.25%; /* 16:9 aspect ratio (9 / 16 = 0.5625 or 56.25%) */
+}
+
+.row-border > * {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
 }
 
 /* Center the modal and make it responsive */
