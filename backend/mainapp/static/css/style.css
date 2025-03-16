@@ -102,7 +102,7 @@ nav .nav-link:hover {
     --bs-table-hover-bg: #dee2e6;
 }
 
-.row-border-2 {
+.row-border {
     display: flex;
     flex-direction: column;
     align-items: center;
