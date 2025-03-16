@@ -103,44 +103,32 @@ nav .nav-link:hover {
 }
 
 .row-border {
-    border: 1px solid #212529;
+    border: 1px #212529 solid;
     border-radius: 25px;
-    width: 100%;
     max-width: 90vw;
     max-height: 90vh;
+    width: 100%; /* Allow width to be dynamic */
+    height: auto; /* Allow height to adjust for aspect ratio */
+    position: relative;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: relative;
-    margin: 0 auto;
-    overflow: hidden; /* Prevents overflow when resizing */
+    margin: 0 auto; /* Center the element */
 }
 
-.row-border .inner-content {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: center;
-    overflow: auto; /* Allow internal content to scroll if necessary */
-}
-
-/* Maintain aspect ratio: 16:9 example (adjust as needed) */
-.row-border:before {
-    content: "";
+/* Maintain aspect ratio (16:9 for example) */
+.row-border::before {
+    content: '';
     display: block;
-    padding-top: 56.25%; /* 16:9 ratio */
-    width: 100%;
+    padding-top: 56.25%; /* 16:9 aspect ratio (9 / 16 = 0.5625 or 56.25%) */
 }
 
-.row-border > .inner-content {
+.row-border > * {
     position: absolute;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    padding: 10px;
 }
 
 /* Center the modal and make it responsive */

@@ -292,33 +292,40 @@
 
     <!-- Zobrazenie streamu z kamery -->
     <div class="row row-border">
-        <div class="inner-content">
-            <h3 class="text-center mt-3"><b>Livestream</b></h3>
-            <div class="d-flex justify-content-center align-items-center">
-                <input type="checkbox" class="btn-check" id="enablePreview" checked aria-describedby="enablePreviewHelp"
-                       onchange="showStream(event)">
-                <label class="btn btn-outline-dark me-4" for="enablePreview">Enable preview</label>
+        <h3 class="text-center mt-3"><b>Livestream</b></h3>
+        <div class="d-flex justify-content-center align-items-center">
+            <input type="checkbox" class="btn-check" id="enablePreview" checked aria-describedby="enablePreviewHelp"
+                   onchange="showStream(event)">
+            <label class="btn btn-outline-dark me-4" for="enablePreview">Enable preview</label>
+            <!-- Increased spacing with 'me-4' -->
 
-                <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" id="irLedSwitch" onchange="toggleIRLED()"
-                           style="transform: scale(1.4);">
-                    <label class="form-check-label ms-2" for="irLedSwitch">IR Light</label>
-                </div>
+            <!-- IR LED Switch -->
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="irLedSwitch" onchange="toggleIRLED()"
+                       style="transform: scale(1.4);">
+                <label class="form-check-label ms-2" for="irLedSwitch">IR Light</label> <!-- Adjusted spacing -->
             </div>
 
-            <div class="mt-1 mb-2" id="imgPreview"></div>
+<!--            <div class="form-check form-switch">-->
+<!--                <input class="form-check-input" type="checkbox" id="pushNotificationSwitch"-->
+<!--                       onchange="togglePushNotifications()"-->
+<!--                       style="transform: scale(1.4);">-->
+<!--                <label class="form-check-label ms-2" for="pushNotificationSwitch">Enable Push Notifications</label>-->
+<!--            </div>-->
 
-            <div id="redshift" class="text-center">
-                <p>The image might appear red-shifted since the sensor has no IR filter (for night vision).</p>
-            </div>
+        </div>
+        <div class="mt-1 mb-2" id="imgPreview"></div>
 
-            <!-- Save Image Button -->
-            <div class="text-center mt-3">
-                <button class="btn btn-success" id="saveImageBtn" disabled onclick="saveImageToGallery()">Save Image to
-                    Gallery
-                </button>
-                <p id="saveMessage" class="text-success mt-2"></p>
-            </div>
+        <div id="redshift" class="text-center">
+            <p>The image might appear red-shifted since the sensor has no IR filter (for night vision).</p>
+        </div>
+
+        <!-- Save Image Button -->
+        <div class="text-center mt-3">
+            <button class="btn btn-success" id="saveImageBtn" disabled onclick="saveImageToGallery()">Save Image to
+                Gallery
+            </button>
+            <p id="saveMessage" class="text-success mt-2"></p>
         </div>
     </div>
 
