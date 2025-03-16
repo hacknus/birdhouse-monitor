@@ -51,7 +51,7 @@
 
             // Adjust parent size dynamically
             img.onload = function () {
-                let parent = document.getElementById("row-border.2"); // Selects .row-border-2
+                let parent = previewContainer.parentElement; // Selects .row-border
                 parent.style.width = img.clientWidth + "px";
                 parent.style.height = img.clientHeight + "px";
                 console.log("Updated parent size:", parent.style.width, parent.style.height);
