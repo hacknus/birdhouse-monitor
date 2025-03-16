@@ -104,16 +104,16 @@ nav .nav-link:hover {
 
 .row-border {
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Ensures content stacks properly */
     max-width: 90vw;
     max-height: 90vh;
-    margin: auto;
-    padding: 10px;
-    border: 2px solid #ccc; /* Ensure visible border */
-    transition: all 0.2s ease-in-out;
-    overflow: hidden;
+    margin: auto; /* Centers the container */
+    padding: 10px; /* Prevents tight fitting */
+    border: 2px solid #ccc; /* Adjust as needed */
+    transition: all 0.2s ease-in-out; /* Smooth scaling */
+    overflow: hidden; /* Prevents anything from spilling out */
 }
 
 #imgPreview {
@@ -121,17 +121,15 @@ nav .nav-link:hover {
     justify-content: center;
     align-items: center;
     width: 100%;
-    height: auto;
-    max-width: 90vw;
-    max-height: 90vh;
-    overflow: hidden; /* Prevent overflow */
+    height: 100%;
+    overflow: hidden; /* Prevents any unwanted overflow */
 }
 
 #imgPreview img {
-    width: 100%;
-    height: auto;
     max-width: 100%;
     max-height: 100%;
+    width: auto;
+    height: auto;
     object-fit: contain;
 }
 
