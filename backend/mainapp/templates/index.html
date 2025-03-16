@@ -47,16 +47,8 @@
     <script>
         function createPreview() {
             img = document.createElement("IMG");
-            img.id = "livestreamImage";
             img.className += "mx-auto d-block rounded cam-stream"; // Center the stream
             img.src = "{% url 'video_feed' %}?t=" + new Date().getTime(); // Add timestamp
-            img.alt = "Live stream preview";
-            img.style.maxWidth = "90vw";
-            img.style.maxHeight = "90vh";
-            img.style.width = "auto";
-            img.style.height = "auto";
-            img.style.display = "block";
-            img.style.margin = "auto"; // Centering
             return img;
         }
 
@@ -336,12 +328,10 @@
             <!--            </div>-->
 
         </div>
-
         <div class="mt-1 mb-2 d-flex justify-content-center" id="imgPreview">
             <!-- The livestream image will be displayed here -->
             <img id="livestreamImage" src="" alt="Livestream Preview" style="display: none;">
         </div>
-
         <div id="redshift" class="text-center">
             <p>The image might appear red-shifted since the sensor has no IR filter (for night vision).</p>
         </div>
