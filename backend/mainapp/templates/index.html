@@ -407,31 +407,40 @@
     </div>
 </footer>
 <script>
+
     function adjustRowBorderSize() {
-        let img = document.querySelector("#imgPreview img");
+        let img = document.querySelector("#livestreamImage");
         let rowBorder = document.querySelector(".row-border");
 
-        if (img && rowBorder) {
-            let imgWidth = img.naturalWidth;
-            let imgHeight = img.naturalHeight;
+        if (img.complete && img.naturalWidth > 0) {
+            let imgRatio = img.naturalWidth / img.naturalHeight;
             let maxWidth = window.innerWidth * 0.9;
             let maxHeight = window.innerHeight * 0.9;
 
-            // Maintain aspect ratio
-            let scale = Math.min(maxWidth / imgWidth, maxHeight / imgHeight, 1);
+            let newWidth = maxWidth;
+            let newHeight = maxWidth / imgRatio;
 
-            rowBorder.style.width = imgWidth * scale + "px";
-            rowBorder.style.height = imgHeight * scale + "px";
+            if (newHeight > maxHeight) {
+                newHeight = maxHeight;
+                newWidth = maxHeight * imgRatio;
+            }
+
+            rowBorder.style.width = `${newWidth}px`;
+            rowBorder.style.height = `${newHeight}px`;
         }
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        let img = document.querySelector("#imgPreview img");
+    // Run on load & resize
+    document.addEventListener("DOMContentLoaded", () => {
+        let img = document.querySelector("#livestreamImage");
 
         if (img) {
             img.onload = adjustRowBorderSize;
-            window.addEventListener("resize", adjustRowBorderSize); // Handle resizing
+            window.addEventListener("resize", adjustRowBorderSize);
         }
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
 
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
         let selectedPeriod = periodSelect.value;  // Default period is the one initially selected
