@@ -120,9 +120,17 @@ nav .nav-link:hover {
     object-fit: contain; /* Ensures the image scales while maintaining aspect ratio */
 }
 
+
 .row-border {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    max-width: 90vw;
+    max-height: 90vh;
+    padding: 10px; /* Add some padding to prevent tight fitting */
     border: 1px #212529 solid;
     border-radius: 25px;
+    transition: all 0.2s ease-in-out; /* Smooth scaling */
 }
 
 /* Center the modal and make it responsive */
