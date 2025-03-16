@@ -412,8 +412,16 @@
         let rowBorder = document.querySelector(".row-border");
 
         if (img && rowBorder) {
-            rowBorder.style.width = img.clientWidth + "px";
-            rowBorder.style.height = img.clientHeight + "px";
+            let imgWidth = img.naturalWidth;
+            let imgHeight = img.naturalHeight;
+            let maxWidth = window.innerWidth * 0.9;
+            let maxHeight = window.innerHeight * 0.9;
+
+            // Maintain aspect ratio
+            let scale = Math.min(maxWidth / imgWidth, maxHeight / imgHeight, 1);
+
+            rowBorder.style.width = imgWidth * scale + "px";
+            rowBorder.style.height = imgHeight * scale + "px";
         }
     }
 
@@ -422,6 +430,7 @@
 
         if (img) {
             img.onload = adjustRowBorderSize;
+            window.addEventListener("resize", adjustRowBorderSize); // Handle resizing
         }
 
         const periodSelect = document.getElementById('periodSelect');  // Get the period select element
