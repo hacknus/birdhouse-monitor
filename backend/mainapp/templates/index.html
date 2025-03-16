@@ -43,6 +43,19 @@
             img.style.height = "auto";
             img.style.display = "block";
             img.style.margin = "auto"; // Centering
+
+            // Append image first
+            let previewContainer = document.getElementById("imgPreview");
+            previewContainer.innerHTML = ""; // Clear previous content
+            previewContainer.appendChild(img);
+
+            // Adjust parent size dynamically
+            img.onload = function () {
+                let parent = document.getElementById("row-border.2"); // Selects .row-border-2
+                parent.style.width = img.clientWidth + "px";
+                parent.style.height = img.clientHeight + "px";
+                console.log("Updated parent size:", parent.style.width, parent.style.height);
+            };
             return img;
         }
 
