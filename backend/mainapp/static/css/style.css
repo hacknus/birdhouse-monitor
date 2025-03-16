@@ -107,6 +107,8 @@ nav .nav-link:hover {
     border-radius: 25px;
     max-width: 90vw;
     max-height: 90vh;
+    width: auto; /* Maintain aspect ratio */
+    height: auto; /* Maintain aspect ratio */
 }
 
 /* Center the modal and make it responsive */
