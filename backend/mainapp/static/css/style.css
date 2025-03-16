@@ -105,15 +105,15 @@ nav .nav-link:hover {
 .row-border {
     border: 1px solid #212529;
     border-radius: 25px;
-    width: 100%;
-    max-width: 90vw;
-    max-height: 90vh;
     display: flex;
     justify-content: center;
     align-items: center;
     position: relative;
     margin: 0 auto;
-    overflow: hidden; /* Prevents overflow when resizing */
+    width: 100%;
+    max-width: 90vw;
+    max-height: 90vh;
+    overflow: hidden;
 }
 
 .row-border .inner-content {
@@ -123,15 +123,13 @@ nav .nav-link:hover {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    overflow: auto; /* Allow internal content to scroll if necessary */
+    overflow: auto;
+    transform-origin: top left; /* Ensure scaling happens from the top-left corner */
 }
 
-/* Maintain aspect ratio: 16:9 example (adjust as needed) */
-.row-border:before {
-    content: "";
-    display: block;
-    padding-top: 56.25%; /* 16:9 ratio */
-    width: 100%;
+/* Maintain aspect ratio and scale the contents */
+.row-border {
+    position: relative;
 }
 
 .row-border > .inner-content {
@@ -141,6 +139,10 @@ nav .nav-link:hover {
     right: 0;
     bottom: 0;
     padding: 10px;
+}
+
+body {
+    overflow: hidden;
 }
 
 /* Center the modal and make it responsive */
