@@ -359,7 +359,7 @@
             <canvas id="motionChart"></canvas>
         </div>
         <div class="col-md-6">
-            <h4>Number of Visitors</h4>
+            <h4>People currently streaming:</h4>
             <p id="visitorNumbers">Loading...</p>
             <canvas id="visitorsChart"></canvas>
         </div>
@@ -522,7 +522,7 @@
 
         // Convert timestamps to Date objects
         const timeLabels = data.map(entry => new Date(entry.timestamp));
-        const visitorData = data.map(entry => parseFloat(entry.number_of_visitors));
+        const visitorData = data.map(entry => parseInt(entry.number_of_visitors));
 
         console.log("Time Labels:", timeLabels);
         console.log("Visitor Data:", visitorData);
@@ -563,7 +563,7 @@
                     y: {
                         title: {
                             display: true,
-                            text: 'Visitors'
+                            text: 'Stream Visitors'
                         },
                     }
                 }
