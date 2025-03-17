@@ -8,18 +8,23 @@ class TrackVisitorMiddleware:
         self.get_response = get_response
 
     def __call__(self, request):
-        # Identify user by IP + User-Agent (better uniqueness)
+        # Generate a unique visitor key using IP + User-Agent
         visitor_key = hashlib.md5(
             (request.META.get("REMOTE_ADDR", "") + request.META.get("HTTP_USER_AGENT", "")).encode()
         ).hexdigest()
 
-        # Store in cache with a timeout (e.g., 5 minutes)
+        # Store visitor key with timestamp (5 minutes expiration)
         cache.set(visitor_key, now(), timeout=300)
+
+        # Maintain a separate list of all visitor keys
+        active_visitors = cache.get("active_visitors", set())
+        active_visitors.add(visitor_key)
+        cache.set("active_visitors", active_visitors, timeout=300)
 
         response = self.get_response(request)
         return response
 
 
 def get_active_visitors():
-    keys = cache.keys("*")  # Get all cached visitor keys
-    return len([key for key in keys if key.startswith("active_visitor_")])
+    active_visitors = cache.get("active_visitors", set())
+    return len(active_visitors)
