@@ -446,7 +446,7 @@
 
     let temperatureChart = null;
     let humidityChart = null;
-    let visitorsChart = null;
+    let motionChart = null;
     let visitorsChart = null;
 
     function renderMotionChart(data) {
@@ -466,11 +466,11 @@
 
         const ctx = document.getElementById('motionChart').getContext('2d');
 
-        if (visitorsChart) {
-            visitorsChart.destroy();
+        if (motionChart) {
+            motionChart.destroy();
         }
 
-        visitorsChart = new Chart(ctx, {
+        motionChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: timeLabels,
