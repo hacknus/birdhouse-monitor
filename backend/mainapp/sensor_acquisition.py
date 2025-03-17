@@ -30,6 +30,7 @@ from django.utils.timezone import now
 
 def get_active_users_count():
     active_sessions = Session.objects.filter(expire_date__gte=now())
+    print(active_sessions)
     return active_sessions.count()
 
 
