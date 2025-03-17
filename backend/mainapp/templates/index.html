@@ -522,8 +522,6 @@
 
         // Convert timestamps to Date objects
         const timeLabels = data.map(entry => new Date(entry.timestamp));
-
-        // Convert motion-triggered values to binary (1 for motion, 0 for no motion)
         const visitorData = data.map(entry => parseFloat(entry.number_of_visitors));
 
         console.log("Time Labels:", timeLabels);

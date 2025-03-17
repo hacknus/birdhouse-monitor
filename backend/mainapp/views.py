@@ -168,6 +168,7 @@ def get_sensor_data(request):
             'temperature': entry.temperature,
             'humidity': entry.humidity,
             'motion_triggered': entry.motion_triggered,
+            'number_of_visitors': entry.number_of_visitors,
             'timestamp': entry.timestamp.isoformat(),
         }
         for entry in data

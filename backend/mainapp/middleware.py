@@ -12,7 +12,6 @@ class TrackVisitorMiddleware:
         visitor_key = hashlib.md5(
             (request.META.get("REMOTE_ADDR", "") + request.META.get("HTTP_USER_AGENT", "")).encode()
         ).hexdigest()
-        print("Visitor key:", visitor_key)
         # Store visitor key with timestamp (5 minutes expiration)
         cache.set(visitor_key, now(), timeout=300)
 
@@ -27,6 +26,4 @@ class TrackVisitorMiddleware:
 
 def get_active_visitors():
     active_visitors = cache.get("active_visitors", set())
-    print(cache)
-    print(active_visitors)
     return len(active_visitors)
