@@ -185,7 +185,6 @@ def get_guru_data(request):
     local_temperature = data.latest("timestamp").temperature
 
     try:
-
         data = WeatherData.objects.filter(timestamp__gte=time_window).order_by('timestamp')
         bern_temperature = data.latest("timestamp").temperature
         # Prepare the data for the response

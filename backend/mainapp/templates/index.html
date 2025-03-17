@@ -358,6 +358,11 @@
             <p id="motionStatus">Loading...</p>
             <canvas id="motionChart"></canvas>
         </div>
+        <div class="col-md-6">
+            <h4>Number of Visitors</h4>
+            <p id="visitorNumbers">Loading...</p>
+            <canvas id="visitorsChart"></canvas>
+        </div>
     </div>
 
 </div>
@@ -402,17 +407,20 @@
                         document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
                         document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
                         document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
+                        document.getElementById('visitorNumbers').textContent = latestData.number_of_visitors ? `${latestData.number_of_visitors}` : 'No data';
 
                         // Render charts with time on the x-axis
                         renderTemperatureChart(data);
                         renderHumidityChart(data);
                         renderMotionChart(data);
+                        renderVisitorsChart(data);
                     } else {
                         console.log('No data available');
                         // Handle the case where there's no data
                         document.getElementById('temperatureValue').textContent = 'No data';
                         document.getElementById('humidityValue').textContent = 'No data';
                         document.getElementById('motionStatus').textContent = 'No data';
+                        document.getElementById('visitorNumbers').textContent = 'No data';
                     }
                 })
                 .catch(error => {
@@ -438,7 +446,8 @@
 
     let temperatureChart = null;
     let humidityChart = null;
-    let motionChart = null;
+    let visitorsChart = null;
+    let visitorsChart = null;
 
     function renderMotionChart(data) {
         if (!data || data.length === 0) {
@@ -457,11 +466,11 @@
 
         const ctx = document.getElementById('motionChart').getContext('2d');
 
-        if (motionChart) {
-            motionChart.destroy();
+        if (visitorsChart) {
+            visitorsChart.destroy();
         }
 
-        motionChart = new Chart(ctx, {
+        visitorsChart = new Chart(ctx, {
             type: 'line',
             data: {
                 labels: timeLabels,
@@ -499,6 +508,65 @@
                         },
                         min: 0,
                         max: 1
+                    }
+                }
+            }
+        });
+    }
+
+    function renderVisitorsChart(data) {
+        if (!data || data.length === 0) {
+            console.log('No data for motion chart');
+            return;
+        }
+
+        // Convert timestamps to Date objects
+        const timeLabels = data.map(entry => new Date(entry.timestamp));
+
+        // Convert motion-triggered values to binary (1 for motion, 0 for no motion)
+        const visitorData = data.map(entry => parseFloat(entry.number_of_visitors));
+
+        console.log("Time Labels:", timeLabels);
+        console.log("Visitor Data:", visitorData);
+
+        const ctx = document.getElementById('visitorsChart').getContext('2d');
+
+        if (visitorsChart) {
+            visitorsChart.destroy();
+        }
+
+        visitorsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: timeLabels,
+                datasets: [{
+                    label: 'Visitors',
+                    data: visitorData,
+                    borderColor: 'rgba(255, 99, 0, 1)',  // Red for motion detection
+                    backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                    fill: true,
+                    stepped: true,  // Stepped line to represent motion events clearly
+                    tension: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                animation: false,
+                scales: {
+                    x: {
+                        type: 'time',
+                        time: {
+                            unit: 'minute'
+                        },
+                        adapters: {
+                            date: {}
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Visitors'
+                        },
                     }
                 }
             }

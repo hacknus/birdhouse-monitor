@@ -24,6 +24,15 @@ from .models import SensorData
 from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
 from .push_notifications import send_push_notification
 
+from django.contrib.sessions.models import Session
+from django.utils.timezone import now
+
+
+def get_active_users_count():
+    active_sessions = Session.objects.filter(expire_date__gte=now())
+    return active_sessions.count()
+
+
 # I2C sensor setup
 i2c = board.I2C()
 sensor = adafruit_sht4x.SHT4x(i2c)
@@ -52,7 +61,8 @@ def store_sensor_data(temperature, humidity, motion_triggered):
         SensorData.objects.create(
             temperature=temperature,
             humidity=humidity,
-            motion_triggered=motion_triggered
+            motion_triggered=motion_triggered,
+            number_of_visitors=get_active_users_count(),
         )
     except (OperationalError, sqlite3.OperationalError):
         pass
