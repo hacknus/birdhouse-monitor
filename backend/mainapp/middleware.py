@@ -2,24 +2,17 @@ from django.core.cache import cache
 from django.utils.timezone import now
 import hashlib
 
-
 class TrackVisitorMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
 
     def __call__(self, request):
         # Generate a unique visitor key using IP + User-Agent
-        visitor_key = hashlib.md5(
+        visitor_key = "visitor_" + hashlib.md5(
             (request.META.get("REMOTE_ADDR", "") + request.META.get("HTTP_USER_AGENT", "")).encode()
         ).hexdigest()
 
-        # Only add the visitor if they're not already tracked
-        if not cache.get(visitor_key):
-            active_visitors = cache.get("active_visitors", set())
-            active_visitors.add(visitor_key)
-            cache.set("active_visitors", active_visitors, timeout=300)
-
-        # Refresh visitor expiration time
+        # Store visitor in cache with 5-minute expiration
         cache.set(visitor_key, now(), timeout=300)
 
         response = self.get_response(request)
@@ -27,12 +20,12 @@ class TrackVisitorMiddleware:
 
 
 def get_active_visitors():
-    active_visitors = cache.get("active_visitors", set())
+    from django.core.cache import caches
+    cache_backend = caches["default"]
 
-    # Remove expired visitors (who are no longer in cache)
-    valid_visitors = {key for key in active_visitors if cache.get(key)}
+    if hasattr(cache_backend, "client"):  # Ensure Redis is being used
+        redis_client = cache_backend.client.get_client(write=True)
+        visitor_keys = list(redis_client.scan_iter("visitor_*"))
+        return len(visitor_keys)
 
-    # Save cleaned visitor list back to cache
-    cache.set("active_visitors", valid_visitors, timeout=300)
-
-    return len(valid_visitors)
+    return 0  # If not using Redis, return 0 (or handle differently)
