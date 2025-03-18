@@ -8,30 +8,34 @@ class TrackVisitorMiddleware:
 
     def __call__(self, request):
         # Generate a unique visitor key using IP + User-Agent
-        visitor_key = "visitor_" + hashlib.md5(
+        visitor_key = hashlib.md5(
             (request.META.get("REMOTE_ADDR", "") + request.META.get("HTTP_USER_AGENT", "")).encode()
         ).hexdigest()
 
-        print("Visitor key:", visitor_key)
+        # Retrieve the active visitors set from cache (default to empty set)
+        active_visitors = cache.get("active_visitors", set())
 
-        # Store visitor in cache with 5-minute expiration
+        # Add the current visitor
+        active_visitors.add(visitor_key)
+
+        # Store the updated set back in cache (with 5-minute timeout)
+        cache.set("active_visitors", active_visitors, timeout=300)
+
+        # Refresh visitor's individual key (to track their last activity time)
         cache.set(visitor_key, now(), timeout=300)
 
         response = self.get_response(request)
-        print("Visitor response:", response)
         return response
 
 
 def get_active_visitors():
-    from django.core.cache import caches
-    print("Getting active visitors...")
-    cache_backend = caches["default"]
-    print("Cache backend:", cache_backend)
+    # Get the set of active visitors
+    active_visitors = cache.get("active_visitors", set())
 
-    if hasattr(cache_backend, "client"):  # Ensure Redis is being used
-        redis_client = cache_backend.client.get_client(write=True)
-        print(f"{redis_client=}")
-        visitor_keys = list(redis_client.scan_iter("visitor_*"))
-        return len(visitor_keys)
-    print("no redis")
-    return 0  # If not using Redis, return 0 (or handle differently)
+    # Filter out expired visitors (whose individual keys are no longer in cache)
+    valid_visitors = {key for key in active_visitors if cache.get(key)}
+
+    # Save the cleaned visitor list back to cache
+    cache.set("active_visitors", valid_visitors, timeout=300)
+
+    return len(valid_visitors)  # Return the number of active visitors

@@ -25,7 +25,6 @@ from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
 from .push_notifications import send_push_notification
 from .middleware import get_active_visitors
 
-
 # I2C sensor setup
 i2c = board.I2C()
 sensor = adafruit_sht4x.SHT4x(i2c)
