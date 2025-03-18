@@ -17,7 +17,7 @@ GPIO.setmode(GPIO.BCM)
 IR_LED_PIN = 17  # Change this pin number to match your setup
 GPIO.setup(IR_LED_PIN, GPIO.OUT)
 ignore_motion_for(10)
-GPIO.output(IR_LED_PIN, GPIO.LOW)
+GPIO.output(IR_LED_PIN, GPIO.HIGH)
 
 # Set tuning for ov5647_noir
 tuning = Picamera2.load_tuning_file("ov5647_noir.json")
@@ -45,8 +45,8 @@ def turn_ir_on():
 def turn_ir_off():
     ignore_motion_for(10)
     global ir_led_state
-    ir_led_state = False
-    GPIO.output(IR_LED_PIN, GPIO.LOW)
+    # ir_led_state = False
+    # GPIO.output(IR_LED_PIN, GPIO.LOW)
 
 
 def get_ir_led_state():
