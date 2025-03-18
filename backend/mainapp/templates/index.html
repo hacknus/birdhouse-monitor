@@ -306,12 +306,12 @@
                 <label class="form-check-label ms-2" for="irLedSwitch">IR Light</label> <!-- Adjusted spacing -->
             </div>
 
-<!--            <div class="form-check form-switch">-->
-<!--                <input class="form-check-input" type="checkbox" id="pushNotificationSwitch"-->
-<!--                       onchange="togglePushNotifications()"-->
-<!--                       style="transform: scale(1.4);">-->
-<!--                <label class="form-check-label ms-2" for="pushNotificationSwitch">Enable Push Notifications</label>-->
-<!--            </div>-->
+            <!--            <div class="form-check form-switch">-->
+            <!--                <input class="form-check-input" type="checkbox" id="pushNotificationSwitch"-->
+            <!--                       onchange="togglePushNotifications()"-->
+            <!--                       style="transform: scale(1.4);">-->
+            <!--                <label class="form-check-label ms-2" for="pushNotificationSwitch">Enable Push Notifications</label>-->
+            <!--            </div>-->
 
         </div>
         <div class="mt-1 mb-2" id="imgPreview"></div>
@@ -407,7 +407,7 @@
                         document.getElementById('temperatureValue').textContent = latestData.temperature ? `${latestData.temperature} °C` : 'No data';
                         document.getElementById('humidityValue').textContent = latestData.humidity ? `${latestData.humidity} %` : 'No data';
                         document.getElementById('motionStatus').textContent = latestData.motion_triggered !== undefined ? (latestData.motion_triggered ? 'Motion Detected' : 'No Motion') : 'No data';
-                        document.getElementById('visitorNumbers').textContent = latestData.number_of_visitors ? `${latestData.number_of_visitors}` : 'No data';
+                        document.getElementById('visitorNumbers').textContent = `${latestData.number_of_visitors}`;
 
                         // Render charts with time on the x-axis
                         renderTemperatureChart(data);

@@ -28,4 +28,6 @@ def get_active_visitors():
         visitor_keys = list(redis_client.scan_iter("visitor_*"))
         return len(visitor_keys)
 
+    print("no redis client")
+
     return 0  # If not using Redis, return 0 (or handle differently)
