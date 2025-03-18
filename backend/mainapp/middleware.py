@@ -25,9 +25,8 @@ def get_active_visitors():
 
     if hasattr(cache_backend, "client"):  # Ensure Redis is being used
         redis_client = cache_backend.client.get_client(write=True)
+        print(f"{redis_client=}")
         visitor_keys = list(redis_client.scan_iter("visitor_*"))
         return len(visitor_keys)
-
-    print("no redis client")
 
     return 0  # If not using Redis, return 0 (or handle differently)
