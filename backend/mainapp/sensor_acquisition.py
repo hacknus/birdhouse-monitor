@@ -119,13 +119,22 @@ def motion_detected_callback():
                             email = subscriber[0]
                             encoded_email = encode_email(email)
                             unsubscribe_link = f"{base_url}{encoded_email}/"
-                            email_body = (
-                                "Hoi Du!<br>"
-                                "I'm moving into the birdhouse!<br>"
-                                "Check me out at http://linusleo.synology.me:8000/voegeli/<br>"
-                                "Best Regards, Your Vögeli<br><br>"
-                                f'<a href="{unsubscribe_link}">Unsubscribe</a>'
-                            )
+                            if "@unibe.ch" in email:
+                                email_body = (
+                                    "Hoi Du!<br>"
+                                    "I just came back and entered my birdhouse!<br>"
+                                    "Check me out at http://cgnum.space.unibe.ch/voegeli<br>"
+                                    "Best Regards, Your Vögeli<br><br>"
+                                    f'<a href="{unsubscribe_link}">Unsubscribe</a>'
+                                )
+                            else:
+                                email_body = (
+                                    "Hoi Du!<br>"
+                                    "I just came back and entered my birdhouse!<br>"
+                                    "Check me out at http://linusleo.synology.me:8000/voegeli/<br>"
+                                    "Best Regards, Your Vögeli<br><br>"
+                                    f'<a href="{unsubscribe_link}">Unsubscribe</a>'
+                                )
 
                             Voegeli.send_mail(
                                 email_body,
