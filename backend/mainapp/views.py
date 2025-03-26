@@ -275,10 +275,10 @@ def remove_email(request):
         return redirect('newsletter')
 
 
-def unsubscribe_email(request, encoded_email):
+def unsubscribe_email(request, email):
     """Handle the email unsubscription request."""
     email_list = read_email_list()
-    email = decode_email(encoded_email)
+    email = decode_email(email)
     if email in email_list:
         email_list.remove(email)
         write_email_list(email_list)
