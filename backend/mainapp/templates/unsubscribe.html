@@ -70,12 +70,14 @@
 
 <!-- Unsubscribe Confirmation -->
 <div class="container mt-5 text-center">
-    {% if removed %}
-    <h2>Unsubscription Successful</h2>
-    <p>The email <strong>{{ email }}</strong> has been removed from our mailing list.</p>
-    {% else %}
-    <h2>Email Not Found</h2>
-    <p>The email <strong>{{ email }}</strong> was not found in our mailing list.</p>
+    {% if messages %}
+    <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert {% if message.tags %}alert-{{ message.tags }}{% endif %}">
+            {{ message }}
+        </div>
+        {% endfor %}
+    </div>
     {% endif %}
 </div>
 

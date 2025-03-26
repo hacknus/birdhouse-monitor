@@ -255,20 +255,18 @@ def add_email(request):
 
         return redirect('newsletter')
 
-def unsubscribe_email(request):
-    if request.method == 'POST':
-        """Handle the email unsubscription request."""
-        encoded_email = request.POST.get('email')
-        email_list = read_email_list()
-        email = decode_email(encoded_email)
-        if email in email_list:
-            email_list.remove(email)
-            write_email_list(email_list)
-            messages.success(request, f"{email} has been unsubscribed successfully.")
-        else:
-            messages.error(request, f"{email} was not found in the subscriber list.")
+def unsubscribe_email(request, email):
+    """Handle the email unsubscription request."""
+    email_list = read_email_list()
+    email = decode_email(email)
+    if email in email_list:
+        email_list.remove(email)
+        write_email_list(email_list)
+        messages.success(request, f"{email} has been unsubscribed successfully.")
+    else:
+        messages.error(request, f"{email} was not found in the subscriber list.")
 
-        return render(request, 'unsubscribe.html', {'email': email})
+    return render(request, 'unsubscribe.html', {'email': email})
 
 
 def newsletter_view(request):
