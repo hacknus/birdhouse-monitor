@@ -255,30 +255,10 @@ def add_email(request):
 
         return redirect('newsletter')
 
-
-# Remove an email from the list
-def remove_email(request):
-    if request.method == 'POST':
-        email = request.POST.get('email')
-
-        email_list = read_email_list()
-        if email in email_list:
-            email_list.remove(email)
-            write_email_list(email_list)
-
-            # Success message
-            messages.success(request, f"Email {email} has been removed from the newsletter list.")
-        else:
-            # Error message if email is not found
-            messages.error(request, f"Email {email} is not in the list.")
-
-        return redirect('newsletter')
-
-
 def unsubscribe_email(request, email):
     """Handle the email unsubscription request."""
     email_list = read_email_list()
-    email = decode_email(email)
+    email = decode_email(email).strip()
     if email in email_list:
         email_list.remove(email)
         write_email_list(email_list)

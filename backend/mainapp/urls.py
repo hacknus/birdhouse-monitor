@@ -15,5 +15,4 @@ urlpatterns = [
     path('unsubscribe/<str:email>/', views.unsubscribe_email, name='unsubscribe_email'),
     path('newsletter/', views.newsletter_view, name='newsletter'),  # Add this path
     path('newsletter/add/', views.add_email, name='add_email'),  # Add this path for adding emails
-    path('newsletter/remove/', views.remove_email, name='remove_email'),  # Add this path for removing emails
 ]
