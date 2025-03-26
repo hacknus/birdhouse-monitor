@@ -37,7 +37,6 @@ pir = MotionSensor(MOTION_PIN, threshold=0.8, queue_len=10)
 
 # replace this with custom email-interface
 Voegeli = Reporter("Voegeli")
-base_url = "http://cgnum.space.unibe.ch/voegeli/unsubscribe/"  # Change this to your actual unsubscribe URL
 
 
 # Function to read temperature and humidity
@@ -118,20 +117,23 @@ def motion_detected_callback():
                         for subscriber in subscribers:
                             email = subscriber[0]
                             encoded_email = encode_email(email)
-                            unsubscribe_link = f"{base_url}{encoded_email}/"
                             if "@unibe.ch" in email:
+                                base_url = "http://cgnum.space.unibe.ch/voegeli"
+                                unsubscribe_link = f"{base_url}/unsubscribe/{encoded_email}/"
                                 email_body = (
                                     "Hoi Du!<br>"
                                     "I just came back and entered my birdhouse!<br>"
-                                    "Check me out at http://cgnum.space.unibe.ch/voegeli<br>"
+                                    f"Check me out at {base_url}<br>"
                                     "Best Regards, Your Vögeli<br><br>"
                                     f'<a href="{unsubscribe_link}">Unsubscribe</a>'
                                 )
                             else:
+                                base_url = "http://linusleo.synology.me:8000/voegeli"
+                                unsubscribe_link = f"{base_url}/unsubscribe/{encoded_email}/"
                                 email_body = (
                                     "Hoi Du!<br>"
                                     "I just came back and entered my birdhouse!<br>"
-                                    "Check me out at http://linusleo.synology.me:8000/voegeli/<br>"
+                                    f"Check me out at {base_url}<br>"
                                     "Best Regards, Your Vögeli<br><br>"
                                     f'<a href="{unsubscribe_link}">Unsubscribe</a>'
                                 )
