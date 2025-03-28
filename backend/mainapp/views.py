@@ -42,15 +42,14 @@ def save_subscription(request):
 
 def img_generator():
     while True:
-        frame = camera_stream.get_frame()
-        # compression
-        ret, jpeg = cv2.imencode(".jpg", frame)
-
-        yield (
+        jpeg = camera_stream.get_jpeg()
+        if jpeg is not None:
+            yield (
                 b"--frame\r\n"
-                b"Content-Type: image/jpeg\r\n\r\n" + jpeg.tobytes() + b"\r\n\r\n"
-        )
-
+                b"Content-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n\r\n"
+            )
+        else:
+            time.sleep(0.1)
 
 def video_feed(request):
     response = StreamingHttpResponse(

@@ -49,10 +49,16 @@ class CameraStream:
             frame = self.picam2.capture_array()
             frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
             frame = cv2.rotate(frame, cv2.ROTATE_180)
+            ret, jpeg = cv2.imencode(".jpg", frame)
 
             with self.lock:
                 self.frame = frame
-            time.sleep(0.03)  # ~30fps
+                self.jpeg = jpeg.tobytes()
+            time.sleep(0.03)
+
+    def get_jpeg(self):
+        with self.lock:
+            return self.jpeg
 
     def get_frame(self):
         with self.lock:
