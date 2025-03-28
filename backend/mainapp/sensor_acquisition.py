@@ -21,7 +21,7 @@ from .encoding import encode_email
 from .ignore_motion import are_we_still_blocked
 # Import your Django model
 from .models import SensorData
-from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
+from .camera import camera_stream, turn_ir_on, turn_ir_off, get_ir_led_state
 from .push_notifications import send_push_notification
 from .middleware import get_active_visitors
 
@@ -91,9 +91,7 @@ def motion_detected_callback():
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
 
-        frame = picam2.capture_array()
-        frame = cv2.rotate(frame, cv2.ROTATE_180)
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
+        frame = camera_stream.get_frame()
 
         cv2.imwrite(image_path, frame)
         last_image_time = current_time
