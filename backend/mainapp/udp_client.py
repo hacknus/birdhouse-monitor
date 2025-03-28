@@ -1,57 +1,72 @@
+# udp_video_client.py
 import socket
+import threading
 import time
-import os
+from collections import deque
 
-# Define the file where the Raspberry Pi IP is stored
-IP_FILE = 'raspberry_pi_ip.txt'
-UDP_PORT = 5005  # The port where Raspberry Pi sends video frames
+class UDPVideoClient:
+    def __init__(self, port=5005, ip_file='raspberry_pi_ip.txt'):
+        self.udp_port = port
+        self.ip_file = ip_file
+        self.running = False
+        self.socket = None
+        self.thread = None
+        self.frame_queue = deque(maxlen=1)
+        self.lock = threading.Lock()
 
+    def read_ip(self):
+        try:
+            with open(self.ip_file, 'r') as file:
+                return file.readline().strip()
+        except Exception as e:
+            print(f"[UDP Client] Error reading IP: {e}")
+            return None
 
-# Function to read IP address from the file
-def read_ip_from_file():
-    try:
-        with open(IP_FILE, 'r') as file:
-            ip_address = file.readline().strip()
-            return ip_address
-    except FileNotFoundError:
-        print(f"Error: {IP_FILE} not found.")
-        return None
-    except Exception as e:
-        print(f"Error reading {IP_FILE}: {e}")
-        return None
+    def start(self):
+        if not self.running:
+            self.running = True
+            self.thread = threading.Thread(target=self._receive_frames, daemon=True)
+            self.thread.start()
 
+    def _receive_frames(self):
+        while self.running:
+            ip = self.read_ip()
+            if not ip:
+                time.sleep(2)
+                continue
 
-# This is the generator that provides JPEG frames to Django view
-def img_generator():
-    while True:
-        # Keep trying to connect and receive frames from the Raspberry Pi
-        ip_address = read_ip_from_file()
-
-        if ip_address:
             try:
-                print(f"Connecting to {ip_address}...")
+                print(f"[UDP Client] Binding to {ip}:{self.udp_port}")
+                self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+                self.socket.settimeout(5)
+                self.socket.bind((ip, self.udp_port))
 
-                # Create a UDP socket to receive video frames
-                udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                udp_socket.bind((ip_address, UDP_PORT))
+                while self.running:
+                    try:
+                        data, _ = self.socket.recvfrom(65536)
+                        with self.lock:
+                            self.frame_queue.append(data)
+                    except socket.timeout:
+                        continue
+                    except Exception as e:
+                        print(f"[UDP Client] Receive error: {e}")
+                        break
 
-                print(f"Connected to {ip_address}:{UDP_PORT}")
+            except Exception as e:
+                print(f"[UDP Client] Bind error: {e}")
+                time.sleep(2)
+            finally:
+                if self.socket:
+                    self.socket.close()
+                    self.socket = None
 
-                while True:
-                    # Receive JPEG frame from the Raspberry Pi
-                    jpeg, addr = udp_socket.recvfrom(65536)  # Max size of a UDP packet
+    def get_frame(self):
+        with self.lock:
+            return self.frame_queue[-1] if self.frame_queue else None
 
-                    if jpeg:
-                        # Yield the frame as part of the multipart response
-                        yield (
-                                b"--frame\r\n"
-                                b"Content-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n\r\n"
-                        )
-                    else:
-                        time.sleep(0.1)  # Pause if no data is received
-            except (socket.timeout, socket.error) as e:
-                print(f"Error: {e}. Reconnecting...")
-                time.sleep(2)  # Retry connection after 2 seconds
-        else:
-            print("IP address not found, retrying in 2 seconds...")
-            time.sleep(2)  # Retry reading the IP address every 2 seconds
+    def stop(self):
+        self.running = False
+        if self.socket:
+            self.socket.close()
+        if self.thread:
+            self.thread.join()

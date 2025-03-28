@@ -1,65 +1,116 @@
 import socket
 import threading
 import time
+import queue
 
-# Define file that contains the Raspberry Pi's IP address
-IP_FILE = 'raspberry_pi_ip.txt'
-TCP_PORT = 6006
+class TCPClient:
+    def __init__(self, ip_file='raspberry_pi_ip.txt', port=6006):
+        self.ip_file = ip_file
+        self.port = port
+        self.socket = None
+        self.connected = False
+        self.lock = threading.Lock()
+        self.running = False
+        self.receive_callback = None  # Function to call when message received
+        self.thread = None
+        self.reply_queue = None  # for synchronous responses
 
+    def read_ip_from_file(self):
+        try:
+            with open(self.ip_file, 'r') as file:
+                return file.readline().strip()
+        except Exception as e:
+            print(f"[TCPClient] Error reading IP file: {e}")
+            return None
 
-# Read the Raspberry Pi's IP address from the file
-def read_ip_from_file():
-    try:
-        with open(IP_FILE, 'r') as file:
-            ip_address = file.readline().strip()
-            return ip_address
-    except FileNotFoundError:
-        print(f"Error: {IP_FILE} not found.")
-        return None
-    except Exception as e:
-        print(f"Error reading {IP_FILE}: {e}")
-        return None
+    def connect_loop(self):
+        self.running = True
+        while self.running:
+            ip_address = self.read_ip_from_file()
+            if not ip_address:
+                print("[TCPClient] No IP found. Retrying...")
+                time.sleep(2)
+                continue
 
-
-# Function to attempt to connect to the Raspberry Pi's TCP server
-def try_connect_to_raspberry_pi():
-    while True:
-        ip_address = read_ip_from_file()
-        if ip_address:
             try:
-                print(f"Trying to connect to {ip_address}:{TCP_PORT}")
-                # Create TCP socket
+                print(f"[TCPClient] Trying to connect to {ip_address}:{self.port}")
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-                    sock.settimeout(5)  # Set timeout for the connection
-                    sock.connect((ip_address, TCP_PORT))
-                    print(f"Connected to {ip_address}:{TCP_PORT}")
+                    sock.settimeout(5)
+                    sock.connect((ip_address, self.port))
+                    with self.lock:
+                        self.socket = sock
+                        self.connected = True
+                    print(f"[TCPClient] Connected to {ip_address}:{self.port}")
 
-                    # Send a test command (for example, "turn on led")
-                    command = "turn on led"
-                    sock.sendall(command.encode('utf-8'))
-                    print(f"Sent command: {command}")
-
-                    # Wait for a response (if any)
-                    response = sock.recv(1024)
-                    print(f"Response from server: {response.decode('utf-8')}")
+                    while self.running:
+                        try:
+                            data = sock.recv(1024)
+                            if not data:
+                                break
+                            message = data.decode('utf-8')
+                            print(f"[TCPClient] Received: {message}")
+                            self.receive_callback_internal(message)
+                        except socket.error as e:
+                            print(f"[TCPClient] Socket error: {e}")
+                            break
 
             except (socket.timeout, socket.error) as e:
-                print(f"Connection failed to {ip_address}:{TCP_PORT}. Retrying...")
-                time.sleep(2)  # Retry every 2 seconds if the connection fails
-        else:
-            print(f"Failed to read IP address from {IP_FILE}. Retrying...")
-            time.sleep(2)  # Retry after 2 seconds if the IP is not found
+                print(f"[TCPClient] Connection failed: {e}")
 
+            with self.lock:
+                self.socket = None
+                self.connected = False
+            time.sleep(2)
 
-# Function to start the connection thread
-def start_connection_thread():
-    connection_thread = threading.Thread(target=try_connect_to_raspberry_pi, daemon=True)
-    connection_thread.start()
+    def start(self):
+        if not self.thread or not self.thread.is_alive():
+            self.thread = threading.Thread(target=self.connect_loop, daemon=True)
+            self.thread.start()
+            print("[TCPClient] Connection thread started.")
 
+    def send(self, message):
+        """Send a message without waiting for a reply."""
+        with self.lock:
+            if self.socket and self.connected:
+                try:
+                    self.socket.sendall(message.encode('utf-8'))
+                    print(f"[TCPClient] Sent: {message}")
+                except socket.error as e:
+                    print(f"[TCPClient] Send failed: {e}")
+            else:
+                print("[TCPClient] Cannot send, not connected.")
 
-if __name__ == "__main__":
-    start_connection_thread()
+    def send_and_wait_for_reply(self, message, timeout=5):
+        """Send a message and wait for a response."""
+        self.reply_queue = queue.Queue(maxsize=1)  # Initialize the queue
+        self.send(message)  # Send the command
+        try:
+            reply = self.reply_queue.get(timeout=timeout)
+            return reply
+        except queue.Empty:
+            return None  # Return None if the reply was not received in time
 
-    # Keep the main thread running while the connection thread works
-    while True:
-        time.sleep(1)
+    def stop(self):
+        self.running = False
+        with self.lock:
+            if self.socket:
+                self.socket.close()
+                self.socket = None
+                self.connected = False
+        print("[TCPClient] Client stopped.")
+
+    def set_receive_callback(self, callback_fn):
+        """Set a callback function to handle incoming messages."""
+        self.receive_callback = callback_fn
+
+    def receive_callback_internal(self, message):
+        """Handle received messages and forward them to the queue if waiting."""
+        # Forward to queue if someone is waiting
+        if self.reply_queue and not self.reply_queue.full():
+            try:
+                self.reply_queue.put_nowait(message)
+            except queue.Full:
+                pass
+        # Also call user-defined callback
+        if self.receive_callback:
+            self.receive_callback(message)

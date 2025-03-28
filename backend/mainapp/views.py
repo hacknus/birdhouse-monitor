@@ -24,9 +24,8 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 
-import mainapp.sensor_acquisition
+from .apps import udp_client, tcp_client
 import mainapp.weather_api
-from .camera import camera_stream, turn_ir_on, turn_ir_off, get_ir_led_state
 
 
 @csrf_exempt
@@ -42,14 +41,13 @@ def save_subscription(request):
 
 def img_generator():
     while True:
-        jpeg = camera_stream.get_jpeg()
-        if jpeg is not None:
+        frame = udp_client.get_frame()
+        if frame:
             yield (
-                b"--frame\r\n"
-                b"Content-Type: image/jpeg\r\n\r\n" + jpeg + b"\r\n\r\n"
+                    b"--frame\r\n"
+                    b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n\r\n"
             )
-        else:
-            time.sleep(0.1)
+
 
 def video_feed(request):
     response = StreamingHttpResponse(
@@ -74,7 +72,7 @@ def save_image(request):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
 
-        frame = camera_stream.get_frame()
+        frame = udp_client.get_frame()
 
         cv2.imwrite(image_path, frame)
 
@@ -113,10 +111,10 @@ def trigger_ir_led(request):
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Invalid request format.'}, status=400)
         if action == 'on':
-            turn_ir_on()
+            tcp_client.send("turn on led")
             return JsonResponse({'success': True, 'message': 'IR LED is ON.'})
         elif action == 'off':
-            turn_ir_off()
+            tcp_client.send("turn off led")
             return JsonResponse({'success': True, 'message': 'IR LED is OFF.'})
         else:
             return JsonResponse({'success': False, 'message': 'Invalid action.'}, status=400)
@@ -127,7 +125,8 @@ def trigger_ir_led(request):
 def get_ir_state(request):
     # You can access the IR state from wherever it's stored (e.g., in a variable, database, or hardware device)
     # For now, let's assume it’s stored in a variable or a simple flag.
-    ir_led_state = "on" if get_ir_led_state() else "off"  # Replace 'ir_led_on' with the actual method/variable to fetch state.
+    response = tcp_client.send_and_wait_for_reply("get led state", timeout=3)
+    ir_led_state = "on" if "ON" in response else "off"  # Replace 'ir_led_on' with the actual method/variable to fetch state.
     return JsonResponse({'state': ir_led_state})
 
 
@@ -248,6 +247,7 @@ def add_email(request):
             messages.error(request, f"Invalid email or email already in the list: {email}")
 
         return redirect('newsletter')
+
 
 def unsubscribe_email(request, email):
     """Handle the email unsubscription request."""
