@@ -1,8 +1,5 @@
 Django
-gpiozero
 flask
-picamera2
-adafruit-circuitpython-sht4x
 gunicorn
 djangorestframework
 opencv-python

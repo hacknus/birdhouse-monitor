@@ -1,0 +1,4 @@
+gpiozero
+picamera2
+adafruit-circuitpython-sht4x
+opencv-python
