@@ -26,7 +26,7 @@ from django.contrib.auth.models import User
 
 import mainapp.sensor_acquisition
 import mainapp.weather_api
-from .camera import picam2, turn_ir_on, turn_ir_off, get_ir_led_state
+from .camera import camera_stream, turn_ir_on, turn_ir_off, get_ir_led_state
 
 
 @csrf_exempt
@@ -42,10 +42,7 @@ def save_subscription(request):
 
 def img_generator():
     while True:
-        frame = picam2.capture_array()
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-        frame = cv2.rotate(frame, cv2.ROTATE_180)
-
+        frame = camera_stream.get_frame()
         # compression
         ret, jpeg = cv2.imencode(".jpg", frame)
 
@@ -78,9 +75,7 @@ def save_image(request):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
 
-        frame = picam2.capture_array()
-        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2GRAY)
-        frame = cv2.rotate(frame, cv2.ROTATE_180)
+        frame = camera_stream.get_frame()
 
         cv2.imwrite(image_path, frame)
 
