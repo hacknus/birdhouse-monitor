@@ -5,7 +5,7 @@ import time
 from collections import deque
 
 class UDPVideoClient:
-    def __init__(self, port=5005, ip_file='raspberry_pi_ip.txt'):
+    def __init__(self, port=5005, ip_file='mainapp/raspberry_pi_ip.txt'):
         self.udp_port = port
         self.ip_file = ip_file
         self.running = False

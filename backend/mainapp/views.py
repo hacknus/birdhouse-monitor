@@ -126,8 +126,11 @@ def get_ir_state(request):
     # You can access the IR state from wherever it's stored (e.g., in a variable, database, or hardware device)
     # For now, let's assume it’s stored in a variable or a simple flag.
     response = tcp_client.send_and_wait_for_reply("get led state", timeout=3)
-    ir_led_state = "on" if "ON" in response else "off"  # Replace 'ir_led_on' with the actual method/variable to fetch state.
-    return JsonResponse({'state': ir_led_state})
+    if response:
+        ir_led_state = "on" if "ON" in response else "off"  # Replace 'ir_led_on' with the actual method/variable to fetch state.
+        return JsonResponse({'state': ir_led_state})
+    else:
+        return JsonResponse({'state': "off"})
 
 
 def get_sensor_data(request):

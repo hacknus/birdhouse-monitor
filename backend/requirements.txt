@@ -1,4 +1,6 @@
 Django
+django-webpush
+django-redis
 flask
 gunicorn
 djangorestframework

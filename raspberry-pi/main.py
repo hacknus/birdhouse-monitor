@@ -72,7 +72,8 @@ class CameraServer:
             print("Motion detection ignored because IR LED is on.")
             return
 
-        self.send_tcp_message("MOTION INTERRUPT")
+        temperature, humidity = read_temperature_humidity()
+        self.send_tcp_message(f"MOTION INTERRUPT! TEMP_HUM: {temperature}, {humidity}")
 
         current_time = time.time()
 
@@ -184,16 +185,16 @@ class CameraServer:
     def handle_command(self, command):
         command = command.strip().lower()
         print(f"[CMD] Received: {command}")
-        if command == "turn on led":
+        if command == "IR_ONd":
             turn_ir_on()
-        elif command == "turn off led":
+        elif command == "IR_OFF":
             turn_ir_off()
-        elif command == "get led state":
+        elif command == "GET_IR":
             state = get_ir_led_state()
             self.send_tcp_message(f"IR LED is {'ON' if state else 'OFF'}")
         elif command == "get sensor data":
             temperature, humidity = read_temperature_humidity()
-            self.send_tcp_message(f"Temperature: {temperature}, Humidity: {humidity}")
+            self.send_tcp_message(f"TEMP_HUM: {temperature}, {humidity}")
         else:
             print(f"[CMD] Unknown command: {command}")
 

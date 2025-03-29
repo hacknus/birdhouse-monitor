@@ -1,19 +1,30 @@
+# utils/tcp_client.py
 import socket
 import threading
 import time
 import queue
+import datetime
+import os
+import cv2
+import numpy as np
+from django.conf import settings
+from django.db.utils import OperationalError
+import sqlite3
+
 
 class TCPClient:
-    def __init__(self, ip_file='raspberry_pi_ip.txt', port=6006):
+    def __init__(self, ip_file='mainapp/raspberry_pi_ip.txt', port=6006, udp_client=None):
         self.ip_file = ip_file
         self.port = port
         self.socket = None
         self.connected = False
         self.lock = threading.Lock()
         self.running = False
-        self.receive_callback = None  # Function to call when message received
+        self.receive_callback = None
         self.thread = None
-        self.reply_queue = None  # for synchronous responses
+        self.reply_queue = None
+        self.udp_client = udp_client  # <-- pass your UDP client here
+        self.interrupt_event = threading.Event()
 
     def read_ip_from_file(self):
         try:
@@ -25,22 +36,23 @@ class TCPClient:
 
     def connect_loop(self):
         self.running = True
+
+        # Start sensor polling thread
+        threading.Thread(target=self.sensor_polling_loop, daemon=True).start()
+
         while self.running:
             ip_address = self.read_ip_from_file()
             if not ip_address:
-                print("[TCPClient] No IP found. Retrying...")
                 time.sleep(2)
                 continue
 
             try:
-                print(f"[TCPClient] Trying to connect to {ip_address}:{self.port}")
                 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
                     sock.settimeout(5)
                     sock.connect((ip_address, self.port))
                     with self.lock:
                         self.socket = sock
                         self.connected = True
-                    print(f"[TCPClient] Connected to {ip_address}:{self.port}")
 
                     while self.running:
                         try:
@@ -48,10 +60,8 @@ class TCPClient:
                             if not data:
                                 break
                             message = data.decode('utf-8')
-                            print(f"[TCPClient] Received: {message}")
                             self.receive_callback_internal(message)
-                        except socket.error as e:
-                            print(f"[TCPClient] Socket error: {e}")
+                        except socket.error:
                             break
 
             except (socket.timeout, socket.error) as e:
@@ -66,29 +76,22 @@ class TCPClient:
         if not self.thread or not self.thread.is_alive():
             self.thread = threading.Thread(target=self.connect_loop, daemon=True)
             self.thread.start()
-            print("[TCPClient] Connection thread started.")
 
     def send(self, message):
-        """Send a message without waiting for a reply."""
         with self.lock:
             if self.socket and self.connected:
                 try:
                     self.socket.sendall(message.encode('utf-8'))
-                    print(f"[TCPClient] Sent: {message}")
                 except socket.error as e:
                     print(f"[TCPClient] Send failed: {e}")
-            else:
-                print("[TCPClient] Cannot send, not connected.")
 
     def send_and_wait_for_reply(self, message, timeout=5):
-        """Send a message and wait for a response."""
-        self.reply_queue = queue.Queue(maxsize=1)  # Initialize the queue
-        self.send(message)  # Send the command
+        self.reply_queue = queue.Queue(maxsize=1)
+        self.send(message)
         try:
-            reply = self.reply_queue.get(timeout=timeout)
-            return reply
+            return self.reply_queue.get(timeout=timeout)
         except queue.Empty:
-            return None  # Return None if the reply was not received in time
+            return None
 
     def stop(self):
         self.running = False
@@ -97,20 +100,65 @@ class TCPClient:
                 self.socket.close()
                 self.socket = None
                 self.connected = False
-        print("[TCPClient] Client stopped.")
 
     def set_receive_callback(self, callback_fn):
-        """Set a callback function to handle incoming messages."""
         self.receive_callback = callback_fn
 
     def receive_callback_internal(self, message):
-        """Handle received messages and forward them to the queue if waiting."""
-        # Forward to queue if someone is waiting
-        if self.reply_queue and not self.reply_queue.full():
+        if "INTERRUPT" in message:
+            print("[TCPClient] INTERRUPT received — saving image")
+            _, values = message.strip().split(":")
+            temp, hum = values.split(",")
+            self.store_sensor_data(float(temp), float(hum), motion_triggered=True)
+            threading.Thread(target=self.handle_interrupt, daemon=True).start()
+        elif message.startswith("TEMP_HUM"):
+            _, values = message.strip().split(":")
+            temp, hum = values.split(",")
+            self.store_sensor_data(float(temp), float(hum), motion_triggered=False)
+        elif self.reply_queue and not self.reply_queue.full():
             try:
                 self.reply_queue.put_nowait(message)
             except queue.Full:
                 pass
-        # Also call user-defined callback
+
         if self.receive_callback:
             self.receive_callback(message)
+
+    def handle_interrupt(self):
+        self.send("IR_ON")
+        time.sleep(3)
+
+        frame_data = self.udp_client.get_frame() if self.udp_client else None
+        if frame_data:
+            np_frame = np.frombuffer(frame_data, dtype=np.uint8)
+            frame = cv2.imdecode(np_frame, cv2.IMREAD_COLOR)
+
+            timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+            image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
+            os.makedirs(os.path.dirname(image_path), exist_ok=True)
+            cv2.imwrite(image_path, frame)
+            print(f"[TCPClient] Saved image at {image_path}")
+        else:
+            print("[TCPClient] No UDP frame available.")
+
+        self.send("IR_OFF")
+
+    def sensor_polling_loop(self):
+        while self.running:
+            time.sleep(10)
+            self.send("GET_SENSOR_DATA")
+
+    def store_sensor_data(self, temperature, humidity, motion_triggered):
+        from .models import SensorData  # ✅ Lazy import inside function
+        try:
+            SensorData.objects.create(
+                temperature=temperature,
+                humidity=humidity,
+                motion_triggered=motion_triggered,
+            )
+        except (OperationalError, sqlite3.OperationalError):
+            pass
+
+    def get_active_visitors(self):
+        # Dummy fallback; replace with real logic
+        return 1
