@@ -23,6 +23,7 @@ services:
       - "6443:443"   # HTTPS exposed externally on port 6443
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./certs:/etc/nginx/certs:ro         # optional if using SSL
       - static_volume:/app/static
       - media_volume:/app/media
     depends_on:
