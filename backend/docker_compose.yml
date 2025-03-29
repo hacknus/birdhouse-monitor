@@ -11,9 +11,10 @@ services:
       - static_volume:/app/static
       - media_volume:/app/media
     environment:
-      - DJANGO_SETTINGS_MODULE=mainapp.settings
-      - DEBUG=False  # Make sure this is False for production!
-
+      - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
+      - DEBUG=${DEBUG}
+      - ALLOWED_HOSTS=${ALLOWED_HOSTS}
+      - DATABASE_URL=${DATABASE_URL}
   nginx:
     image: nginx:latest
     container_name: django_nginx
