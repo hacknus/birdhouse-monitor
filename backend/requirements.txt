@@ -5,3 +5,5 @@ flask
 gunicorn
 djangorestframework
 opencv-python
+python-dotenv
+numpy
