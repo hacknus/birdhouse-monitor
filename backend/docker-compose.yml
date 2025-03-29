@@ -19,7 +19,8 @@ services:
     image: nginx:latest
     container_name: django_nginx
     ports:
-      - "80:80"
+      - "6080:80"    # HTTP exposed externally on port 6080
+      - "6443:443"   # HTTPS exposed externally on port 6443
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - static_volume:/app/static
