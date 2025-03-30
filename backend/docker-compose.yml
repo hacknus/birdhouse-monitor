@@ -8,7 +8,7 @@ services:
       - "8000"
     volumes:
       - ./backend:/app
-      - ./backend/static:/app/static
+      - ./backend/mainapp/static:/app/static
       - ./backend/media:/app/media
     environment:
       - DJANGO_SECRET_KEY=${DJANGO_SECRET_KEY}
