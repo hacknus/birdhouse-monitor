@@ -10,7 +10,7 @@ ENV DOCKER_ENV=true
 WORKDIR /app
 
 # Install dependencies
-COPY backend/ /app/
+COPY . /app/
 
 # Install system dependencies for OpenCV
 RUN apt-get update && apt-get install -y \
