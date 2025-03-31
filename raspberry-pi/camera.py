@@ -10,7 +10,7 @@ import cv2
 from picamera2 import Picamera2
 import RPi.GPIO as GPIO
 
-from .ignore_motion import ignore_motion_for
+from ignore_motion import ignore_motion_for
 
 # Toggle IR LED (ON or OFF)
 
