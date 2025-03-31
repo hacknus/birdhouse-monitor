@@ -118,11 +118,15 @@
     });
 
     function openModal(imageSrc) {
-        currentIndex = images.findIndex(img => img === imageSrc);  // Set the index of the clicked image
-        showImage(currentIndex);
-        document.getElementById("imageModal").style.display = "flex";
+        currentIndex = images.indexOf(imageSrc); // Set correct index
+        if (currentIndex === -1) {
+            console.error("Image not found in array:", imageSrc); // Debugging if needed
+            return;
     }
-
+    showImage(currentIndex);
+    document.getElementById("imageModal").style.display = "flex";
+}
+    
     function closeModal() {
         document.getElementById("imageModal").style.display = "none";
     }
