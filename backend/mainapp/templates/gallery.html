@@ -117,16 +117,26 @@
         images = Array.from(document.querySelectorAll(".card-img-top")).map(img => img.src);
     });
 
+    function normalizeUrl(url) {
+        let a = document.createElement("a");
+        a.href = url;
+        return a.href;  // Returns the absolute URL
+    }
 
     function openModal(imageSrc) {
-        currentIndex = images.indexOf(imageSrc); // Set correct index
+        let normalizedSrc = normalizeUrl(imageSrc);  // Convert clicked image URL to absolute form
+        currentIndex = images.findIndex(img => normalizeUrl(img) === normalizedSrc);
+    
         if (currentIndex === -1) {
-            console.error("Image not found in array:", imageSrc); // Debugging if needed
+            console.error("Image not found:", normalizedSrc); // Debugging
+            console.error("Available images:", images); // Show all stored images
             return;
+        }
+
+        showImage(currentIndex);
+        document.getElementById("imageModal").style.display = "flex";
     }
-    showImage(currentIndex);
-    document.getElementById("imageModal").style.display = "flex";
-}
+
     
     function closeModal() {
         document.getElementById("imageModal").style.display = "none";
