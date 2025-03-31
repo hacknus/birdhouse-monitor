@@ -191,7 +191,7 @@ class CameraServer:
                 writer.writerow([email])
 
     def handle_command(self, command):
-        command = command.strip().lower()
+        command = command.strip()
         print(f"[CMD] Received: {command}")
         if command == "IR_ON":
             turn_ir_on()
