@@ -146,17 +146,19 @@ nav .nav-link:hover {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    font-size: 2rem;
+    font-size: 3rem;
     font-weight: bold;
-    color: white;
+    color: white !important;
     cursor: pointer;
-    padding: 10px;
+    padding: 15px;
     background-color: rgba(0, 0, 0, 0.5);
     border-radius: 5px;
+    text-decoration: none; /* Remove blue link underline */
+    user-select: none;
 }
 
-.prev { left: 10px; }
-.next { right: 10px; }
+.prev { left: 20px; }
+.next { right: 20px; }
 
 .prev:hover, .next:hover {
     background-color: rgba(0, 0, 0, 0.8);

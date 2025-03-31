@@ -118,7 +118,7 @@
     });
 
     function openModal(imageSrc) {
-        currentIndex = images.indexOf(imageSrc);  // Set the index of the clicked image
+        currentIndex = images.findIndex(img => img === imageSrc);  // Set the index of the clicked image
         showImage(currentIndex);
         document.getElementById("imageModal").style.display = "flex";
     }
@@ -148,11 +148,14 @@
 
     // Keyboard navigation (left/right arrow keys)
     document.addEventListener("keydown", function (event) {
-        if (document.getElementById("imageModal").style.display === "flex") {
+        let modal = document.getElementById("imageModal");
+
+        if (modal.style.display === "flex") {
             if (event.key === "ArrowLeft") changeImage(-1);
             if (event.key === "ArrowRight") changeImage(1);
-        }
-    });
+            if (event.key === "Escape") closeModal();
+    }
+});
 </script>
 
 <footer class="bg-dark text-center text-white" id="about">
