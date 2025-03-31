@@ -117,6 +117,7 @@
         images = Array.from(document.querySelectorAll(".card-img-top")).map(img => img.src);
     });
 
+
     function openModal(imageSrc) {
         currentIndex = images.indexOf(imageSrc); // Set correct index
         if (currentIndex === -1) {
