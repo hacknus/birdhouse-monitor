@@ -97,9 +97,11 @@
 </div>
 
 <!-- Image Preview Modal -->
-<div id="imageModal" class="modal" onclick="closeModal()">
+<div id="imageModal" class="modal">
     <span class="close" onclick="closeModal()">&times;</span>
+    <a class="prev" onclick="changeImage(-1)">&#10094;</a>
     <img class="modal-content" id="modalImage">
+    <a class="next" onclick="changeImage(1)">&#10095;</a>
     <a id="downloadLink" class="download-btn" download>
         Download <i class="fa fa-download"></i>
     </a>
@@ -107,19 +109,50 @@
 
 <!-- JavaScript -->
 <script>
-    function openModal(imageSrc) {
-        var modal = document.getElementById("imageModal");
-        var modalImg = document.getElementById("modalImage");
-        var downloadBtn = document.getElementById("downloadLink");
+    let images = [];  // Array to store image URLs
+    let currentIndex = 0;  // Track the currently displayed image
 
-        modal.style.display = "flex";
-        modalImg.src = imageSrc;
-        downloadBtn.href = imageSrc;
+    // Store image URLs in an array
+    document.addEventListener("DOMContentLoaded", function () {
+        images = Array.from(document.querySelectorAll(".card-img-top")).map(img => img.src);
+    });
+
+    function openModal(imageSrc) {
+        currentIndex = images.indexOf(imageSrc);  // Set the index of the clicked image
+        showImage(currentIndex);
+        document.getElementById("imageModal").style.display = "flex";
     }
 
     function closeModal() {
         document.getElementById("imageModal").style.display = "none";
     }
+
+    function showImage(index) {
+        if (index < 0) {
+            index = images.length - 1; // Loop to the last image
+        } else if (index >= images.length) {
+            index = 0; // Loop to the first image
+        }
+
+        currentIndex = index;
+        let modalImg = document.getElementById("modalImage");
+        let downloadBtn = document.getElementById("downloadLink");
+
+        modalImg.src = images[currentIndex];
+        downloadBtn.href = images[currentIndex];
+    }
+
+    function changeImage(step) {
+        showImage(currentIndex + step);
+    }
+
+    // Keyboard navigation (left/right arrow keys)
+    document.addEventListener("keydown", function (event) {
+        if (document.getElementById("imageModal").style.display === "flex") {
+            if (event.key === "ArrowLeft") changeImage(-1);
+            if (event.key === "ArrowRight") changeImage(1);
+        }
+    });
 </script>
 
 <footer class="bg-dark text-center text-white" id="about">
