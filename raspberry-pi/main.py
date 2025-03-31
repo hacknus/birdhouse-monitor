@@ -57,6 +57,9 @@ class CameraServer:
         self.tcp_conn = None
         self.tcp_lock = threading.Lock()
 
+        # Path to the CSV file where emails are stored
+        self.subscriber_file_path = 'newsletter_subscribers.csv'
+
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.ir_led_pin, GPIO.OUT)
         GPIO.output(self.ir_led_pin, GPIO.LOW)
@@ -182,6 +185,22 @@ class CameraServer:
 
             time.sleep(0.05)
 
+    # Read the current list of emails from the CSV file
+    def read_email_list(self):
+        try:
+            with open(self.subscriber_file_path, mode='r') as file:
+                reader = csv.reader(file)
+                return [row[0] for row in reader]
+        except FileNotFoundError:
+            return []
+
+    # Write the email list back to the CSV file
+    def write_email_list(self, email_list):
+        with open(self.subscriber_file_path, mode='w') as file:
+            writer = csv.writer(file)
+            for email in email_list:
+                writer.writerow([email])
+
     def handle_command(self, command):
         command = command.strip().lower()
         print(f"[CMD] Received: {command}")
@@ -195,7 +214,43 @@ class CameraServer:
         elif command == "get sensor data":
             temperature, humidity = read_temperature_humidity()
             self.send_tcp_message(f"TEMP_HUM: {temperature}, {humidity}")
+        elif "add email" in command:
+            email = command.split(":")[1].strip()
+            email_list = self.read_email_list()
+
+            # Check if the email is valid
+            if email and email not in email_list:
+                email_list.append(email)
+                self.write_email_list(email_list)
+
+                # Success message
+                self.send_tcp_message(f"ok, email added: {email}")
+            else:
+                # Error message if email is empty or already exists
+                self.send_tcp_message(f"error, adding email: {email}")
+        elif "remove email" in command:
+            email = command.split(":")[1].strip()
+            email_list = self.read_email_list()
+
+            if email in email_list:
+                email_list.remove(email)
+                self.write_email_list(email_list)
+                self.send_tcp_message(f"ok, removed added: {email}")
+            else:
+                self.send_tcp_message(f"error, removing email: {email}")
+        elif "get subscriber count" in command:
+            # Read the current subscribers from the CSV file
+            subscriber_count = 0
+            try:
+                with open(self.subscriber_file_path, mode='r') as file:
+                    reader = csv.reader(file)
+                    subscribers = list(reader)
+                    subscriber_count = len(subscribers)
+            except FileNotFoundError:
+                pass  # File does not exist yet, no subscribers
+            self.send_tcp_message(f"ok, subscriber count:{subscriber_count}")
         else:
+            self.send_tcp_message(f"[CMD] Unknown command: {command}")
             print(f"[CMD] Unknown command: {command}")
 
     def send_tcp_message(self, message):

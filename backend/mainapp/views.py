@@ -210,79 +210,49 @@ def get_guru_data(request):
     return JsonResponse(response_data, safe=False)
 
 
-# Path to the CSV file where emails are stored
-CSV_FILE_PATH = 'newsletter_subscribers.csv'
-
-
-# Read the current list of emails from the CSV file
-def read_email_list():
-    try:
-        with open(CSV_FILE_PATH, mode='r') as file:
-            reader = csv.reader(file)
-            return [row[0] for row in reader]
-    except FileNotFoundError:
-        return []
-
-
-# Write the email list back to the CSV file
-def write_email_list(email_list):
-    with open(CSV_FILE_PATH, mode='w') as file:
-        writer = csv.writer(file)
-        for email in email_list:
-            writer.writerow([email])
-
-
 # Add an email to the list
 def add_email(request):
     if request.method == 'POST':
         email = request.POST.get('email')
-        email_list = read_email_list()
 
-        # Check if the email is valid
-        if email and email not in email_list:
-            email_list.append(email)
-            write_email_list(email_list)
-
-            # Success message
-            messages.success(request, f"Email {email} has been added to the newsletter list.")
-        else:
-            # Error message if email is empty or already exists
-            messages.error(request, f"Invalid email or email already in the list: {email}")
+        response = tcp_client.send_and_wait_for_reply(f"add email = {email}", timeout=3)
+        if response:
+            if response.lower().startswith("ok"):
+                # Success message
+                messages.success(request, f"Email {email} has been added to the newsletter list.")
+            else:
+                # Error message if email is empty or already exists
+                messages.error(request, f"Invalid email or email already in the list: {email}")
 
         return redirect('newsletter')
 
 
 def unsubscribe_email(request, email):
     """Handle the email unsubscription request."""
-    email_list = read_email_list()
     email = decode_email(email)
-    if email in email_list:
-        email_list.remove(email)
-        write_email_list(email_list)
-        messages.success(request, f"{email} has been unsubscribed successfully.")
-    else:
-        messages.error(request, f"{email} was not found in the subscriber list.")
 
-    return render(request, 'unsubscribe.html', {'email': email})
+    response = tcp_client.send_and_wait_for_reply(f"remove email = {email}", timeout=3)
+    if response:
+        if response.lower().startswith("ok"):
+            messages.success(request, f"{email} has been unsubscribed successfully.")
+        else:
+            messages.error(request, f"{email} was not found in the subscriber list.")
+
+        return render(request, 'unsubscribe.html', {'email': email})
 
 
 def newsletter_view(request):
-    # Path to the CSV file where emails are stored
-    csv_file = 'newsletter_subscribers.csv'
-
-    # Read the current subscribers from the CSV file
-    subscribers = []
-    try:
-        with open(csv_file, mode='r') as file:
-            reader = csv.reader(file)
-            subscribers = list(reader)
-    except FileNotFoundError:
-        pass  # File does not exist yet, no subscribers
-
-    # Pass the number of subscribers to the template
-    return render(request, 'newsletter.html', {
-        'subscriber_count': len(subscribers),
-    })
+    response = tcp_client.send_and_wait_for_reply("get subscriber count", timeout=3)
+    if response:
+        # Pass the number of subscribers to the template
+        return render(request, 'newsletter.html', {
+            'subscriber_count': response.split(":")[1].strip(),
+        })
+    else:
+        # Pass the number of subscribers to the template
+        return render(request, 'newsletter.html', {
+            'subscriber_count': 0,
+        })
 
 
 def making_of_view(request):
