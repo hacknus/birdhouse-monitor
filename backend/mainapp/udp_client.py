@@ -41,10 +41,13 @@ class UDPVideoClient:
 
                 # self.socket.settimeout(5)
                 self.socket.bind((ip, self.udp_port))
+                print(f"[UDP Client] Successfully bound to {ip}:{self.udp_port}")
 
                 while self.running:
                     try:
-                        data, _ = self.socket.recvfrom(65536)
+                        data, addr = self.socket.recvfrom(65536)
+                        print(f"[UDP Client] Received data from {addr}: {len(data)} bytes")
+
                         with self.lock:
                             self.frame_queue.append(data)
                         print(f"[UDP Client] Received frame: {data}")
