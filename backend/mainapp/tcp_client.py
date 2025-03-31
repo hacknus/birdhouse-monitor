@@ -155,6 +155,7 @@ class TCPClient:
                 temperature=temperature,
                 humidity=humidity,
                 motion_triggered=motion_triggered,
+                number_of_visitors=0,
             )
         except (OperationalError, sqlite3.OperationalError):
             pass
