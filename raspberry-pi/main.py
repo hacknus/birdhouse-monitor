@@ -172,8 +172,7 @@ class CameraServer:
                     udp_socket.sendto(chunk, (self.udp_ip, self.udp_port))
             except Exception as e:
                 print(f"[UDP] Send error: {e}")
-            print("sent a frame!")
-            time.sleep(0.05)
+            time.sleep(0.01)
 
     # Read the current list of emails from the CSV file
     def read_email_list(self):
