@@ -30,16 +30,12 @@ class UDPVideoClient:
 
     def _receive_frames(self):
         while self.running:
-            ip = self.read_ip()
-            if not ip:
-                time.sleep(2)
-                continue
-
+            ip = "0.0.0.0"
             try:
                 print(f"[UDP Client] Binding to {ip}:{self.udp_port}")
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
                 self.socket.settimeout(5)
-                self.socket.bind(("0.0.0.0", self.udp_port))
+                self.socket.bind((ip, self.udp_port))
 
                 while self.running:
                     try:
