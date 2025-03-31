@@ -31,7 +31,7 @@ class UDPVideoClient:
 
     def _receive_frames(self):
         while self.running:
-            ip = "255.255.255.255"
+            ip = "0.0.0.0"
             try:
                 print(f"[UDP Client] Binding to {ip}:{self.udp_port}")
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
