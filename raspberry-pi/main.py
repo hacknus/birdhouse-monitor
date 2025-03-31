@@ -97,26 +97,16 @@ class CameraServer:
                             for subscriber in subscribers:
                                 email = subscriber[0]
                                 encoded_email = encode_email(email)
-                                if "@unibe.ch" in email:
-                                    base_url = "http://cgnum.space.unibe.ch/voegeli"
-                                    unsubscribe_link = f"{base_url}/unsubscribe/{encoded_email}/"
-                                    email_body = (
-                                        "Hoi Du!<br>"
-                                        "I just came back and entered my birdhouse!<br>"
-                                        f"Check me out at {base_url}<br>"
-                                        "Best Regards, Your Vögeli<br><br>"
-                                        f'<a href="{unsubscribe_link}">Unsubscribe</a>'
-                                    )
-                                else:
-                                    base_url = "http://linusleo.synology.me:8000/voegeli"
-                                    unsubscribe_link = f"{base_url}/unsubscribe/{encoded_email}/"
-                                    email_body = (
-                                        "Hoi Du!<br>"
-                                        "I just came back and entered my birdhouse!<br>"
-                                        f"Check me out at {base_url}<br>"
-                                        "Best Regards, Your Vögeli<br><br>"
-                                        f'<a href="{unsubscribe_link}">Unsubscribe</a>'
-                                    )
+
+                                base_url = "https://linusleo.synology.me/voegeli"
+                                unsubscribe_link = f"{base_url}/unsubscribe/{encoded_email}/"
+                                email_body = (
+                                    "Hoi Du!<br>"
+                                    "I just came back and entered my birdhouse!<br>"
+                                    f"Check me out at {base_url}<br>"
+                                    "Best Regards, Your Vögeli<br><br>"
+                                    f'<a href="{unsubscribe_link}">Unsubscribe</a>'
+                                )
 
                                 Voegeli.send_mail(
                                     email_body,
