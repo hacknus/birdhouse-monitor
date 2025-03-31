@@ -60,6 +60,7 @@ class CameraServer:
         # Path to the CSV file where emails are stored
         self.subscriber_file_path = 'newsletter_subscribers.csv'
 
+        pir.when_motion = self.motion_detected_callback
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.ir_led_pin, GPIO.OUT)
         GPIO.output(self.ir_led_pin, GPIO.LOW)
@@ -129,8 +130,6 @@ class CameraServer:
                 f.write(str(new_timestamp))
 
         print("Motion detected! Data stored.")
-
-    pir.when_motion = motion_detected_callback
 
     def start(self):
         video_thread = threading.Thread(target=self.stream_video, daemon=True)
