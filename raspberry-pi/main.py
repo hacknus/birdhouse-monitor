@@ -47,7 +47,7 @@ def read_temperature_humidity():
 
 
 class CameraServer:
-    def __init__(self, udp_ip='0.0.0.0', udp_port=5005, tcp_port=6006, ir_led_pin=17):
+    def __init__(self, udp_ip='255.255.255.255', udp_port=5005, tcp_port=6006, ir_led_pin=17):
         self.udp_ip = udp_ip
         self.udp_port = udp_port
         self.tcp_port = tcp_port
@@ -157,6 +157,7 @@ class CameraServer:
         while True:
             jpeg_data = camera_stream.get_jpeg()
             if jpeg_data is None:
+                print("... skipped a frame!")
                 time.sleep(0.05)
                 continue
 
@@ -171,7 +172,7 @@ class CameraServer:
                     udp_socket.sendto(chunk, (self.udp_ip, self.udp_port))
             except Exception as e:
                 print(f"[UDP] Send error: {e}")
-
+            print("sent a frame!")
             time.sleep(0.05)
 
     # Read the current list of emails from the CSV file
