@@ -47,7 +47,7 @@ def read_temperature_humidity():
 
 
 class CameraServer:
-    def __init__(self, udp_ip='255.255.255.255', udp_port=5005, tcp_port=6006, ir_led_pin=17):
+    def __init__(self, udp_ip='10.8.0.1', udp_port=5005, tcp_port=6006, ir_led_pin=17):
         self.udp_ip = udp_ip
         self.udp_port = udp_port
         self.tcp_port = tcp_port
