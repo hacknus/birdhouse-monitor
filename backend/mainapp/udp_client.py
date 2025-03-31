@@ -47,6 +47,7 @@ class UDPVideoClient:
                         data, _ = self.socket.recvfrom(65536)
                         with self.lock:
                             self.frame_queue.append(data)
+                        print(f"[UDP Client] Received frame: {data}")
                     except socket.timeout:
                         continue
                     except Exception as e:
