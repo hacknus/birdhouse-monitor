@@ -142,26 +142,6 @@ nav .nav-link:hover {
     cursor: pointer;
 }
 
-.prev, .next {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 2rem;
-    font-weight: bold;
-    color: white;
-    cursor: pointer;
-    padding: 10px;
-    background-color: rgba(0, 0, 0, 0.5);
-    border-radius: 5px;
-}
-
-.prev { left: 10px; }
-.next { right: 10px; }
-
-.prev:hover, .next:hover {
-    background-color: rgba(0, 0, 0, 0.8);
-}
-
 /* Style for the download button inside the preview */
 .download-btn {
     position: absolute;
