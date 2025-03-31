@@ -113,10 +113,10 @@ def trigger_ir_led(request):
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'message': 'Invalid request format.'}, status=400)
         if action == 'on':
-            tcp_client.send("turn on led")
+            tcp_client.send("IR_ON")
             return JsonResponse({'success': True, 'message': 'IR LED is ON.'})
         elif action == 'off':
-            tcp_client.send("turn off led")
+            tcp_client.send("IR_OFF")
             return JsonResponse({'success': True, 'message': 'IR LED is OFF.'})
         else:
             return JsonResponse({'success': False, 'message': 'Invalid action.'}, status=400)
@@ -127,7 +127,7 @@ def trigger_ir_led(request):
 def get_ir_state(request):
     # You can access the IR state from wherever it's stored (e.g., in a variable, database, or hardware device)
     # For now, let's assume it’s stored in a variable or a simple flag.
-    response = tcp_client.send_and_wait_for_reply("get led state", timeout=3)
+    response = tcp_client.send_and_wait_for_reply("GET_IR", timeout=3)
     if response:
         ir_led_state = "on" if "ON" in response else "off"  # Replace 'ir_led_on' with the actual method/variable to fetch state.
         return JsonResponse({'state': ir_led_state})
@@ -217,7 +217,7 @@ def add_email(request):
     if request.method == 'POST':
         email = request.POST.get('email')
 
-        response = tcp_client.send_and_wait_for_reply(f"add email = {email}", timeout=3)
+        response = tcp_client.send_and_wait_for_reply(f"ADD_EMAIL = {email}", timeout=3)
         if response:
             if response.lower().startswith("ok"):
                 # Success message
@@ -233,7 +233,7 @@ def unsubscribe_email(request, email):
     """Handle the email unsubscription request."""
     email = decode_email(email)
 
-    response = tcp_client.send_and_wait_for_reply(f"remove email = {email}", timeout=3)
+    response = tcp_client.send_and_wait_for_reply(f"REMOVE_EMAIL = {email}", timeout=3)
     if response:
         if response.lower().startswith("ok"):
             messages.success(request, f"{email} has been unsubscribed successfully.")
@@ -244,7 +244,7 @@ def unsubscribe_email(request, email):
 
 
 def newsletter_view(request):
-    response = tcp_client.send_and_wait_for_reply("get subscriber count", timeout=3)
+    response = tcp_client.send_and_wait_for_reply("GET_SUBSCRIBER_COUNT", timeout=3)
     if response:
         # Pass the number of subscribers to the template
         return render(request, 'newsletter.html', {

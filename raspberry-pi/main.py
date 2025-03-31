@@ -47,7 +47,7 @@ def read_temperature_humidity():
 
 
 class CameraServer:
-    def __init__(self, udp_ip='255.255.255.255', udp_port=5005, tcp_port=6006, ir_led_pin=17):
+    def __init__(self, udp_ip='0.0.0.0', udp_port=5005, tcp_port=6006, ir_led_pin=17):
         self.udp_ip = udp_ip
         self.udp_port = udp_port
         self.tcp_port = tcp_port
@@ -193,17 +193,17 @@ class CameraServer:
     def handle_command(self, command):
         command = command.strip().lower()
         print(f"[CMD] Received: {command}")
-        if command == "IR_ONd":
+        if command == "IR_ON":
             turn_ir_on()
         elif command == "IR_OFF":
             turn_ir_off()
         elif command == "GET_IR":
             state = get_ir_led_state()
             self.send_tcp_message(f"IR LED is {'ON' if state else 'OFF'}")
-        elif command == "get sensor data":
+        elif command == "GET_SENSOR_DATA":
             temperature, humidity = read_temperature_humidity()
             self.send_tcp_message(f"TEMP_HUM: {temperature}, {humidity}")
-        elif "add email" in command:
+        elif "ADD_EMAIL" in command:
             email = command.split(":")[1].strip()
             email_list = self.read_email_list()
 
@@ -217,7 +217,7 @@ class CameraServer:
             else:
                 # Error message if email is empty or already exists
                 self.send_tcp_message(f"error, adding email: {email}")
-        elif "remove email" in command:
+        elif "REMOVE_EMAIL" in command:
             email = command.split(":")[1].strip()
             email_list = self.read_email_list()
 
@@ -227,7 +227,7 @@ class CameraServer:
                 self.send_tcp_message(f"ok, removed added: {email}")
             else:
                 self.send_tcp_message(f"error, removing email: {email}")
-        elif "get subscriber count" in command:
+        elif "GET_SUBSCRIBER_COUNT" in command:
             # Read the current subscribers from the CSV file
             subscriber_count = 0
             try:
@@ -253,7 +253,7 @@ class CameraServer:
 
     def tcp_server(self):
         self.tcp_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.tcp_socket.bind(('', self.tcp_port))
+        self.tcp_socket.bind(('0.0.0.0', self.tcp_port))
         self.tcp_socket.listen(1)
         print(f"[TCP] Listening on port {self.tcp_port}...")
 
