@@ -4,6 +4,7 @@ import threading
 import time
 from collections import deque
 
+
 class UDPVideoClient:
     def __init__(self, port=5005, ip_file='mainapp/raspberry_pi_ip.txt'):
         self.udp_port = port
@@ -34,7 +35,11 @@ class UDPVideoClient:
             try:
                 print(f"[UDP Client] Binding to {ip}:{self.udp_port}")
                 self.socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-                self.socket.settimeout(5)
+
+                # Enable reusing the port so multiple clients can receive the stream
+                self.socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+
+                # self.socket.settimeout(5)
                 self.socket.bind((ip, self.udp_port))
 
                 while self.running:
