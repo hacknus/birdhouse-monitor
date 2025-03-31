@@ -39,6 +39,7 @@ class CameraStream:
         print(self.picam2.camera)
         self.picam2.start()
         self.frame = None
+        self.jpeg = None
         self.lock = threading.Lock()
         self.running = True
         thread = threading.Thread(target=self.update_frame, daemon=True)

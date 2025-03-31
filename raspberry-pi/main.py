@@ -171,7 +171,7 @@ class CameraServer:
                 time.sleep(0.05)
                 continue
 
-            data = jpeg_data.tobytes()
+            data = jpeg_data
             size = len(data)
             max_size = 1400
             chunks = [data[i:i + max_size] for i in range(0, size, max_size)]

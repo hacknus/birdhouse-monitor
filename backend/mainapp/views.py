@@ -42,11 +42,13 @@ def save_subscription(request):
 def img_generator():
     while True:
         frame = udp_client.get_frame()
-        if frame:
+        if frame is not None:
             yield (
                     b"--frame\r\n"
                     b"Content-Type: image/jpeg\r\n\r\n" + frame + b"\r\n\r\n"
             )
+        else:
+            time.sleep(0.1)
 
 
 def video_feed(request):
