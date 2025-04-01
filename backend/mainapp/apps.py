@@ -1,7 +1,7 @@
 # apps.py
 from django.apps import AppConfig
 
-udp_client = None  # Global placeholder
+stream_client = None  # Global placeholder
 tcp_client = None  # Global placeholder
 
 class StreamappConfig(AppConfig):
@@ -9,19 +9,19 @@ class StreamappConfig(AppConfig):
     name = "mainapp"
 
     def ready(self):
-        global udp_client, tcp_client  # Declare we're modifying the globals
+        global stream_client, tcp_client  # Declare we're modifying the globals
 
-        from .udp_client import UDPVideoClient
+        from .stream_client import StreamVideoClient
         from .tcp_client import TCPClient
 
-        print("init udp client")
-        udp_client = UDPVideoClient()
-        print("starting udp client")
-        udp_client.start()
-        print("started udp client")
+        print("init stream client")
+        stream_client = StreamVideoClient()
+        print("starting stream client")
+        stream_client.start()
+        print("started stream client")
 
         print("init tcp client")
-        tcp_client = TCPClient(udp_client=udp_client)
+        tcp_client = TCPClient(stream_client=stream_client)
         print("starting tcp client")
         tcp_client.start()
         print("started tcp client")

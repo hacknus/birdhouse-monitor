@@ -24,7 +24,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 
-from .apps import udp_client, tcp_client
+from .apps import stream_client, tcp_client
 import mainapp.weather_api
 
 
@@ -41,7 +41,7 @@ def save_subscription(request):
 
 def img_generator():
     while True:
-        frame = udp_client.get_frame()
+        frame = stream_client.get_frame()
         if frame is not None:
             yield (
                     b"--frame\r\n"
@@ -74,7 +74,7 @@ def save_image(request):
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         image_path = os.path.join(settings.MEDIA_ROOT, "gallery", f"{timestamp}.jpg")
 
-        frame = udp_client.get_frame()
+        frame = stream_client.get_frame()
 
         cv2.imwrite(image_path, frame)
 

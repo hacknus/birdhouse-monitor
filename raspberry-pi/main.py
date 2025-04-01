@@ -47,9 +47,9 @@ def read_temperature_humidity():
 
 
 class CameraServer:
-    def __init__(self, udp_ip='10.8.0.1', udp_port=5005, tcp_port=6006, ir_led_pin=17):
-        self.udp_ip = udp_ip
-        self.udp_port = udp_port
+    def __init__(self, stream_ip='10.8.0.1', stream_port=5005, tcp_port=6006, ir_led_pin=17):
+        self.stream_ip = stream_ip
+        self.stream_port = stream_port
         self.tcp_port = tcp_port
         self.ir_led_pin = ir_led_pin
 
@@ -150,8 +150,11 @@ class CameraServer:
                 self.tcp_conn.close()
 
     def stream_video(self):
-        udp_socket = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        udp_socket.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        server_ip = '0.0.0.0'
+        server_port = 5005
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((server_ip, server_port))
+
         time.sleep(2)  # Warm-up camera
 
         while True:
@@ -162,28 +165,8 @@ class CameraServer:
                 time.sleep(0.05)
                 continue
 
-            data = jpeg_data
-            size = len(data)
-            max_size = 1400  # Maximum size per UDP packet
-            chunks = [data[i:i + max_size] for i in range(0, size, max_size)]
-            total_chunks = len(chunks)
-
-            try:
-                # Send the total number of chunks first (4 bytes)
-                udp_socket.sendto(struct.pack("I", total_chunks), (self.udp_ip, self.udp_port))
-                # Send the frame size (4 bytes)
-                udp_socket.sendto(struct.pack("I", size), (self.udp_ip, self.udp_port))
-
-                # Send each chunk with sequence number (4 bytes for chunk ID and max_size bytes for data)
-                for i, chunk in enumerate(chunks):
-                    # Send chunk ID (4 bytes)
-                    udp_socket.sendto(struct.pack("I", i), (self.udp_ip, self.udp_port))
-                    # Send chunk data
-                    udp_socket.sendto(chunk, (self.udp_ip, self.udp_port))
-                    print(f"[UDP Sender] Sent chunk {i + 1}/{total_chunks} of size {len(chunk)} bytes")
-
-            except Exception as e:
-                print(f"[UDP] Send error: {e}")
+            sock.sendall(struct.pack("L", len(jpeg_data)))
+            sock.sendall(jpeg_data)
 
             time.sleep(0.01)  # Small delay between frames to avoid overwhelming the network
 

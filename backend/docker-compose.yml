@@ -7,7 +7,7 @@ services:
     expose:
       - "8001:8001"  # Use a different port here for the app
     ports:
-      - "5005:5005/udp"  # Expose UDP port (adjust port to your actual one)
+      - "5005:5005/tcp"  # Expose Stream port (adjust port to your actual one)
     volumes:
       - .:/app
       - ./mainapp/static:/app/static

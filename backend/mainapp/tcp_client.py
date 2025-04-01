@@ -13,7 +13,7 @@ import sqlite3
 
 
 class TCPClient:
-    def __init__(self, ip_file='mainapp/raspberry_pi_ip.txt', port=6006, udp_client=None):
+    def __init__(self, ip_file='mainapp/raspberry_pi_ip.txt', port=6006, stream_client=None):
         self.ip_file = ip_file
         self.port = port
         self.socket = None
@@ -23,7 +23,7 @@ class TCPClient:
         self.receive_callback = None
         self.thread = None
         self.reply_queue = None
-        self.udp_client = udp_client  # <-- pass your UDP client here
+        self.stream_client = stream_client  # <-- pass your Stream client here
         self.interrupt_event = threading.Event()
 
     def read_ip_from_file(self):
@@ -128,7 +128,7 @@ class TCPClient:
         self.send("IR_ON")
         time.sleep(3)
 
-        frame_data = self.udp_client.get_frame() if self.udp_client else None
+        frame_data = self.stream_client.get_frame() if self.stream_client else None
         if frame_data:
             np_frame = np.frombuffer(frame_data, dtype=np.uint8)
             frame = cv2.imdecode(np_frame, cv2.IMREAD_COLOR)
@@ -139,7 +139,7 @@ class TCPClient:
             cv2.imwrite(image_path, frame)
             print(f"[TCPClient] Saved image at {image_path}")
         else:
-            print("[TCPClient] No UDP frame available.")
+            print("[TCPClient] No frame available.")
 
         self.send("IR_OFF")
 
