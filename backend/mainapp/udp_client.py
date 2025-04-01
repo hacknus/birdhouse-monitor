@@ -1,5 +1,6 @@
 # udp_video_client.py
 import socket
+import struct
 import threading
 import time
 from collections import deque
@@ -43,14 +44,47 @@ class UDPVideoClient:
                 self.socket.bind((ip, self.udp_port))
                 print(f"[UDP Client] Successfully bound to {ip}:{self.udp_port}")
 
+                current_frame = []
+                total_chunks = None  # To store the total number of chunks
+                received_chunks = 0
+
                 while self.running:
                     try:
                         data, addr = self.socket.recvfrom(65536)
                         print(f"[UDP Client] Received data from {addr}: {len(data)} bytes")
 
-                        with self.lock:
-                            self.frame_queue.append(data)
-                        print(f"[UDP Client] Received frame: {data}")
+                        if total_chunks is None:
+                            # The first packet contains the total number of chunks
+                            total_chunks = struct.unpack("B", data)[0]
+                            print(f"Expecting {total_chunks} chunks for the next frame.")
+                            continue  # Skip the total chunks packet
+
+                        chunk_id = struct.unpack("B", data[:1])[0]  # Get the chunk ID from the header
+                        chunk_data = data[1:]  # Get the actual data without the header
+
+                        # Add the chunk to the current frame (ensure that the chunks are added in the correct order)
+                        current_frame.append((chunk_id, chunk_data))
+                        received_chunks += 1
+
+                        # If all chunks for the current frame have been received, reassemble it
+                        if received_chunks == total_chunks:
+                            print(f"[UDP Client] Full frame received ({received_chunks} chunks). Reassembling frame...")
+                            # Sort the chunks based on the chunk ID
+                            current_frame.sort(key=lambda x: x[0])
+
+                            # Reassemble the frame
+                            full_frame = b''.join([chunk[1] for chunk in current_frame])
+
+                            # Add the complete frame to the frame queue
+                            with self.lock:
+                                self.frame_queue.append(full_frame)
+
+                            # Reset for the next frame
+                            current_frame = []
+                            total_chunks = None
+                            received_chunks = 0
+
+                        time.sleep(0.01)
                     except socket.timeout:
                         continue
                     except Exception as e:
@@ -67,6 +101,7 @@ class UDPVideoClient:
 
     def get_frame(self):
         with self.lock:
+            print(f"[FRAME Q]  {self.frame_queue}")
             return self.frame_queue[-1] if self.frame_queue else None
 
     def stop(self):

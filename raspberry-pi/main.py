@@ -165,11 +165,18 @@ class CameraServer:
             size = len(data)
             max_size = 1400
             chunks = [data[i:i + max_size] for i in range(0, size, max_size)]
+            total_chunks = len(chunks)
 
+            # Send the number of chunks
             try:
-                udp_socket.sendto(struct.pack("B", len(chunks)), (self.udp_ip, self.udp_port))
-                for chunk in chunks:
-                    udp_socket.sendto(chunk, (self.udp_ip, self.udp_port))
+                udp_socket.sendto(struct.pack("B", total_chunks), (self.udp_ip, self.udp_port))
+
+                # Send each chunk with an identifier
+                for i, chunk in enumerate(chunks):
+                    chunk_header = struct.pack("B", i)  # Chunk ID (0-based)
+                    chunk_data = chunk_header + chunk  # Concatenate header and data
+                    udp_socket.sendto(chunk_data, (self.udp_ip, self.udp_port))
+
             except Exception as e:
                 print(f"[UDP] Send error: {e}")
             time.sleep(0.01)
