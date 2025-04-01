@@ -25,6 +25,8 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 
 from .apps import stream_client, tcp_client
+
+# TODO: this should only be done by one thread!!
 import mainapp.weather_api
 
 
