@@ -51,7 +51,12 @@ class UDPVideoClient:
                 while self.running:
                     try:
                         data, addr = self.socket.recvfrom(65536)  # Receive data (maximum buffer size)
+
                         if self.total_chunks == 0:  # No chunks expected yet, get metadata
+                            if len(data) < 8:
+                                print(
+                                    f"[UDP Client] Skipping short packet. Expected metadata length is 8, got {len(data)}.")
+                                continue
                             # The first packet contains the total number of chunks
                             self.total_chunks = struct.unpack("I", data[:4])[0]
                             self.expected_size = struct.unpack("I", data[4:8])[0]
@@ -59,14 +64,18 @@ class UDPVideoClient:
                                 f"[UDP Client] Expecting {self.total_chunks} chunks for the next frame. Expected frame size: {self.expected_size}")
                             continue  # Skip the total chunks metadata packet
 
+                        if len(data) < 5:
+                            print(f"[UDP Client] Invalid chunk received (size too small): {len(data)}")
+                            continue
+
                         chunk_id = struct.unpack("I", data[:4])[0]  # Get the chunk ID (4 bytes)
                         chunk_data = data[4:]  # The actual chunk data (everything after the ID)
+
+                        print(f"[UDP Client] Received chunk {chunk_id}/{self.total_chunks} of size {len(chunk_data)}")
 
                         # Add the chunk to the current frame
                         current_frame.append((chunk_id, chunk_data))
                         received_chunks += 1
-
-                        print(f"[UDP Client] Received chunk {chunk_id}/{self.total_chunks}")
 
                         # If all chunks for the current frame have been received, reassemble the frame
                         if received_chunks == self.total_chunks:
