@@ -5,6 +5,7 @@ import threading
 import time
 from collections import deque
 
+import cv2
 import numpy as np
 
 
@@ -63,10 +64,18 @@ class StreamVideoClient:
                             frame_data += packet
 
                         # Decode the received frame
-                        full_frame = np.frombuffer(frame_data, dtype=np.uint8)
+                        np_frame = np.frombuffer(frame_data, dtype=np.uint8)
+
+                        frame = cv2.imdecode(np_frame, cv2.IMREAD_COLOR)
+
+                        if frame is None:
+                            continue
+
+                        # Encode frame as JPEG for HTTP streaming
+                        _, jpeg = cv2.imencode('.jpg', frame)
 
                         with self.lock:
-                            self.frame_queue.append(full_frame)
+                            self.frame_queue.append(jpeg.tobytes())
 
                     except socket.timeout:
                         continue
