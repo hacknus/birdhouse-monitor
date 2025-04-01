@@ -41,9 +41,6 @@ class StreamVideoClient:
                 print(f"[Stream Client] Binding to {ip}:{self.stream_port}")
                 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
-                # Enable reusing the port so multiple clients can receive the stream
-                sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-
                 sock.connect((ip, self.stream_port))
 
                 print(f"[Stream Client] Successfully bound to {ip}:{self.stream_port}")
