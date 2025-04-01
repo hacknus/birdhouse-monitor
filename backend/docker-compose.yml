@@ -3,10 +3,11 @@ version: '3.9'
 services:
   web:
     build: .
-    network_mode: "host"  # This makes the container use the host's network stack
     container_name: django_gunicorn
     expose:
       - "8001:8001"  # Use a different port here for the app
+    ports:
+      - "5005:5005/udp"  # Expose UDP port (adjust port to your actual one)
     volumes:
       - .:/app
       - ./mainapp/static:/app/static
@@ -23,6 +24,7 @@ services:
     ports:
       - "6080:80"     # HTTP → maps host:6080 to container:80
       - "6443:443"    # HTTPS → maps
+      - "5005:5005"    # HTTPS → maps
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
       - ./certs:/etc/nginx/certs:ro
