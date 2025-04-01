@@ -46,11 +46,8 @@ class UDPVideoClient:
                 while self.running:
                     try:
                         data, addr = self.socket.recvfrom(65536)
-                        print(f"[UDP Client] Received data from {addr}: {len(data)} bytes")
-
                         with self.lock:
                             self.frame_queue.append(data)
-                        print(f"[UDP Client] Received frame: {data}")
                     except socket.timeout:
                         continue
                     except Exception as e:
