@@ -6,7 +6,7 @@ services:
     network_mode: "host"  # This makes the container use the host's network stack
     container_name: django_gunicorn
     expose:
-      - "8000"
+      - "8001:8001"  # Use a different port here for the app
     volumes:
       - .:/app
       - ./mainapp/static:/app/static

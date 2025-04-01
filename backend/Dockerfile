@@ -30,7 +30,7 @@ RUN python manage.py collectstatic --noinput
 # Run Gunicorn server
 
 # Expose port for Gunicorn
-EXPOSE 8000
+EXPOSE 8001
 
 # Start Gunicorn
-CMD ["gunicorn", "--workers=3", "--bind=0.0.0.0:8000", "birdhouse.wsgi:application"]
+CMD ["gunicorn", "--workers=3", "--bind=0.0.0.0:8001", "birdhouse.wsgi:application"]
