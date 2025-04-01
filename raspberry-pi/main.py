@@ -169,18 +169,23 @@ class CameraServer:
             total_chunks = len(chunks)
 
             try:
-                # Send the total number of chunks first
+                # Send the total number of chunks first (4 bytes)
                 udp_socket.sendto(struct.pack("I", total_chunks), (self.udp_ip, self.udp_port))
-                udp_socket.sendto(struct.pack("I", size), (self.udp_ip, self.udp_port))  # Frame size
+                # Send the frame size (4 bytes)
+                udp_socket.sendto(struct.pack("I", size), (self.udp_ip, self.udp_port))
 
-                # Send each chunk with sequence number
+                # Send each chunk with sequence number (4 bytes for chunk ID and max_size bytes for data)
                 for i, chunk in enumerate(chunks):
-                    udp_socket.sendto(struct.pack("I", i), (self.udp_ip, self.udp_port))  # Chunk sequence number
+                    # Send chunk ID (4 bytes)
+                    udp_socket.sendto(struct.pack("I", i), (self.udp_ip, self.udp_port))
+                    # Send chunk data
                     udp_socket.sendto(chunk, (self.udp_ip, self.udp_port))
+                    print(f"[UDP Sender] Sent chunk {i + 1}/{total_chunks} of size {len(chunk)} bytes")
 
             except Exception as e:
                 print(f"[UDP] Send error: {e}")
-            time.sleep(0.01)
+
+            time.sleep(0.01)  # Small delay between frames to avoid overwhelming the network
 
     # Read the current list of emails from the CSV file
     def read_email_list(self):
