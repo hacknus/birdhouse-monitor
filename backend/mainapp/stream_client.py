@@ -46,16 +46,12 @@ class StreamVideoClient:
 
                 sock.connect((ip, self.stream_port))
 
-                print("Waiting for a connection...")
-                conn, addr = sock.accept()
-                print(f"Connection established with {addr}")
-
                 print(f"[Stream Client] Successfully bound to {ip}:{self.stream_port}")
 
                 while self.running:
                     try:
                         # Receive the size of the frame
-                        packed_size = conn.recv(4)
+                        packed_size = sock.recv(4)
                         if not packed_size:
                             break
                         frame_size = struct.unpack("L", packed_size)[0]
@@ -63,7 +59,7 @@ class StreamVideoClient:
                         # Receive the frame data
                         frame_data = b""
                         while len(frame_data) < frame_size:
-                            packet = conn.recv(frame_size - len(frame_data))
+                            packet = sock.recv(frame_size - len(frame_data))
                             if not packet:
                                 break
                             frame_data += packet
