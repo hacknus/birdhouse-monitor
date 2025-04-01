@@ -46,7 +46,6 @@ class StreamVideoClient:
 
                 sock.connect((ip, self.stream_port))
 
-                sock.listen(1)
                 print("Waiting for a connection...")
                 conn, addr = sock.accept()
                 print(f"Connection established with {addr}")

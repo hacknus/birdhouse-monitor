@@ -47,7 +47,7 @@ def read_temperature_humidity():
 
 
 class CameraServer:
-    def __init__(self, stream_ip='10.8.0.1', stream_port=5005, tcp_port=6006, ir_led_pin=17):
+    def __init__(self, stream_ip='0.0.0.0', stream_port=5005, tcp_port=6006, ir_led_pin=17):
         self.stream_ip = stream_ip
         self.stream_port = stream_port
         self.tcp_port = tcp_port
@@ -150,10 +150,9 @@ class CameraServer:
                 self.tcp_conn.close()
 
     def stream_video(self):
-        server_ip = '0.0.0.0'
-        server_port = 5005
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        sock.connect((server_ip, server_port))
+        sock.bind((self.stream_ip, self.stream_port))
+        sock.listen(1)
 
         time.sleep(2)  # Warm-up camera
 
