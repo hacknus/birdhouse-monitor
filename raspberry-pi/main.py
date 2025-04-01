@@ -155,6 +155,7 @@ class CameraServer:
         time.sleep(2)  # Warm-up camera
 
         while True:
+            # Capture the frame (600x800 pixels, 3 bytes per pixel)
             jpeg_data = camera_stream.get_jpeg()
             if jpeg_data is None:
                 print("... skipped a frame!")
@@ -163,19 +164,19 @@ class CameraServer:
 
             data = jpeg_data
             size = len(data)
-            max_size = 1400
+            max_size = 1400  # Maximum size per UDP packet
             chunks = [data[i:i + max_size] for i in range(0, size, max_size)]
             total_chunks = len(chunks)
 
-            # Send the number of chunks
             try:
-                udp_socket.sendto(struct.pack("B", total_chunks), (self.udp_ip, self.udp_port))
+                # Send the total number of chunks first
+                udp_socket.sendto(struct.pack("I", total_chunks), (self.udp_ip, self.udp_port))
+                udp_socket.sendto(struct.pack("I", size), (self.udp_ip, self.udp_port))  # Frame size
 
-                # Send each chunk with an identifier
+                # Send each chunk with sequence number
                 for i, chunk in enumerate(chunks):
-                    chunk_header = struct.pack("B", i)  # Chunk ID (0-based)
-                    chunk_data = chunk_header + chunk  # Concatenate header and data
-                    udp_socket.sendto(chunk_data, (self.udp_ip, self.udp_port))
+                    udp_socket.sendto(struct.pack("I", i), (self.udp_ip, self.udp_port))  # Chunk sequence number
+                    udp_socket.sendto(chunk, (self.udp_ip, self.udp_port))
 
             except Exception as e:
                 print(f"[UDP] Send error: {e}")
