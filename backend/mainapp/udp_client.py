@@ -51,8 +51,6 @@ class UDPVideoClient:
                 while self.running:
                     try:
                         data, addr = self.socket.recvfrom(65536)
-                        print(f"[UDP Client] Received data from {addr}: {len(data)} bytes")
-
                         if total_chunks is None:
                             # The first packet contains the total number of chunks
                             total_chunks = struct.unpack("B", data)[0]
@@ -68,7 +66,6 @@ class UDPVideoClient:
 
                         # If all chunks for the current frame have been received, reassemble it
                         if received_chunks == total_chunks:
-                            print(f"[UDP Client] Full frame received ({received_chunks} chunks). Reassembling frame...")
                             # Sort the chunks based on the chunk ID
                             current_frame.sort(key=lambda x: x[0])
 
@@ -101,7 +98,6 @@ class UDPVideoClient:
 
     def get_frame(self):
         with self.lock:
-            print(f"[FRAME Q]  {self.frame_queue}")
             return self.frame_queue[-1] if self.frame_queue else None
 
     def stop(self):
