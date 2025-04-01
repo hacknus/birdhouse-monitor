@@ -15,6 +15,8 @@ class UDPVideoClient:
         self.thread = None
         self.frame_queue = deque(maxlen=1)
         self.lock = threading.Lock()
+        self.expected_size = 0  # Expected size of the full frame
+        self.total_chunks = 0  # Total chunks expected for the current frame
 
     def read_ip(self):
         try:
