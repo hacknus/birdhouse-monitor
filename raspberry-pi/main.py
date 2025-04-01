@@ -168,9 +168,10 @@ class CameraServer:
                         print("... skipped a frame!")
                         time.sleep(0.05)
                         continue
-    
+
                     try:
-                        client_socket.sendall(struct.pack("L", len(jpeg_data)))
+                        frame_size = struct.pack("!Q", len(jpeg_data))  # "!Q" = big-endian, 8-byte unsigned long long
+                        client_socket.sendall(frame_size)
                         client_socket.sendall(jpeg_data)
                     except Exception as e:
                         print(f"Error sending data: {e}")

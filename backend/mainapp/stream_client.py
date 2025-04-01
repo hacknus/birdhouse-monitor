@@ -48,10 +48,11 @@ class StreamVideoClient:
                 while self.running:
                     try:
                         # Receive the size of the frame
-                        packed_size = sock.recv(4)
-                        if not packed_size:
+                        frame_size_data = sock.recv(8)
+                        if not frame_size_data:
+                            print("No data received, exiting...")
                             break
-                        frame_size = struct.unpack("L", packed_size)[0]
+                        frame_size = struct.unpack("!Q", frame_size_data)[0]
 
                         # Receive the frame data
                         frame_data = b""
