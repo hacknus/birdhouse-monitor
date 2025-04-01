@@ -155,19 +155,28 @@ class CameraServer:
         sock.listen(1)
 
         time.sleep(2)  # Warm-up camera
-
         while True:
-            # Capture the frame (600x800 pixels, 3 bytes per pixel)
-            jpeg_data = camera_stream.get_jpeg()
-            if jpeg_data is None:
-                print("... skipped a frame!")
-                time.sleep(0.05)
-                continue
+            print("Waiting for client to connect...")
+            client_socket, client_address = sock.accept()
+            print(f"Client connected: {client_address}")
+            with client_socket:
+                while True:
 
-            sock.sendall(struct.pack("L", len(jpeg_data)))
-            sock.sendall(jpeg_data)
+                    # Capture the frame (600x800 pixels, 3 bytes per pixel)
+                    jpeg_data = camera_stream.get_jpeg()
+                    if jpeg_data is None:
+                        print("... skipped a frame!")
+                        time.sleep(0.05)
+                        continue
+    
+                    try:
+                        client_socket.sendall(struct.pack("L", len(jpeg_data)))
+                        client_socket.sendall(jpeg_data)
+                    except Exception as e:
+                        print(f"Error sending data: {e}")
+                        break  # Stop streaming if the cli
 
-            time.sleep(0.01)  # Small delay between frames to avoid overwhelming the network
+                    time.sleep(0.01)  # Small delay between frames to avoid overwhelming the network
 
     # Read the current list of emails from the CSV file
     def read_email_list(self):
