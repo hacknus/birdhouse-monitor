@@ -3,6 +3,7 @@ version: '3.9'
 services:
   web:
     build: .
+    network_mode: "host"  # This makes the container use the host's network stack
     container_name: django_gunicorn
     expose:
       - "8000"
