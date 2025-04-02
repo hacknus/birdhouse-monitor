@@ -142,6 +142,28 @@ nav .nav-link:hover {
     cursor: pointer;
 }
 
+.prev, .next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 3rem;
+    font-weight: bold;
+    color: white !important;
+    cursor: pointer;
+    padding: 15px;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 5px;
+    text-decoration: none; /* Remove blue link underline */
+    user-select: none;
+}
+
+.prev { left: 20px; }
+.next { right: 20px; }
+
+.prev:hover, .next:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
 /* Style for the download button inside the preview */
 .download-btn {
     position: absolute;
