@@ -157,8 +157,13 @@ nav .nav-link:hover {
     user-select: none;
 }
 
-.prev { left: 20px; }
-.next { right: 20px; }
+.prev {
+    left: 20px;
+}
+
+.next {
+    right: 20px;
+}
 
 .prev:hover, .next:hover {
     background-color: rgba(0, 0, 0, 0.8);
@@ -197,8 +202,8 @@ nav .nav-link:hover {
 .navbar-nav .nav-item .nav-link {
     display: flex;
     align-items: center; /* Center both the icon and the text vertically */
-    padding-left: 10px;   /* Add space before the icon */
-    padding-right: 10px;  /* Optional: Add space after the icon */
+    padding-left: 10px; /* Add space before the icon */
+    padding-right: 10px; /* Optional: Add space after the icon */
 }
 
 /* Add space between the icon and the text */
@@ -266,7 +271,7 @@ button:hover {
 }
 
 #toggleIRButton, #saveImageBtn {
-    width: 120px;  /* Adjust the width of the buttons */
+    width: 120px; /* Adjust the width of the buttons */
 }
 
 /* List styling for subscribers */
@@ -352,4 +357,5 @@ ul {
 
 .info-text {
     color: #ff6300;
+    text-align: center;
 }
