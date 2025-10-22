@@ -116,7 +116,7 @@ def motion_detected_callback():
                             email = subscriber[0]
                             encoded_email = encode_email(email)
                             if "@unibe.ch" in email:
-                                base_url = "http://cgnum.space.unibe.ch/voegeli"
+                                base_url = "http://sedna.space.unibe.ch/voegeli"
                                 unsubscribe_link = f"{base_url}/unsubscribe/{encoded_email}/"
                                 email_body = (
                                     "Hoi Du!<br>"
@@ -126,7 +126,7 @@ def motion_detected_callback():
                                     f'<a href="{unsubscribe_link}">Unsubscribe</a>'
                                 )
                             else:
-                                base_url = "http://linusleo.synology.me:8000/voegeli"
+                                base_url = "https://linusleo.synology.me"
                                 unsubscribe_link = f"{base_url}/unsubscribe/{encoded_email}/"
                                 email_body = (
                                     "Hoi Du!<br>"
